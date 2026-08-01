@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coro delle 10 | Cori San Vito</title>
+    <link rel="icon" href="../images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+    <link rel="manifest" href="../images/site.webmanifest">
+
+    <meta name="msapplication-TileColor" content="#0d3b6e">
+    <meta name="theme-color" content="#0d3b6e">
+
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/home.css">
+    <link rel="stylesheet" href="../style/temi-cori.css">
+
+    <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32"
+        data-utcoffset="1"></script>
+</head>
+
+<body class="home-page coro-10" data-sheet="coro-10">
+    <div class="coro-stripe"></div>
+    <header>
+        <a class="back-to-root" href="../">&#8592; tutti i cori</a>
+        <h1><a href="./">Coro delle 10</a></h1>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="overlay"></div>
+        <nav>
+            <ul>
+                <li><a href="./" class="active">Home</a></li>
+                <li><a href="../canti">Canti</a></li>
+                <li><a href="./calendario">Calendario</a></li>
+                <li><a href="../admin/aggiungi-canto">Area riservata</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <aside>
+            <section id="tempi-forti">
+                <h3><span id="tempo"></span></h3>
+                <div id="canti-tempo" class="div-canti"></div>
+            </section>
+        </aside>
+
+        <div class="centre-column">
+            <section>
+                <h3>I canti di <span id="data"></span></h3>
+                <div id="canti-domenica" class="div-canti"></div>
+            </section>
+        </div>
+
+        <aside>
+            <section id="sezione-nuovi-canti">
+                <h3>Canti da ripassare</h3>
+                <div id="canti-nuovi" class="div-canti"></div>
+            </section>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="anno"></span> Cori San Vito &mdash; <a class="privacy" href="../privacy.html">Privacy</a></p>
+    </footer>
+
+    <script src="../script/canti-domenica.js" defer></script>
+    <script>document.getElementById("anno").textContent = new Date().getFullYear();</script>
+</body>
+
+</html>

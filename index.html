@@ -4,155 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coro delle Dieci</title>
-    <link rel="icon" href="../images/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
-    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
-    <link rel="manifest" href="../images/site.webmanifest">
+    <title>Cori di San Vito</title>
+    <link rel="icon" href="./images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+    <link rel="manifest" href="./images/site.webmanifest">
 
-    <meta name="msapplication-TileColor" content="#061a40">
-    <meta name="theme-color" content="#061a40">
+    <meta name="description" content="Sito dei cori parrocchiali della parrocchia di San Vito in Spinea (VE).">
+    <meta name="msapplication-TileColor" content="#1a1a2e">
+    <meta name="theme-color" content="#1a1a2e">
 
     <link rel="stylesheet" href="./style/style.css">
-    <link rel="stylesheet" href="./style/home.css">
+
+    <style>
+        /* ----- Homepage selezione coro ----- */
+
+        body {
+            background: #f0f2f7;
+            color: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #1a1a2e;
+            text-align: center;
+            height: auto;
+            padding: 2rem 1rem 1.5rem;
+            position: static; /* non sticky sulla root */
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            letter-spacing: 0.03em;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            gap: 1.5rem;
+        }
+
+        .scelta-titolo {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cori-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 860px;
+        }
+
+        .coro-card {
+            background: white;
+            border-radius: 14px;
+            text-decoration: none;
+            color: inherit;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.6rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            border-top: 5px solid var(--stripe);
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        .coro-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+            text-decoration: none;
+        }
+
+        .coro-card .orario {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--stripe);
+            line-height: 1;
+        }
+
+        .coro-card .nome {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .coro-card .desc {
+            font-size: 0.82rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .coro-card .vai {
+            margin-top: auto;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--stripe);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Colori per carta */
+        .card-10    { --stripe: #0047AB; }
+        .card-1115  { --stripe: #568203; }
+        .card-estate { --stripe: #E44D2E; }
+
+        footer {
+            background-color: #1a1a2e;
+            text-align: center;
+            height: auto;
+            padding: 1.2rem;
+        }
+
+        footer a.privacy { color: rgba(255,255,255,0.6); }
+
+        @media (max-width: 640px) {
+            .cori-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+            .coro-card {
+                flex-direction: row;
+                align-items: center;
+                padding: 1.2rem 1.4rem;
+                gap: 1rem;
+            }
+            .coro-card .orario { font-size: 1.7rem; min-width: 3.5rem; }
+            .coro-card .desc { display: none; }
+            .coro-card .vai { margin-top: 0; margin-left: auto; }
+        }
+    </style>
 
     <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32"
         data-utcoffset="1"></script>
 </head>
-</head>
 
-<body class="home-page">
+<body>
     <header>
-        <h1><a href="./">Coro delle Dieci</a></h1>
-        <input type="checkbox" id="menu-toggle" class="menu-toggle">
-        <label for="menu-toggle" class="menu-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-        </label>
-        <div class="overlay"></div>
-        <nav>
-            <ul>
-                <li><a href="./">Home</a></li>
-                <li><a href="./canti">Canti</a></li>
-                <li><a href="./calendario">Calendario</a></li>
-                <li><a href="./admin/aggiungi-canto">Area riservata</a></li>
-            </ul>
-        </nav>
+        <h1>Cori di San Vito</h1>
+        <p>Parrocchia di San Vito e C.M. — Spinea (VE)</p>
     </header>
+
     <main>
-        <aside>
-            <section id="tempi-forti">
-                <h3><span id="tempo"></span></h3>
-                <div id="canti-tempo" class="div-canti"></div>
-            </section>
+        <p class="scelta-titolo">Scegli il tuo coro</p>
 
-            <!--
-            <section>
-                <h3>I canti di Pasqua</h3>
-                <div class="div-canti">
-                    <p class="canto-link"><a href="canti/cristo-vive-in-mezzo-a-noi" target="_blank">Cristo vive in mezzo a noi</a></p>
-                    <p class="canto-link"><a href="canti/gloria-buttazzo" target="_blank">Gloria (Buttazzo)</a></p>
-                    <p class="canto-link"><a href="canti/alleluia-ora-lui-vive" target="_blank">Alleluia, ora Lui vive</a></p>
-                    <p class="canto-link"><a href="canti/santo-giorgi" target="_blank">Santo (Giorgi)</a></p>
-                    <p class="canto-link"><a href="canti/cristo-e-risorto-veramente" target="_blank">Cristo è risorto veramente</a></p>
-                </div>
-            </section>
-            -->
+        <div class="cori-grid">
 
-            <!--
-            <section>
-                <h3>I canti di Natale</h3>
-                <div class="div-canti">
-                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
-                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
-                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
-                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
-                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
-                </div>
-            </section>
-            -->
-        </aside>
+            <a href="./coro-10/" class="coro-card card-10">
+                <span class="orario">10:00</span>
+                <span class="nome">Coro delle 10</span>
+                <span class="desc">Animazione della Santa Messa domenicale delle ore 10:00</span>
+                <span class="vai">Entra →</span>
+            </a>
 
+            <a href="./coro-1115/" class="coro-card card-1115">
+                <span class="orario">11:15</span>
+                <span class="nome">Coro delle 11:15</span>
+                <span class="desc">Animazione della Santa Messa domenicale delle ore 11:15</span>
+                <span class="vai">Entra →</span>
+            </a>
 
-        <div class="centre-column">
-            <!-- Avviso di inizio anno 
-            <section class="warning restart">
-                <h3>ATTENZIONE!</h3>
-                <div>
-                    <p>Ricominceremo il nostro servizio di animazione della S. Messa delle ore 10:00 domenica 21 settembre.</p>
-                    <p class="closing">Vi aspettiamo numerosi!</p>
-                </div>
-            </section>
-            -->            
+            <a href="./coro-estate/" class="coro-card card-estate">
+                <span class="orario">☀</span>
+                <span class="nome">Coro Estivo</span>
+                <span class="desc">Animazione delle Messe estive e dei campi scuola</span>
+                <span class="vai">Entra →</span>
+            </a>
 
-            <!-- Avviso vacanze di Natale 
-            <section class="warning christmas">
-                <h3>Vacanze di Natale</h3>
-                <div class="warning-content">
-                    <p>
-                        Durante le vacanze di Natale <b>non svolgeremo il servizio di animazione</b>,
-                        quindi a Santo Stefano, domenica 28 dicembre e domenica 4 gennaio non canteremo.
-                    </p>
-
-                    <p>
-                        Il coro animerà la <b>S. Messa di Natale</b> e
-                        riprenderà direttamente il servizio all’<b>Epifania</b>, lunedì 6 gennaio</b>.
-                    </p>
-
-                    <p class="closing">Buon Santo Natale e buone feste!</p>
-                </div>
-            </section>
-            -->
-
-            <!-- Avviso di fine anno 
-            <section class="warning end">
-                <h3>ATTENZIONE!</h3>
-                <div>
-                    <p>La nostra ultima S. Messa animata sarà domenica 7 giugno alle ore 10:00.</p>
-                    <p class="closing">Ci rivediamo a settembre!</p>
-                </div>
-            </section>
-            -->
-
-            <section>
-                <h3>I canti di <span id="data"></span></h3>
-                <div id="canti-domenica" class="div-canti"></div>
-            </section>
-
-            <!--
-            <section class="calendar-section">
-                <h3>Calendario delle prove</h3>
-                <iframe
-                    src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FRome&showTitle=0&showTz=0&mode=AGENDA&showNav=0&showDate=0&showPrint=0&showTabs=0&src=Y29ybzEwLnNhbnZpdG9AZ21haWwuY29t&src=Y2M0NTIxMjNlYjZiZDY4NGE4Njc0YjBiMGQ3ZDRkYjZiY2I1MDUyMjI2NDJjYzgxNjcyNzUxNWI5OGY5ODY3MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23006daa&color=%23061a40"
-                    title="Google Calendar"></iframe>
-            </section>
-            -->
-
-            <section>
-                <h3>Campi estivi</h3>
-                <div class="div-canti">È tempo di campi estivi! <br> Per l'animazione delle celebrazioni durante queste esperienze per i bambini e i ragazzi, si suggerisce agli animatori e agli educatori la consultazione dell'<a href="./repertori/campiscuola">apposita sezione</a>.</div>
-            </section>
         </div>
-
-
-        <aside>
-            <section id="sezione-nuovi-canti">
-                <h3>Nuovi canti</h3>
-                <div id="canti-nuovi" class="div-canti"></div>
-            </section>
-        </aside>
     </main>
 
     <footer>
-        <p>&copy; 2025 Coro delle Dieci - <a class="privacy" href="privacy.html">Privacy</a></p>
+        <p>&copy; <span id="anno"></span> Cori di San Vito &mdash; <a class="privacy" href="./privacy.html">Privacy</a></p>
     </footer>
 
-    <script src="/script/canti-tempi-forti.js" defer></script>
-    <script src="/script/canti-nuovi.js" defer></script>
-    <script src="/script/canti-domenica.js" defer></script>
-    <!--<script src="./script/contatore-visite.js"></script>-->
+    <script>
+        document.getElementById("anno").textContent = new Date().getFullYear();
+    </script>
 </body>
 
 </html>

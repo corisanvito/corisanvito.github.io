@@ -1,0 +1,101 @@
+/*
+ * temi-cori.css
+ * Palette differenziate per i tre cori.
+ * Ogni pagina di coro ha class="coro-10" / "coro-1115" / "coro-estate" sul <body>.
+ * Le variabili sovrascrivono i colori base definiti in style.css.
+ */
+
+/* ── Coro delle 10:00 ─────────────────────────────────────────────────────*/
+body.coro-10 {
+    --c-primary:     #061a40;   /* blu notte per header/footer */
+}
+
+/* ── Coro delle 11:15 ─────────────────────────────────────────────────────*/
+body.coro-1115 {
+    --c-primary:     #3b4a1e;   /* verde oliva scuro */
+}
+
+/* ── Coro Estivo ──────────────────────────────────────────────────────────*/
+body.coro-estate {
+    --c-primary:     #8b3320;   /* terracotta scuro */
+}
+
+/* ── Applicazione delle variabili ─────────────────────────────────────── */
+
+body.coro-10,
+body.coro-1115,
+body.coro-estate {
+    color: #1a1a2e;
+}
+
+body.coro-10 header,
+body.coro-1115 header,
+body.coro-estate header {
+    background-color: var(--c-primary);
+}
+
+body.coro-10 footer,
+body.coro-1115 footer,
+body.coro-estate footer {
+    background-color: var(--c-primary);
+}
+
+body.coro-10 h2,
+body.coro-10 h3,
+body.coro-1115 h2,
+body.coro-1115 h3,
+body.coro-estate h2,
+body.coro-estate h3 {
+    color: var(--c-primary);
+}
+
+body.coro-10 main a,
+body.coro-1115 main a,
+body.coro-estate main a {
+    color: var(--c-primary);
+}
+
+body.coro-10 main a:hover,
+body.coro-1115 main a:hover,
+body.coro-estate main a:hover {
+    color: var(--c-primary);
+}
+
+/* Striscia colorata in cima alla homepage del coro */
+.coro-stripe {
+    height: 5px;
+    background-color: var(--c-primary);
+    width: 100%;
+}
+
+/* Etichetta coro nell'header */
+.coro-label {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    font-weight: 400;
+    display: block;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Link "← tutti i cori" nell'header */
+.back-to-root {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.back-to-root:hover { opacity: 1; text-decoration: none; }
+
+/* Nav link attivo */
+nav a.active {
+    border-bottom: 2px solid white;
+    padding-bottom: 2px;
+}
+
+/* Meta theme-color dinamico via JS (vedi script) */
