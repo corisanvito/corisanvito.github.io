@@ -40,6 +40,12 @@ body.coro-estate footer {
     background-color: var(--c-primary);
 }
 
+body.coro-10 main,
+body.coro-1115 main,
+body.coro-estate main {
+    align-content: start;
+}
+
 body.coro-10 h2,
 body.coro-10 h3,
 body.coro-1115 h2,
@@ -96,6 +102,16 @@ body.coro-estate main a:hover {
 nav a.active {
     border-bottom: 2px solid white;
     padding-bottom: 2px;
+}
+
+/* Nav mobile colorato per coro */
+@media (max-width: 768px) {
+    body.coro-10 nav,
+    body.coro-1115 nav,
+    body.coro-estate nav {
+        background-color: color-mix(in srgb, var(--c-primary) 98%, transparent);
+        filter: brightness(1.5);
+    }
 }
 
 /* Meta theme-color dinamico via JS (vedi script) */

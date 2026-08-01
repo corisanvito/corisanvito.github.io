@@ -5,7 +5,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
 stringa_da_sostituire = 'Coro delle Dieci'
-nuova_stringa = 'Cori San Vito'
+nuova_stringa = 'Privacy'
 
 
 def chiedi_cartella():

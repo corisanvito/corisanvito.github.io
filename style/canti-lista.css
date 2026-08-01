@@ -14,14 +14,14 @@
 .alfabeto-nav a {
     text-align: center;
     margin: 0 3.6vw;
-    color: #061a40;
+    color: #2e2a35;
     text-decoration: none;
     font-weight: bolder;
     white-space: nowrap;
 }
 
 .inactive {
-    color: rgba(6, 26, 64, 0.4) !important;
+    color: #2e2a3566 !important;
     display: none;
 }
 
@@ -67,7 +67,7 @@
     display: block;
     padding: 0;
     margin-bottom: -8px;
-    color: #14416E;
+    color: #2e2a35;
     text-decoration: none;
 }
 
@@ -80,7 +80,7 @@
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background-color: #061a40;
+    background-color: #2e2a35;
     color: white;
     width: 50px;
     height: 50px;

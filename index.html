@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cori di San Vito</title>
+    <title>Cori San Vito</title>
     <link rel="icon" href="./images/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
@@ -23,28 +23,31 @@
         body {
             background: #f0f2f7;
             color: #1a1a2e;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: block;
         }
 
         header {
             background-color: #1a1a2e;
             text-align: center;
-            height: auto;
+            height: 9rem;
             padding: 2rem 1rem 1.5rem;
             position: static; /* non sticky sulla root */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         header h1 {
             font-size: 1.8rem;
             letter-spacing: 0.03em;
+            flex: 1;
         }
 
         header p {
             font-size: 0.95rem;
             opacity: 0.7;
             margin-top: 0.3rem;
+            flex: 2;
         }
 
         main {
@@ -53,8 +56,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0;
+            padding: 0 1.5rem;
             gap: 1.5rem;
+            min-height: calc(100vh - 9rem - 4rem);
         }
 
         .scelta-titolo {
@@ -132,7 +136,7 @@
         footer {
             background-color: #1a1a2e;
             text-align: center;
-            height: auto;
+            height: 4rem;
             padding: 1.2rem;
         }
 
@@ -161,7 +165,7 @@
 
 <body>
     <header>
-        <h1>Cori di San Vito</h1>
+        <h1>Cori San Vito</h1>
         <p>Parrocchia di San Vito e C.M. — Spinea (VE)</p>
     </header>
 
@@ -195,7 +199,7 @@
     </main>
 
     <footer>
-        <p>&copy; <span id="anno"></span> Cori di San Vito &mdash; <a class="privacy" href="./privacy.html">Privacy</a></p>
+        <p>&copy; <span id="anno"></span> Cori San Vito &mdash; <a class="privacy" href="./privacy.html">Privacy</a></p>
     </footer>
 
     <script>
