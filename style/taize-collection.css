@@ -1,0 +1,210 @@
+.song {
+    padding-top: 5.6rem;
+}
+
+.taize-song {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid #7892AF;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.taize-song:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.taize-song.active {
+    border-left-color: #061a40;
+    background-color: #f8f9fa;
+}
+
+.taize-song.active h2 {
+    background-color: #f8f9fa;
+}
+
+.taize-video-sidebar {
+    width: 100%;
+    aspect-ratio: 16/9;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    background-color: #ffffff;
+    margin: 0 0 1rem 0;
+    padding: 0;
+    border-bottom: 1px solid #7892AF;
+    z-index: 2;
+}
+
+.video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    color: #666;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* VIDEO MOBILE - Nascondi di default su desktop */
+.taize-mobile-video {
+    display: none;
+    margin-top: 1.5rem;
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9/16 = 0.5625) */
+    height: 0;
+}
+
+.taize-mobile-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.video-placeholder-mobile {
+    width: 100%;
+    padding-bottom: 56.25%; /* Stesso rapporto 16:9 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    color: #666;
+    text-align: center;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.video-placeholder-mobile p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 1rem;
+}
+
+.taize-info-compact {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.taize-info-compact b {
+    color: #2c3e50;
+}
+
+.taize-verse {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-align: center;
+    color: #2c3e50;
+    font-style: italic;
+    margin: 1.5rem 0;
+    padding: 0 1rem;
+}
+
+.taize-translation {
+    text-align: center;
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.taize-translation p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.details {
+    position: sticky;
+    align-self: start;
+    top: 10rem;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+@media (max-width: 968px) {
+    main.taize {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 2rem 2rem;
+    }
+    
+    .details {
+        position: static;
+        order: 3; /* Sposta il download in fondo */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .song {
+        padding-top: 1rem;
+    }
+    
+    /* Nascondi completamente il video sidebar su mobile */
+    .taize-video-sidebar {
+        display: none;
+    }
+    
+    /* Mostra video mobile quando attivo */
+    .taize-song.active .taize-mobile-video {
+        display: block;
+    }
+    
+    .taize-song.active .video-placeholder-mobile {
+        display: none;
+    }
+    
+    .taize-song.active .taize-mobile-video iframe {
+        display: block;
+    }
+    
+    /* Stile per il canone attivo su mobile */
+    .taize-song.active {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (max-width: 426px) {
+    main.taize {
+        padding: 1rem 1.2rem;
+    }
+    
+    .taize-song {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .taize-verse {
+        font-size: 1.1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .video-placeholder-mobile,
+    .taize-mobile-video iframe {
+        height: 160px;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+}

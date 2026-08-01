@@ -1,0 +1,249 @@
+h2 {
+    padding: 2.3rem 0 0.1rem;
+    top: 4.4rem;
+    background-color: #f8f9fa;
+    position: sticky;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #7892AF;
+    z-index: 2;
+}
+
+.subtitle {
+    font-style: italic;
+    color: #7892AF;
+    margin-bottom: 1.5rem;
+}
+
+.song {
+    min-height: 100vh;
+}
+
+.verse, .chorus, .bridge, .intro, .outro {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.chorus {
+    font-weight: bold;
+}
+
+.bridge, .intro, .outro {
+    font-style: italic;
+}
+
+.canon {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.2rem 0;
+    border-left: 3px solid #061a4099;
+}
+
+.canon .voice-label {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #061a4099;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+.canon .voice-1, .canon .voice-label.first {
+    padding-left: 0.8rem;
+}
+
+.canon p {
+    margin: 0;
+}
+
+.video-container {
+    margin: 0 0 2rem;
+    width: 32rem;
+    height: 18rem;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.download {
+    margin-bottom: 1rem;
+}
+
+.download-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background-color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #2c3e50;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s;
+}
+
+.download-link:hover {
+    background-color: #f8f9fa;
+    border-color: #2980b9;
+}
+
+
+.ico {
+    border-style: none;
+    vertical-align: middle;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 2rem;
+    padding: 0 3rem 2rem;
+}
+
+.details {
+    position: sticky;
+    align-self: start;
+    top: 10rem;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.song, p:last-of-type {
+    margin-bottom: 0;
+}
+
+@media (max-width: 968px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%;
+        height: 0;
+        margin-top: 0;
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+    }
+
+    .details {
+        padding-top: 0;
+    }
+
+    .canon {
+        grid-template-columns: 1fr;
+    }
+
+    .canon .voice-2 {
+        font-style: italic;
+        padding-left: 1.6rem;
+        transform: skewX(-6deg);
+        color: #061a40d9;
+    }
+
+    .canon .voice-label {
+        display: none; /* l'etichetta non serve, il corsivo distingue già */
+    }
+
+    /* su mobile: voice-1 e voice-2 si alternano nell'ordine giusto */
+    .canon p.voice-1 { order: calc(var(--row) * 2 - 1); }
+    .canon p.voice-2 { order: calc(var(--row) * 2); }
+}
+
+@media (max-width: 426px) {
+    main {
+        padding: 1rem 1.8rem;
+    }
+
+    h2 {
+        padding: 0;
+    }
+}
+
+
+
+/* MODALITA PRESENTAZIONE */
+
+body.zoomed-in header,
+body.zoomed-in h2 {
+    position: static;
+}
+
+body.zoomed-in header,
+body.zoomed-in footer,
+body.zoomed-in h2,
+body.zoomed-in .subtitle,
+body.zoomed-in .details {
+    visibility: hidden;
+}
+
+body.zoomed-in .song {
+    position: absolute;
+    top: 1em;
+    padding-bottom: 2rem;
+}
+
+.auto-scroll-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #061a40;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: none; /* Nascosto di default */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10000; /* Z-index molto alto per essere sopra tutto */
+    transition: all 0.3s ease;
+}
+
+.auto-scroll-btn:hover {
+    background-color: #1c6ea4;
+    transform: scale(1.1);
+}
+
+.auto-scroll-btn:active {
+    transform: scale(0.95);
+}
+
+.scroll-speed {
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.scroll-icon {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.auto-scroll-btn.active .scroll-icon {
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
+body.zoomed-in .auto-scroll-btn {
+    display: flex !important;
+}

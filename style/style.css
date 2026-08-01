@@ -1,0 +1,201 @@
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/Poppins400.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/Poppins400Italic.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/Poppins600.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/Poppins700.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/Poppins800.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url('/fonts/Poppins900.woff2') format('woff2'); }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:target {
+  scroll-margin-top: 80px;
+}
+
+body {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #061a40;
+    background-color: #f8f9fa;
+    font-size: 1.15rem;
+    font-display: swap;
+}
+
+header {
+    background-color: #061a40;
+    color: white;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 70px;
+}
+
+main a {
+    color: #2a89c8;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 a, h1 a:hover, h1 a:visited, h1 a:active {
+    color: white;
+    text-decoration: none;
+}
+
+.privacy {
+    color: white;
+    text-decoration: none;
+}
+
+.privacy:hover {
+    text-decoration: underline;
+}
+
+.banner {
+    height: 10vh;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.menu-icon span {
+    height: 3px;
+    width: 25px;
+    background-color: white;
+    transition: 0.3s;
+    display: block;
+    margin: 5px;
+    position: relative;
+    border-radius: 3px;
+    transform-origin: center;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.4rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+nav a:hover {
+    opacity: 0.8;
+}
+
+main {
+    margin: 0 auto;
+    padding: 2rem 3rem;
+    overflow: visible;
+    min-height: calc(100vh - 140px);
+}
+
+section {
+    margin-bottom: 2rem;
+    overflow: visible;
+}
+
+h2 {
+    color: #061a40;
+    margin-bottom: 1.5rem;
+}
+
+h3 {
+    color: #061a40;
+    margin-bottom: 0.5rem;
+}
+
+footer {
+    background-color: #061a40;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+    height: 70px;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 0 1.5rem;
+    }
+
+    h2 {
+        padding-top: 1rem;
+    }
+
+    .menu-icon {
+        display: block;
+    }
+    
+    nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #2c3e50;
+        display: none;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .menu-toggle:checked ~ nav {
+        display: block;
+    }
+    
+    #menu-toggle:checked ~ .menu-icon span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    
+    #menu-toggle:checked ~ .menu-icon span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    #menu-toggle:checked ~ .menu-icon span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}
+
+a, button, input, textarea, label {
+    -webkit-tap-highlight-color: transparent; /* iOS e Android */
+    -webkit-focus-ring-color: transparent;    /* Android */
+    outline: none;
+}

@@ -1,0 +1,95 @@
+.search-container {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    height: fit-content;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #061a40;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+#searchResults {
+    margin-top: 10px;
+    position: relative;
+    display: none;
+}
+
+.search-result-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #4a90e2;
+}
+
+.search-result-title {
+    color: #2c3e50;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.search-result-preview {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+}
+
+.search-result-category {
+    display: inline-block;
+    background: #f8f9fa;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    color: #495057;
+}
+
+.highlight {
+    background-color: #fff3cd;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.search-info {
+    margin: 10px 0;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+/* Nascondi lista normale durante la ricerca */
+#searchResults:not(:empty) ~ .alfabeto-nav,
+#searchResults:not(:empty) ~ .canti-container {
+    display: none !important;
+}
+
+#searchResults:not(:empty) {
+    display: block;
+}

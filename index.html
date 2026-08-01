@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coro delle Dieci</title>
+    <link rel="icon" href="../images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+    <link rel="manifest" href="../images/site.webmanifest">
+
+    <meta name="msapplication-TileColor" content="#061a40">
+    <meta name="theme-color" content="#061a40">
+
+    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/home.css">
+
+    <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32"
+        data-utcoffset="1"></script>
+</head>
+</head>
+
+<body class="home-page">
+    <header>
+        <h1><a href="./">Coro delle Dieci</a></h1>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="overlay"></div>
+        <nav>
+            <ul>
+                <li><a href="./">Home</a></li>
+                <li><a href="./canti">Canti</a></li>
+                <li><a href="./calendario">Calendario</a></li>
+                <li><a href="./admin/aggiungi-canto">Area riservata</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <aside>
+            <section id="tempi-forti">
+                <h3><span id="tempo"></span></h3>
+                <div id="canti-tempo" class="div-canti"></div>
+            </section>
+
+            <!--
+            <section>
+                <h3>I canti di Pasqua</h3>
+                <div class="div-canti">
+                    <p class="canto-link"><a href="canti/cristo-vive-in-mezzo-a-noi" target="_blank">Cristo vive in mezzo a noi</a></p>
+                    <p class="canto-link"><a href="canti/gloria-buttazzo" target="_blank">Gloria (Buttazzo)</a></p>
+                    <p class="canto-link"><a href="canti/alleluia-ora-lui-vive" target="_blank">Alleluia, ora Lui vive</a></p>
+                    <p class="canto-link"><a href="canti/santo-giorgi" target="_blank">Santo (Giorgi)</a></p>
+                    <p class="canto-link"><a href="canti/cristo-e-risorto-veramente" target="_blank">Cristo è risorto veramente</a></p>
+                </div>
+            </section>
+            -->
+
+            <!--
+            <section>
+                <h3>I canti di Natale</h3>
+                <div class="div-canti">
+                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
+                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
+                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
+                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
+                    <p class="canto-link"><a href="canti/canto" target="_blank">Canto</a></p>
+                </div>
+            </section>
+            -->
+        </aside>
+
+
+        <div class="centre-column">
+            <!-- Avviso di inizio anno 
+            <section class="warning restart">
+                <h3>ATTENZIONE!</h3>
+                <div>
+                    <p>Ricominceremo il nostro servizio di animazione della S. Messa delle ore 10:00 domenica 21 settembre.</p>
+                    <p class="closing">Vi aspettiamo numerosi!</p>
+                </div>
+            </section>
+            -->            
+
+            <!-- Avviso vacanze di Natale 
+            <section class="warning christmas">
+                <h3>Vacanze di Natale</h3>
+                <div class="warning-content">
+                    <p>
+                        Durante le vacanze di Natale <b>non svolgeremo il servizio di animazione</b>,
+                        quindi a Santo Stefano, domenica 28 dicembre e domenica 4 gennaio non canteremo.
+                    </p>
+
+                    <p>
+                        Il coro animerà la <b>S. Messa di Natale</b> e
+                        riprenderà direttamente il servizio all’<b>Epifania</b>, lunedì 6 gennaio</b>.
+                    </p>
+
+                    <p class="closing">Buon Santo Natale e buone feste!</p>
+                </div>
+            </section>
+            -->
+
+            <!-- Avviso di fine anno 
+            <section class="warning end">
+                <h3>ATTENZIONE!</h3>
+                <div>
+                    <p>La nostra ultima S. Messa animata sarà domenica 7 giugno alle ore 10:00.</p>
+                    <p class="closing">Ci rivediamo a settembre!</p>
+                </div>
+            </section>
+            -->
+
+            <section>
+                <h3>I canti di <span id="data"></span></h3>
+                <div id="canti-domenica" class="div-canti"></div>
+            </section>
+
+            <!--
+            <section class="calendar-section">
+                <h3>Calendario delle prove</h3>
+                <iframe
+                    src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FRome&showTitle=0&showTz=0&mode=AGENDA&showNav=0&showDate=0&showPrint=0&showTabs=0&src=Y29ybzEwLnNhbnZpdG9AZ21haWwuY29t&src=Y2M0NTIxMjNlYjZiZDY4NGE4Njc0YjBiMGQ3ZDRkYjZiY2I1MDUyMjI2NDJjYzgxNjcyNzUxNWI5OGY5ODY3MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23006daa&color=%23061a40"
+                    title="Google Calendar"></iframe>
+            </section>
+            -->
+
+            <section>
+                <h3>Campi estivi</h3>
+                <div class="div-canti">È tempo di campi estivi! <br> Per l'animazione delle celebrazioni durante queste esperienze per i bambini e i ragazzi, si suggerisce agli animatori e agli educatori la consultazione dell'<a href="./repertori/campiscuola">apposita sezione</a>.</div>
+            </section>
+        </div>
+
+
+        <aside>
+            <section id="sezione-nuovi-canti">
+                <h3>Nuovi canti</h3>
+                <div id="canti-nuovi" class="div-canti"></div>
+            </section>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Coro delle Dieci - <a class="privacy" href="privacy.html">Privacy</a></p>
+    </footer>
+
+    <script src="/script/canti-tempi-forti.js" defer></script>
+    <script src="/script/canti-nuovi.js" defer></script>
+    <script src="/script/canti-domenica.js" defer></script>
+    <!--<script src="./script/contatore-visite.js"></script>-->
+</body>
+
+</html>

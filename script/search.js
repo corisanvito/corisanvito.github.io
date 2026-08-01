@@ -1,0 +1,154 @@
+// Sistema di ricerca
+let cantiData = [];
+
+// Carica i dati dei canti
+async function caricaCanti() {
+    try {
+        const response = await fetch('../canti.json');
+        const data = await response.json();
+
+        // Unisci canti normali + canoni di Taizé (se ci sono)
+        cantiData = [...data.canti, ...data.taize];
+
+        console.log(`Caricati ${cantiData.length} canti totali (inclusi Taizé)`);
+
+    } catch (error) {
+        console.error('Errore nel caricamento canti:', error);
+    }
+}
+
+// Funzione di ricerca
+function cercaCanti(query) {
+    const searchResults = document.getElementById('searchResults');
+    const cantiContainer = document.getElementById('cantiContainer');
+    const alfabetoNav = document.getElementById('alfabetoNav');
+    const searchInfo = document.getElementById('searchInfo');
+    
+    if (!query.trim()) {
+        // Nessuna query, mostra lista normale
+        searchResults.innerHTML = '';
+        cantiContainer.classList.remove('search-active');
+        alfabetoNav.classList.remove('search-active');
+        searchInfo.innerHTML = `Digita per cercare tra i ${cantiData.length} canti`;
+        return;
+    }
+    
+    const queryLower = query.toLowerCase().trim();
+    const termini = queryLower.split(' ').filter(term => term.length > 0);
+    const risultati = [];
+    
+    cantiData.forEach(canto => {
+        let punteggio = 0;
+        const categorie = canto.categorie || [];
+        const titoloLower = canto.titolo.toLowerCase();
+        const testoCompleto = (canto.titolo + ' ' + canto.testo + ' ' + categorie.join(' ')).toLowerCase();
+
+        // Bonus forti per corrispondenze esatte della frase intera
+        if (titoloLower === queryLower) {
+            punteggio += 100; // titolo identico alla ricerca
+        } else if (titoloLower.includes(queryLower)) {
+            punteggio += 20; // titolo contiene la frase esatta (non solo i termini separati)
+        }
+
+        if (categorie.some(cat => cat.toLowerCase() === queryLower)) {
+            punteggio += 15; // categoria identica alla ricerca
+        } else if (categorie.some(cat => cat.toLowerCase().includes(queryLower))) {
+            punteggio += 5; // categoria contiene la frase esatta
+        }
+
+        // Calcola punteggio di rilevanza per i singoli termini (fallback per ricerche parziali)
+        termini.forEach(termine => {
+            if (titoloLower.includes(termine)) punteggio += 1;
+            if (canto.testo.toLowerCase().includes(termine)) punteggio += 0.5;
+            if (categorie.some(cat => cat.toLowerCase().includes(termine))) punteggio += 0.3;
+        });
+        
+        if (punteggio > 0) {
+            risultati.push({ 
+                ...canto, 
+                punteggio,
+                tutteLeCategorie: categorie.join(', ')
+            });
+        }
+    });
+    
+    // Ordina per punteggio
+    risultati.sort((a, b) => b.punteggio - a.punteggio);
+    
+    // Mostra risultati
+    mostraRisultati(risultati, query);
+    
+    // Nascondi lista normale
+    cantiContainer.classList.add('search-active');
+    alfabetoNav.classList.add('search-active');
+    searchInfo.innerHTML = `${risultati.length} canti trovati per "${query}"`;
+}
+
+// Mostra risultati della ricerca
+function mostraRisultati(risultati, query) {
+    const container = document.getElementById('searchResults');
+    const termini = query.toLowerCase().split(' ').filter(term => term.length > 2);
+    
+    if (risultati.length === 0) {
+        container.innerHTML = '<div class="no-results">Nessun canto trovato. Prova con termini diversi.</div>';
+        return;
+    }
+    
+    container.innerHTML = risultati.map(canto => {
+        let titoloEvidenziato = canto.titolo;
+        termini.forEach(termine => {
+            const regex = new RegExp(`(${termine})`, 'gi');
+            titoloEvidenziato = titoloEvidenziato.replace(regex, '<span class="highlight">$1</span>');
+        });
+        
+        let anteprima = canto.testo ? (canto.testo.substring(0, 120) + '...') : '';
+        if (anteprima) {
+            termini.forEach(termine => {
+                const regex = new RegExp(`(${termine})`, 'gi');
+                anteprima = anteprima.replace(regex, '<span class="highlight">$1</span>');
+            });
+        }
+
+        const categorieTesto = canto.tutteLeCategorie || 'Altro';
+        const link = canto.url || '#';
+
+        // Gestione link con hash per Taizé
+        const isTaize = link.includes('#');
+        const href = isTaize ? link : link;
+
+        return `
+            <div class="search-result-item" onclick="window.location.href='${href}'">
+                <div class="search-result-title">${titoloEvidenziato}</div>
+                <div class="search-result-preview">${anteprima}</div>
+                <span class="search-result-category">${categorieTesto}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Event listeners per la ricerca
+let searchTimeout;
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        cercaCanti(e.target.value);
+    }, 300);
+});
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        clearTimeout(searchTimeout);
+        cercaCanti(e.target.value);
+    }
+});
+
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        this.value = '';
+        cercaCanti('');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    caricaCanti();
+});

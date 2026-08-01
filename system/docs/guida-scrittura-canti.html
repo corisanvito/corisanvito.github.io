@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida alla formattazione dei canti</title>
+    <link rel="stylesheet" href="../../style/style.css">
+    <link rel="stylesheet" href="../../style/docs.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon-16x16.png">
+    <link rel="manifest" href="../../images/site.webmanifest">
+    <link rel="mask-icon" href="../../images/safari-pinned-tab.svg" color="#061a40">
+    <meta name="msapplication-TileColor" content="#061a40">
+    <meta name="theme-color" content="#061a40">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32" data-utcoffset="1"></script>
+</head>
+<body>
+    <header>
+        <h1><a href="../../">Coro delle Dieci</a></h1>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="overlay"></div>
+        <nav>
+            <ul>
+                <li><a href="../../">Home</a></li>
+                <li><a href="../../canti.html">Canti</a></li>
+                <li><a href="../../calendario.html">Calendario</a></li>
+                <li><a href="../../admin/aggiungi-canto.html">Area riservata</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section>
+            <h2>Come formattare il testo dei canti</h2>
+            <p>Questa guida spiega come strutturare il testo dei canti per essere correttamente convertiti in HTML dallo script.</p>
+            
+            <h3>Struttura base</h3>
+            <p>Separa le diverse sezioni del canto (strofe, ritornelli, ecc.) con una riga vuota:</p>
+            
+            <p class="example">
+Prima strofa<br>
+seconda riga<br>
+terza riga<br>
+<br>
+Seconda strofa<br>
+seconda riga<br>
+terza riga
+            </p>
+            
+            <h3>Sezioni speciali</h3>
+            <p>Puoi specificare diversi tipi di sezioni usando i seguenti prefissi:</p>
+            
+            <ul>
+                <li><code>Rit.:</code> - Per il ritornello</li>
+                <li><code>intro:</code> - Per l'introduzione</li>
+                <li><code>outro:</code> - Per la conclusione</li>
+                <li><code>bridge:</code> - Per un bridge</li>
+                <li><code>Rit.</code> - Da sola su una riga per ripetere l'ultimo ritornello</li>
+            </ul>
+            
+            <p class="example">
+intro: Introduzione del canto<br>
+<br>
+Prima strofa<br>
+prima riga<br>
+seconda riga<br>
+<br>
+Rit.: Ritornello principale<br>
+prima riga del rit<br>
+seconda riga del rit<br>
+<br>
+Seconda strofa<br>
+prima riga Rit.
+            </p>
+
+            <h3>Formattazione del testo</h3>
+            <p>Il testo verrà formattato come segue:</p>
+            <ul>
+                <li>Le strofe saranno formattate come testo normale (come questo)</li>
+                <li>Il ritornello sarà formattato in grassetto</li>
+                <li>Le sezioni speciali come intro, outro, bridge saranno evidenziate in corsivo</li>
+            </ul>
+            
+            <h3>Note aggiuntive</h3>
+            <ul>
+                <li>Lo script chiederà anche un titolo, un link YouTube (opzionale) e i numeri di riferimento nei libretti</li>
+                <li>Il link YouTube verrà automaticamente convertito in un embed</li>
+                <li>Il nome del file HTML verrà generato automaticamente dal titolo</li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Coro delle Dieci - <a class="privacy" href="../../privacy">Privacy</a></p>
+    </footer>
+
+    <!--<script src="../../script/contatore-visite.js"></script>-->
+    
+</body>
+</html>
