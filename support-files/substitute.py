@@ -4,8 +4,8 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
-stringa_da_sostituire = 'Coro delle Dieci'
-nuova_stringa = 'Privacy'
+stringa_da_sostituire = 'data-utcoffset="1"'
+nuova_stringa = 'data-utcoffset="2"'
 
 
 def chiedi_cartella():
