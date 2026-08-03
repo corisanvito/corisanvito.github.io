@@ -9,15 +9,15 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a1a2e">
-    <meta name="msapplication-TileColor" content="#1a1a2e">
-    <meta name="theme-color" content="#1a1a2e">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#555555">
+    <meta name="msapplication-TileColor" content="#555555">
+    <meta name="theme-color" content="#555555">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --header-footer-bg: #1a1a2e;
-            --text-light: #b9d6f2;
-            --accent: #0353a4;
+            --header-footer-bg: #555555;
+            --text-light: #E5E4E2;
+            --accent: #4D5D53;
         }
 
         body {
@@ -27,7 +27,7 @@
             justify-content: center;
             align-items: center;
             background:
-                linear-gradient(45deg, var(--header-footer-bg) 20%, #00122e),
+                linear-gradient(45deg, var(--header-footer-bg) 20%, #555555),
                 url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="28" fill="%2300355910" transform="rotate(45)">♬</text></svg>');
             font-family: 'Poppins', sans-serif;
             color: var(--text-light);
@@ -37,7 +37,6 @@
         .container {
             max-width: 800px;
             padding: 2rem;
-            position: relative;
             overflow: hidden;
         }
 
@@ -47,16 +46,13 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 3px;
-            position: relative;
             display: inline-block;
         }
 
         h1::after {
             content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
+            display: block;
+            margin: 10px auto 0;
             width: 60px;
             height: 3px;
             background: var(--accent);
@@ -71,7 +67,7 @@
 
         .notes-container {
             position: relative;
-            height: 100px;
+            height: 200px;
             margin: 3rem 0;
         }
 
@@ -108,7 +104,7 @@
 
         @keyframes floatUp {
             0% {
-                transform: translateY(0) rotate(0deg);
+                transform: translateY(120px) rotate(0deg);
                 opacity: 0;
             }
 
@@ -117,7 +113,7 @@
             }
 
             100% {
-                transform: translateY(-100px) rotate(360deg);
+                transform: translateY(-80px) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -152,9 +148,9 @@
             <div class="music-note" style="left:15%; animation-delay:1s">𝄞</div>
             <div class="music-note" style="left:30%; animation-delay:4s">♩</div>
             <div class="music-note" style="left:45%; animation-delay:2s">♪</div>
-            <div class="music-note" style="left:60%; animation-delay:5s">♫</div>
-            <div class="music-note" style="left:75%; animation-delay:3s">♬</div>
-            <div class="music-note" style="left:90%; animation-delay:4s">♮</div>
+            <div class="music-note" style="left:60%; animation-delay:4s">♮</div>
+            <div class="music-note" style="left:75%; animation-delay:5s">♫</div>
+            <div class="music-note" style="left:90%; animation-delay:3s">♬</div>
         </div>
     </div>
 
