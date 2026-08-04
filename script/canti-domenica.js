@@ -26,6 +26,18 @@ function getSheetUrl() {
     return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${foglio}`;
 }
 
+/* ── Utilità URL ───────────────────────────────────────────────────────── */
+
+/**
+ * Converte i percorsi relativi (es. "canti/nome") in assoluti ("/canti/nome"),
+ * così funzionano correttamente da qualsiasi sotto-cartella del sito.
+ * URL già assoluti (http/https) o ancore (#) vengono restituiti invariati.
+ */
+function normalizzaUrl(url) {
+    if (!url || url === "#" || url.startsWith("http") || url.startsWith("/")) return url;
+    return "/" + url;
+}
+
 /* ── Utilità data ──────────────────────────────────────────────────────── */
 
 function formattaDataCompleta(data) {
@@ -92,7 +104,7 @@ async function caricaCantiDomenica() {
             if (!row.c || row.c.length < 3) return;
 
             const titolo     = row.c[0]?.v?.trim() || "";
-            const link       = row.c[1]?.v || "#";
+            const link       = normalizzaUrl(row.c[1]?.v) || "#";
             const indicazione = row.c[2]?.v?.trim() || "";
 
             if (!titolo || titolo.startsWith("http") || titolo.toLowerCase().includes("inserire")) return;
@@ -129,7 +141,7 @@ async function caricaCantiNuovi() {
         rows.slice(1).forEach(row => {
             // Col E (4) = testo, col F (5) = url
             const testo = row.c?.[4]?.v;
-            const url   = row.c?.[5]?.v;
+            const url   = normalizzaUrl(row.c?.[5]?.v);
             if (!testo || !url) return;
 
             haCanti = true;
@@ -172,7 +184,7 @@ async function caricaCantiTempo() {
         rows.slice(1).forEach(row => {
             // Col H (7) = testo, col I (8) = url
             const testo = row.c?.[7]?.v;
-            const url   = row.c?.[8]?.v;
+            const url   = normalizzaUrl(row.c?.[8]?.v);
             if (!testo || !url) return;
 
             haCanti = true;
