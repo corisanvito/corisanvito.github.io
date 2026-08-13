@@ -200,7 +200,7 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
     </main>
 
     <footer>
-        <p>&copy; 2025 Coro delle Dieci - <a class="privacy" href="../privacy">Privacy e note legali</a></p>
+        <p>&copy; 2025 Coro delle Dieci - <a class="privacy" href="../privacy">Privacy</a></p>
     </footer>
 
     <button id="autoScrollBtn" class="auto-scroll-btn">
