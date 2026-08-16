@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2e2a35">
+    <title>Registro presenze | Cori San Vito</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/registro.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Cori San Vito</a></h1>
+        <nav>
+            <ul>
+                <li><a href="/portale/index.html">Dashboard</a></li>
+                <li><a href="/portale/registro.html" class="active">Registro</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Registro presenze</h2>
+        <div class="form-registro">
+            <div class="form-row">
+                <div class="campo">
+                    <label>Coro</label>
+                    <select id="sel-coro">
+                        <option value="">Seleziona…</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Data</label>
+                    <input type="date" id="data-evento">
+                </div>
+                <div class="campo">
+                    <label>Tipo</label>
+                    <select id="tipo-evento">
+                        <option value="prova">Prova</option>
+                        <option value="celebrazione">Celebrazione</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" id="btn-carica-coristi">Carica coristi</button>
+        </div>
+
+        <div id="sezione-coristi" style="display:none">
+            <div class="lista-coristi" id="lista-coristi"></div>
+            <button class="btn-primary" id="btn-salva">Salva presenze</button>
+            <p class="messaggio" id="msg"></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+    </footer>
+
+    <script type="module">
+        import { requireAuth } from '/script/auth-guard.js';
+        import { apiCall, getCori } from '/script/api.js';
+
+        const utente = requireAuth(['direttore', 'responsabile']);
+        if (!utente) throw new Error();
+
+        // Imposta data di oggi di default
+        document.getElementById('data-evento').valueAsDate = new Date();
+
+        // Carica cori
+        const cori = await getCori();
+        const selCoro = document.getElementById('sel-coro');
+        (cori || []).forEach(c => {
+            const o = document.createElement('option');
+            o.value = c._id;
+            o.textContent = c.nome;
+            selCoro.appendChild(o);
+        });
+
+        let presenzaMap = {}; // { userId: true/false }
+
+        document.getElementById('btn-carica-coristi').addEventListener('click', async () => {
+            const coroId = selCoro.value;
+            if (!coroId) { alert('Seleziona un coro.'); return; }
+
+            const utenti = await apiCall('/users');
+            const coristi = (utenti || []).filter(u => u.coro && u.coro._id === coroId && u.attivo);
+
+            if (coristi.length === 0) {
+                alert('Nessun corista trovato per questo coro.');
+                return;
+            }
+
+            presenzaMap = {};
+            const lista = document.getElementById('lista-coristi');
+            lista.innerHTML = coristi.map(c => `
+        <div class="corista-row" data-id="${c._id}">
+          <div>
+            <div class="corista-nome">${c.nome} ${c.cognome}</div>
+            <div class="corista-ruolo">${c.ruolo}</div>
+          </div>
+          <div class="toggle-presenza">
+            <button class="btn-presenza presente" data-id="${c._id}" data-val="true">✓ Presente</button>
+            <button class="btn-presenza assente"  data-id="${c._id}" data-val="false">✗ Assente</button>
+          </div>
+        </div>
+      `).join('');
+
+            lista.querySelectorAll('.btn-presenza').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const val = btn.dataset.val === 'true';
+                    presenzaMap[id] = val;
+                    // aggiorna stile
+                    lista.querySelectorAll(`.btn-presenza[data-id="${id}"]`).forEach(b => b.classList.remove('attivo'));
+                    btn.classList.add('attivo');
+                });
+            });
+
+            document.getElementById('sezione-coristi').style.display = 'block';
+        });
+
+        document.getElementById('btn-salva').addEventListener('click', async () => {
+            const coroId = selCoro.value;
+            const data = document.getElementById('data-evento').value;
+            const tipo = document.getElementById('tipo-evento').value;
+            const msg = document.getElementById('msg');
+
+            if (!data) { alert('Seleziona una data.'); return; }
+            if (Object.keys(presenzaMap).length === 0) { alert('Segna almeno una presenza.'); return; }
+
+            const promises = Object.entries(presenzaMap).map(([userId, presente]) =>
+                apiCall('/presenze', {
+                    method: 'POST',
+                    body: JSON.stringify({ utente: userId, coro: coroId, tipo, data, presente })
+                })
+            );
+
+            await Promise.all(promises);
+            msg.className = 'messaggio ok';
+            msg.textContent = '✓ Presenze salvate!';
+            presenzaMap = {};
+            document.querySelectorAll('.btn-presenza').forEach(b => b.classList.remove('attivo'));
+        });
+    </script>
+</body>
+
+</html>

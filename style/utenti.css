@@ -1,0 +1,140 @@
+.form-nuovo {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.form-nuovo h3 {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.campo label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: var(--c-grey);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.6rem 1.4rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+    opacity: 0.85;
+}
+
+.tabella-wrap {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: var(--c-grey);
+    color: white;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-size: 0.88rem;
+}
+
+td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge.attivo {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.inattivo {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: white;
+    margin-right: 0.3rem;
+    transition: background 0.15s;
+}
+
+.btn-sm:hover {
+    background: #f0f0f0;
+}
+
+.btn-sm.danger {
+    color: #c0392b;
+    border-color: #c0392b;
+}
+
+.btn-sm.danger:hover {
+    background: #fdf0f0;
+}
+
+.btn-sm.ok {
+    color: #2e7d32;
+    border-color: #2e7d32;
+}
+
+.btn-sm.ok:hover {
+    background: #e8f5e9;
+}
+
+.messaggio {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: #2e7d32;
+}

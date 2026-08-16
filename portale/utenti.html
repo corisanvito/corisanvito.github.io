@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2e2a35">
+    <title>Utenti | Cori San Vito</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/utenti.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Cori San Vito</a></h1>
+        <nav>
+            <ul>
+                <li><a href="/portale/index.html">Dashboard</a></li>
+                <li><a href="/portale/utenti.html" class="active">Utenti</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Gestione utenti</h2>
+
+        <div class="form-nuovo">
+            <h3>Nuovo account</h3>
+            <div class="form-row">
+                <div class="campo"><label>Nome</label><input type="text" id="u-nome"></div>
+                <div class="campo"><label>Cognome</label><input type="text" id="u-cognome"></div>
+                <div class="campo"><label>Email</label><input type="email" id="u-email"></div>
+                <div class="campo"><label>Password temporanea</label><input type="text" id="u-password"></div>
+                <div class="campo">
+                    <label>Ruolo</label>
+                    <select id="u-ruolo">
+                        <option value="corista">Corista</option>
+                        <option value="strumentista">Strumentista</option>
+                        <option value="responsabile">Responsabile</option>
+                        <option value="direttore">Direttore</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Coro</label>
+                    <select id="u-coro">
+                        <option value="">Nessuno</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" id="btn-crea">Crea account</button>
+            <p class="messaggio" id="msg-crea"></p>
+        </div>
+
+        <div class="tabella-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Ruolo</th>
+                        <th>Coro</th>
+                        <th>Stato</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-utenti">
+                    <tr>
+                        <td colspan="6">Caricamento…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+    </footer>
+
+    <script type="module">
+        import { requireAuth } from '/script/auth-guard.js';
+        import { apiCall, getCori } from '/script/api.js';
+
+        const utente = requireAuth(['direttore', 'responsabile']);
+        if (!utente) throw new Error();
+
+        const cori = await getCori();
+        const selCoro = document.getElementById('u-coro');
+        (cori || []).forEach(c => {
+            const o = document.createElement('option');
+            o.value = c._id; o.textContent = c.nome;
+            selCoro.appendChild(o);
+        });
+
+        async function caricaUtenti() {
+            const utenti = await apiCall('/users');
+            const tbody = document.getElementById('tbody-utenti');
+            if (!utenti || utenti.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="color:#888">Nessun utente.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = utenti.map(u => `
+        <tr>
+          <td>${u.nome} ${u.cognome}</td>
+          <td>${u.email}</td>
+          <td>${u.ruolo}</td>
+          <td>${u.coro ? u.coro.nome : '—'}</td>
+          <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
+          <td>
+            ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}')">Attiva</button>` : ''}
+            <button class="btn-sm danger" onclick="eliminaUtente('${u._id}')">Elimina</button>
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        document.getElementById('btn-crea').addEventListener('click', async () => {
+            const body = {
+                nome: document.getElementById('u-nome').value.trim(),
+                cognome: document.getElementById('u-cognome').value.trim(),
+                email: document.getElementById('u-email').value.trim(),
+                password: document.getElementById('u-password').value,
+                ruolo: document.getElementById('u-ruolo').value,
+                coro: document.getElementById('u-coro').value || null
+            };
+            if (!body.nome || !body.cognome || !body.email || !body.password) {
+                alert('Compila tutti i campi obbligatori.'); return;
+            }
+            const res = await apiCall('/users', { method: 'POST', body: JSON.stringify(body) });
+            const msg = document.getElementById('msg-crea');
+            msg.textContent = res?.message || 'Account creato!';
+            caricaUtenti();
+        });
+
+        window.attivaUtente = async (id) => {
+            await apiCall(`/users/${id}/attiva`, { method: 'PATCH' });
+            caricaUtenti();
+        };
+
+        window.eliminaUtente = async (id) => {
+            if (!confirm('Eliminare questo utente?')) return;
+            await apiCall(`/users/${id}`, { method: 'DELETE' });
+            caricaUtenti();
+        };
+
+        caricaUtenti();
+    </script>
+</body>
+
+</html>

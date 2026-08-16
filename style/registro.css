@@ -1,0 +1,117 @@
+.form-registro {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.campo label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.lista-coristi {
+    margin-top: 1.5rem;
+}
+
+.corista-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.corista-row:last-child {
+    border-bottom: none;
+}
+
+.corista-nome {
+    font-weight: 600;
+}
+
+.corista-ruolo {
+    font-size: 0.82rem;
+    color: #888;
+}
+
+.toggle-presenza {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-presenza {
+    padding: 0.3rem 0.9rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+}
+
+.btn-presenza.presente.attivo {
+    background: #e8f5e9;
+    border-color: #2e7d32;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.btn-presenza.assente.attivo {
+    background: #fdecea;
+    border-color: #c0392b;
+    color: #c0392b;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: var(--c-grey);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.7rem 1.6rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 1.2rem;
+}
+
+.btn-primary:hover {
+    opacity: 0.85;
+}
+
+.messaggio {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.ok {
+    color: #2e7d32;
+}
+
+.err {
+    color: #c0392b;
+}

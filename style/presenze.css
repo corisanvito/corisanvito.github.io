@@ -1,0 +1,96 @@
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-numero {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--c-grey);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    font-size: 0.82rem;
+    color: #888;
+}
+
+.barra-wrap {
+    background: #eee;
+    border-radius: 10px;
+    height: 12px;
+    margin: 0.5rem 0 1.5rem;
+    overflow: hidden;
+}
+
+.barra {
+    height: 100%;
+    border-radius: 10px;
+    background: var(--c-grey);
+    transition: width 0.6s ease;
+}
+
+.sezione-titolo {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.tabella-wrap {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: var(--c-grey);
+    color: white;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-size: 0.88rem;
+}
+
+td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge.presente {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.assente {
+    background: #fdecea;
+    color: #c0392b;
+}

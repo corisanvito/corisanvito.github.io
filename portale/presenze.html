@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2e2a35">
+    <title>Presenze | Cori San Vito</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/presenze.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Cori San Vito</a></h1>
+        <nav>
+            <ul>
+                <li><a href="/portale/index.html">Dashboard</a></li>
+                <li><a href="/portale/bacheca.html">Bacheca</a></li>
+                <li><a href="/portale/presenze.html" class="active">Presenze</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Le mie presenze</h2>
+        <div id="contenuto">
+            <p>Caricamento…</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+    </footer>
+
+    <script type="module">
+        import { requireAuth } from '/script/auth-guard.js';
+        import { apiCall } from '/script/api.js';
+
+        const utente = requireAuth();
+        if (!utente) throw new Error();
+
+        const contenuto = document.getElementById('contenuto');
+
+        const [stat, presenze] = await Promise.all([
+            apiCall('/presenze/statistiche'),
+            apiCall('/presenze')
+        ]);
+
+        if (!stat) { contenuto.innerHTML = '<p>Errore nel caricamento.</p>'; return; }
+
+        const righe = (presenze || []).map(p => `
+      <tr>
+        <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
+        <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
+        <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
+        <td>${p.note || '—'}</td>
+      </tr>
+    `).join('');
+
+        contenuto.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-numero">${stat.percentuale}%</div>
+          <div class="stat-label">Presenze totali</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-numero">${stat.presenti}</div>
+          <div class="stat-label">Volte presente</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-numero">${stat.assenti}</div>
+          <div class="stat-label">Volte assente</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-numero">${stat.prove}</div>
+          <div class="stat-label">Prove</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-numero">${stat.celebrazioni}</div>
+          <div class="stat-label">Celebrazioni</div>
+        </div>
+      </div>
+
+      <p class="sezione-titolo">Percentuale presenze</p>
+      <div class="barra-wrap"><div class="barra" style="width:${stat.percentuale}%"></div></div>
+
+      ${righe ? `<div class="tabella-wrap">
+        <table>
+          <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th></tr></thead>
+          <tbody>${righe}</tbody>
+        </table>
+      </div>` : '<p style="color:#888;font-style:italic">Nessuna presenza registrata.</p>'}
+    `;
+    </script>
+</body>
+
+</html>
