@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2e2a35">
+    <title>Accedi | Cori San Vito</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/login.css">
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Cori San Vito</a></h1>
+    </header>
+
+    <div class="login-wrap">
+        <div class="login-card">
+            <h2>Area riservata</h2>
+            <p class="sottotitolo">Accedi con le credenziali ricevute</p>
+
+            <div class="campo">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="nome@esempio.it" autocomplete="email">
+            </div>
+
+            <div class="campo">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+
+            <button class="btn-login" id="btn-login">Accedi</button>
+            <p class="errore" id="errore"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+    </footer>
+
+    <script type="module">
+        import { login, saveAuth, getToken, getUtente } from '/script/api.js';
+
+        // Se già loggato, vai subito al portale
+        if (getToken() && getUtente()) {
+            window.location.href = '/portale/index.html';
+        }
+
+        const btnLogin = document.getElementById('btn-login');
+        const errore = document.getElementById('errore');
+
+        btnLogin.addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                mostraErrore('Compila tutti i campi.');
+                return;
+            }
+
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Accesso in corso…';
+            errore.classList.remove('visibile');
+
+            try {
+                const data = await login(email, password);
+
+                if (data.token) {
+                    saveAuth(data.token, data.utente);
+                    window.location.href = '/portale/index.html';
+                } else {
+                    mostraErrore(data.message || 'Credenziali non valide.');
+                }
+            } catch (e) {
+                mostraErrore('Errore di connessione. Riprova.');
+            } finally {
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Accedi';
+            }
+        });
+
+        // Login anche premendo Invio
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') btnLogin.click();
+        });
+
+        function mostraErrore(msg) {
+            errore.textContent = msg;
+            errore.classList.add('visibile');
+        }
+    </script>
+</body>
+
+</html>
