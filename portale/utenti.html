@@ -104,7 +104,7 @@
           <td>${u.nome} ${u.cognome}</td>
           <td>${u.email}</td>
           <td>${u.ruolo}</td>
-          <td>${u.coro ? u.coro.nome : '—'}</td>
+          <td>${u.cori ? u.cori.nome : '—'}</td>
           <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
           <td>
             ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}')">Attiva</button>` : ''}

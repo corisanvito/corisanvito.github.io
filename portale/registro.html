@@ -84,7 +84,7 @@
             if (!coroId) { alert('Seleziona un coro.'); return; }
 
             const utenti = await apiCall('/users');
-            const coristi = (utenti || []).filter(u => u.coro && u.coro._id === coroId && u.attivo);
+            const coristi = (utenti || []).filter(u => u.cori && u.cori.some(c => c._id === coroId) && u.attivo);
 
             if (coristi.length === 0) {
                 alert('Nessun corista trovato per questo coro.');
