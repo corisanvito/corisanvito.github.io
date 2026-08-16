@@ -41,10 +41,8 @@
                     </select>
                 </div>
                 <div class="campo">
-                    <label>Coro</label>
-                    <select id="u-coro">
-                        <option value="">Nessuno</option>
-                    </select>
+                    <label>Cori</label>
+                    <div id="check-cori-utente" style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.3rem"></div>
                 </div>
             </div>
             <button class="btn-primary" id="btn-crea">Crea account</button>
@@ -84,11 +82,14 @@
         if (!utente) throw new Error();
 
         const cori = await getCori();
-        const selCoro = document.getElementById('u-coro');
+
+        // popola checkbox cori
+        const checkCoriUtente = document.getElementById('check-cori-utente');
         (cori || []).forEach(c => {
-            const o = document.createElement('option');
-            o.value = c._id; o.textContent = c.nome;
-            selCoro.appendChild(o);
+            checkCoriUtente.innerHTML += `
+    <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer">
+        <input type="checkbox" value="${c._id}"> ${c.nome}
+    </label>`;
         });
 
         async function caricaUtenti() {
@@ -120,7 +121,7 @@
                 email: document.getElementById('u-email').value.trim(),
                 password: document.getElementById('u-password').value,
                 ruolo: document.getElementById('u-ruolo').value,
-                coro: document.getElementById('u-coro').value || null
+                cori: [...document.getElementById('check-cori-utente').querySelectorAll('input:checked')].map(i => i.value)
             };
             if (!body.nome || !body.cognome || !body.email || !body.password) {
                 alert('Compila tutti i campi obbligatori.'); return;
