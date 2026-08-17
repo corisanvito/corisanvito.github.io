@@ -1,0 +1,46 @@
+.tabs-cori {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tab-coro {
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tab-coro.attivo {
+    background: var(--c-grey);
+    color: white;
+    border-color: var(--c-grey);
+}
+
+.corista-sezione {
+    margin-bottom: 2rem;
+}
+
+.corista-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.corista-nome-admin {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.corista-perc {
+    font-size: 0.88rem;
+    color: #888;
+}

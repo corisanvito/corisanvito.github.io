@@ -8,6 +8,7 @@
     <title>Utenti | Cori San Vito</title>
     <link rel="stylesheet" href="/style/style.css">
     <link rel="stylesheet" href="/style/utenti.css">
+    <link rel="stylesheet" href="/style/tab-cori.css">
 </head>
 
 <body>
@@ -77,25 +78,9 @@
             <p class="messaggio" id="msg-crea"></p>
         </div>
 
-        <div class="tabella-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Ruolo</th>
-                        <th>Cori</th>
-                        <th>Voce</th>
-                        <th>Stato</th>
-                        <th>Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-utenti">
-                    <tr>
-                        <td colspan="7">Caricamento…</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="tabs-cori" id="tabs-cori"></div>
+        <div id="pannello-utenti">
+            <p>Caricamento…</p>
         </div>
     </main>
 
@@ -187,6 +172,73 @@
         };
 
         caricaUtenti();
+
+        const me = await apiCall('/auth/me');
+        const coriMe = me.cori || [];
+
+        // Genera tab
+        const tabsCori = document.getElementById('tabs-cori');
+        tabsCori.innerHTML = coriMe.map((c, i) => `
+  <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>
+`).join('');
+
+        async function caricaUtentiCoro(coroId) {
+            const pannello = document.getElementById('pannello-utenti');
+            pannello.innerHTML = '<p>Caricamento…</p>';
+
+            const utenti = await apiCall('/users');
+            const filtrati = (utenti || []).filter(u => u.cori?.some(c => c._id === coroId));
+
+            if (filtrati.length === 0) {
+                pannello.innerHTML = '<p style="color:#888;font-style:italic">Nessun utente in questo coro.</p>';
+                return;
+            }
+
+            pannello.innerHTML = `
+    <div class="tabella-wrap">
+      <table>
+        <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th><th>Stato</th><th>Azioni</th></tr></thead>
+        <tbody>
+          ${filtrati.map(u => `
+            <tr>
+              <td>${u.nome} ${u.cognome}</td>
+              <td>${u.email}</td>
+              <td>${u.ruolo}</td>
+              <td>${u.tipoVoce || '—'}</td>
+              <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
+              <td>
+                ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
+                <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')">Elimina</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+        }
+
+        document.querySelectorAll('.tab-coro').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
+                btn.classList.add('attivo');
+                caricaUtentiCoro(btn.dataset.id);
+            });
+        });
+
+        window.attivaUtente = async (id, coroId) => {
+            await apiCall(`/users/${id}/attiva`, { method: 'PATCH' });
+            caricaUtentiCoro(coroId);
+        };
+
+        window.eliminaUtente = async (id, coroId) => {
+            if (!confirm('Eliminare questo utente?')) return;
+            await apiCall(`/users/${id}`, { method: 'DELETE' });
+            caricaUtentiCoro(coroId);
+        };
+
+        // Carica primo coro di default
+        if (coriMe.length > 0) caricaUtentiCoro(coriMe[0]._id);
     </script>
 </body>
 

@@ -8,6 +8,7 @@
   <title>Presenze | Cori San Vito</title>
   <link rel="stylesheet" href="/style/style.css">
   <link rel="stylesheet" href="/style/presenze.css">
+  <link rel="stylesheet" href="/style/tab-cori.css">
 </head>
 
 <body>
@@ -48,66 +49,124 @@
     const utente = requireAuth();
     if (!utente) throw new Error();
 
+    const isAdmin = ['direttore', 'responsabile'].includes(utente.ruolo);
     const contenuto = document.getElementById('contenuto');
 
-    async function carica() {
+    if (!isAdmin) {
+      // Vista corista: statistiche personali
       const [stat, presenze] = await Promise.all([
         apiCall('/presenze/statistiche'),
         apiCall('/presenze')
       ]);
 
-      if (!stat) {
-        contenuto.innerHTML = '<p>Errore nel caricamento.</p>';
+      const righe = (presenze || []).map(p => `
+        <tr>
+          <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
+          <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
+          <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
+          <td>${p.note || '—'}</td>
+        </tr>
+      `).join('');
+
+      contenuto.innerHTML = `
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-numero">${stat.percentuale}%</div><div class="stat-label">Presenze totali</div></div>
+          <div class="stat-card"><div class="stat-numero">${stat.presenti}</div><div class="stat-label">Volte presente</div></div>
+          <div class="stat-card"><div class="stat-numero">${stat.assenti}</div><div class="stat-label">Volte assente</div></div>
+          <div class="stat-card"><div class="stat-numero">${stat.prove}</div><div class="stat-label">Prove</div></div>
+          <div class="stat-card"><div class="stat-numero">${stat.celebrazioni}</div><div class="stat-label">Celebrazioni</div></div>
+        </div>
+        <p class="sezione-titolo">Percentuale presenze</p>
+        <div class="barra-wrap"><div class="barra" style="width:${stat.percentuale}%"></div></div>
+        ${righe ? `<div class="tabella-wrap"><table>
+          <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th></tr></thead>
+          <tbody>${righe}</tbody>
+        </table></div>` : '<p style="color:#888;font-style:italic">Nessuna presenza registrata.</p>'}
+      `;
+    } else {
+      // Vista admin: schede per coro
+      const me = await apiCall('/auth/me');
+      const cori = me.cori || [];
+
+      if (cori.length === 0) {
+        contenuto.innerHTML = '<p style="color:#888">Nessun coro assegnato.</p>';
         return;
       }
 
-      const righe = (presenze || []).map(p => `
-                <tr>
-                    <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
-                    <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
-                    <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
-                    <td>${p.note || '—'}</td>
-                </tr>
-            `).join('');
-
+      // Tabs cori
       contenuto.innerHTML = `
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-numero">${stat.percentuale}%</div>
-                        <div class="stat-label">Presenze totali</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-numero">${stat.presenti}</div>
-                        <div class="stat-label">Volte presente</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-numero">${stat.assenti}</div>
-                        <div class="stat-label">Volte assente</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-numero">${stat.prove}</div>
-                        <div class="stat-label">Prove</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-numero">${stat.celebrazioni}</div>
-                        <div class="stat-label">Celebrazioni</div>
-                    </div>
-                </div>
+        <div class="tabs-cori">
+          ${cori.map((c, i) => `
+            <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>
+          `).join('')}
+        </div>
+        <div id="pannello-coro"><p>Caricamento…</p></div>
+      `;
 
-                <p class="sezione-titolo">Percentuale presenze</p>
-                <div class="barra-wrap"><div class="barra" style="width:${stat.percentuale}%"></div></div>
+      async function caricaCoro(coroId, coroNome) {
+        const pannello = document.getElementById('pannello-coro');
+        pannello.innerHTML = '<p>Caricamento…</p>';
 
-                ${righe ? `
-                <div class="tabella-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th></tr></thead>
-                        <tbody>${righe}</tbody>
-                    </table>
-                </div>` : '<p style="color:#888;font-style:italic">Nessuna presenza registrata.</p>'}
-            `;
+        const presenze = await apiCall(`/presenze/coro/${coroId}`);
+        if (!presenze || presenze.length === 0) {
+          pannello.innerHTML = '<p style="color:#888;font-style:italic">Nessuna presenza registrata per questo coro.</p>';
+          return;
+        }
+
+        // Raggruppa per corista
+        const map = {};
+        presenze.forEach(p => {
+          const uid = p.utente._id;
+          if (!map[uid]) map[uid] = { nome: p.utente.nome + ' ' + p.utente.cognome, presenti: 0, totale: 0, righe: [] };
+          map[uid].totale++;
+          if (p.presente) map[uid].presenti++;
+          map[uid].righe.push(p);
+        });
+
+        pannello.innerHTML = Object.entries(map).map(([uid, d]) => `
+          <div class="corista-sezione">
+            <div class="corista-header">
+              <span class="corista-nome-admin">${d.nome}</span>
+              <span class="corista-perc">${Math.round(d.presenti / d.totale * 100)}% (${d.presenti}/${d.totale})</span>
+            </div>
+            <div class="tabella-wrap">
+              <table>
+                <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th><th></th></tr></thead>
+                <tbody>
+                  ${d.righe.map(p => `
+                    <tr>
+                      <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
+                      <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
+                      <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
+                      <td>${p.note || '—'}</td>
+                      <td><button class="btn-sm danger" onclick="eliminaPresenza('${p._id}', '${coroId}', '${coroNome}')">Elimina</button></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Click sui tab
+      document.querySelectorAll('.tab-coro').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
+          btn.classList.add('attivo');
+          caricaCoro(btn.dataset.id, btn.textContent);
+        });
+      });
+
+      window.eliminaPresenza = async (id, coroId, coroNome) => {
+        if (!confirm('Eliminare questa presenza?')) return;
+        await apiCall(`/presenze/${id}`, { method: 'DELETE' });
+        caricaCoro(coroId, coroNome);
+      };
+
+      // Carica il primo coro di default
+      caricaCoro(cori[0]._id, cori[0].nome);
     }
-
-    carica();
   </script>
 </body>
 
