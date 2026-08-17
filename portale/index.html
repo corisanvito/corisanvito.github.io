@@ -7,95 +7,25 @@
     <meta name="theme-color" content="#2e2a35">
     <title>Portale | Cori San Vito</title>
     <link rel="stylesheet" href="/style/style.css">
-    <style>
-        .benvenuto {
-            margin-bottom: 2rem;
-        }
-
-        .benvenuto h2 {
-            margin-bottom: 0.2rem;
-        }
-
-        .benvenuto p {
-            color: #888;
-            font-size: 0.95rem;
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.2rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
-            color: var(--c-grey);
-            transition: box-shadow 0.2s, transform 0.2s;
-            display: block;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-            text-decoration: none;
-            color: var(--c-grey);
-        }
-
-        .card-icon {
-            font-size: 2rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .card h3 {
-            margin-bottom: 0.3rem;
-            font-size: 1.1rem;
-        }
-
-        .card p {
-            font-size: 0.88rem;
-            color: #888;
-            margin: 0;
-        }
-
-        .btn-logout {
-            background: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 0.4rem 1rem;
-            font-family: inherit;
-            font-size: 0.9rem;
-            cursor: pointer;
-            color: var(--c-grey);
-            transition: background 0.2s;
-        }
-
-        .btn-logout:hover {
-            background: #f0f0f0;
-        }
-
-        .header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.2rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-    </style>
+    <link rel="stylesheet" href="/style/dashboard.css">
 </head>
 
 <body>
     <header>
-        <h1><a href="/">Cori San Vito</a></h1>
+        <h1><a href="../">Cori San Vito</a></h1>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="overlay"></div>
         <nav>
             <ul>
-                <li><a href="/portale/bacheca.html">Bacheca</a></li>
-                <li><a href="/portale/presenze.html">Presenze</a></li>
-                <li><a href="/portale/profilo.html">Profilo</a></li>
+                <li><a href="..">Home</a></li>
+                <li><a href="../canti">Canti</a></li>
+                <li><a href="../calendario">Calendario</a></li>
+                <li><a href="../admin/aggiungi-canto">Area riservata</a></li>
             </ul>
         </nav>
     </header>
