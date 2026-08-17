@@ -70,30 +70,41 @@
                 return;
             }
             lista.innerHTML = avvisi.map(a => `
-        <div class="avviso-card" data-id="${a._id}">
-          <h3>${a.titolo}${a.coro ? `<span class="tag-coro">${a.coro.nome}</span>` : '<span class="tag-coro">Tutti</span>'}</h3>
-          <p class="avviso-meta">${a.autore ? a.autore.nome + ' ' + a.autore.cognome : ''} · ${new Date(a.createdAt).toLocaleDateString('it-IT')}</p>
-          <p class="avviso-testo">${a.testo}</p>
-          ${isAdmin ? `<div class="azioni-avviso">
-            <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')">Elimina</button>
-          </div>` : ''}
-        </div>
-      `).join('');
+                <div class="avviso-card" data-id="${a._id}">
+                    <h3>${a.titolo}${a.coro ? `<span class="tag-coro">${a.coro.nome}</span>` : '<span class="tag-coro">Tutti</span>'}</h3>
+                    <p class="avviso-meta">${a.autore ? a.autore.nome + ' ' + a.autore.cognome : ''} · ${new Date(a.createdAt).toLocaleDateString('it-IT')}</p>
+                    <p class="avviso-testo">${a.testo}</p>
+                    ${isAdmin ? `<div class="azioni-avviso">
+                        <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')">Elimina</button>
+                    </div>` : ''}
+                </div>
+            `).join('');
         }
 
-        // Form nuovo avviso (solo admin)
         if (isAdmin) {
             document.getElementById('form-nuovo').style.display = 'block';
 
-            getCori().then(cori => {
-                const sel = document.getElementById('coro-avviso');
+            const sel = document.getElementById('coro-avviso');
+
+            if (utente.ruolo === 'direttore') {
+                // Il direttore vede tutti i cori
+                const cori = await getCori();
                 (cori || []).forEach(c => {
                     const o = document.createElement('option');
                     o.value = c._id;
                     o.textContent = c.nome;
                     sel.appendChild(o);
                 });
-            });
+            } else {
+                // Il responsabile vede solo i suoi cori
+                const me = await apiCall('/auth/me');
+                (me.cori || []).forEach(c => {
+                    const o = document.createElement('option');
+                    o.value = c._id;
+                    o.textContent = c.nome;
+                    sel.appendChild(o);
+                });
+            }
 
             document.getElementById('btn-pubblica').addEventListener('click', async () => {
                 const titolo = document.getElementById('titolo-avviso').value.trim();

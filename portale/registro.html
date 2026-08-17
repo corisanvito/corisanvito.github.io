@@ -64,27 +64,40 @@
         const utente = requireAuth(['direttore', 'responsabile']);
         if (!utente) throw new Error();
 
-        // Imposta data di oggi di default
         document.getElementById('data-evento').valueAsDate = new Date();
 
-        // Carica cori
-        const cori = await getCori();
         const selCoro = document.getElementById('sel-coro');
-        (cori || []).forEach(c => {
-            const o = document.createElement('option');
-            o.value = c._id;
-            o.textContent = c.nome;
-            selCoro.appendChild(o);
-        });
 
-        let presenzaMap = {}; // { userId: true/false }
+        if (utente.ruolo === 'direttore') {
+            // Il direttore vede tutti i cori
+            const cori = await getCori();
+            (cori || []).forEach(c => {
+                const o = document.createElement('option');
+                o.value = c._id;
+                o.textContent = c.nome;
+                selCoro.appendChild(o);
+            });
+        } else {
+            // Il responsabile vede solo i suoi cori
+            const me = await apiCall('/auth/me');
+            (me.cori || []).forEach(c => {
+                const o = document.createElement('option');
+                o.value = c._id;
+                o.textContent = c.nome;
+                selCoro.appendChild(o);
+            });
+        }
+
+        let presenzaMap = {};
 
         document.getElementById('btn-carica-coristi').addEventListener('click', async () => {
             const coroId = selCoro.value;
             if (!coroId) { alert('Seleziona un coro.'); return; }
 
             const utenti = await apiCall('/users');
-            const coristi = (utenti || []).filter(u => u.cori && u.cori.some(c => c._id === coroId) && u.attivo);
+            const coristi = (utenti || []).filter(u =>
+                u.cori && u.cori.some(c => c._id === coroId) && u.attivo
+            );
 
             if (coristi.length === 0) {
                 alert('Nessun corista trovato per questo coro.');
@@ -94,24 +107,23 @@
             presenzaMap = {};
             const lista = document.getElementById('lista-coristi');
             lista.innerHTML = coristi.map(c => `
-        <div class="corista-row" data-id="${c._id}">
-          <div>
-            <div class="corista-nome">${c.nome} ${c.cognome}</div>
-            <div class="corista-ruolo">${c.ruolo}</div>
-          </div>
-          <div class="toggle-presenza">
-            <button class="btn-presenza presente" data-id="${c._id}" data-val="true">✓ Presente</button>
-            <button class="btn-presenza assente"  data-id="${c._id}" data-val="false">✗ Assente</button>
-          </div>
-        </div>
-      `).join('');
+                <div class="corista-row" data-id="${c._id}">
+                    <div>
+                        <div class="corista-nome">${c.nome} ${c.cognome}</div>
+                        <div class="corista-ruolo">${c.ruolo}</div>
+                    </div>
+                    <div class="toggle-presenza">
+                        <button class="btn-presenza presente" data-id="${c._id}" data-val="true">✓ Presente</button>
+                        <button class="btn-presenza assente" data-id="${c._id}" data-val="false">✗ Assente</button>
+                    </div>
+                </div>
+            `).join('');
 
             lista.querySelectorAll('.btn-presenza').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.id;
                     const val = btn.dataset.val === 'true';
                     presenzaMap[id] = val;
-                    // aggiorna stile
                     lista.querySelectorAll(`.btn-presenza[data-id="${id}"]`).forEach(b => b.classList.remove('attivo'));
                     btn.classList.add('attivo');
                 });
