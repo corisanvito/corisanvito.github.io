@@ -140,7 +140,7 @@
         const utente = requireAuth(['direttore', 'responsabile']);
         if (!utente) throw new Error();
 
-        document.getElementById('btn-aggiungi').addEventListener('click', async () => {
+        document.getElementById('btn-aggiungi')?.addEventListener('click', async () => {
             const titolo = document.getElementById('c-titolo').value.trim();
             if (!titolo) { alert('Il titolo è obbligatorio.'); return; }
 
