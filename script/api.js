@@ -47,3 +47,4 @@ export const getStatistiche = () => apiCall('/presenze/statistiche');
 export const getPresenze = () => apiCall('/presenze');
 export const getCanti = () => apiCall('/canti');
 export const getCori = () => apiCall('/cori');
+export const getCantiSettimana = (coroId) => apiCall(`/canti-settimana/${coroId}`);
