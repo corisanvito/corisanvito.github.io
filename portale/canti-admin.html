@@ -45,6 +45,21 @@
     <main>
         <h2>Gestione canti</h2>
 
+        <!-- SEZIONE CANTI SETTIMANA -->
+        <div class="sezione-settimana">
+            <h3>Canti della settimana</h3>
+            <p class="info">Gestisci i canti che appaiono nella homepage di ogni coro, in parallelo al foglio Google.
+            </p>
+
+            <div class="tabs-cori" id="tabs-cori-settimana"></div>
+
+            <div id="pannello-settimana">
+                <p class="vuoto">Seleziona un coro per iniziare.</p>
+            </div>
+        </div>
+
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
         <div class="form-canto">
             <h3>Aggiungi canto</h3>
             <form id="cantoForm" action="https://formsubmit.co/corisanvito@gmail.com" method="POST">
@@ -120,7 +135,7 @@
 
     <script type="module">
         import { requireAuth } from '/script/auth-guard.js';
-        import { apiCall } from '/script/api.js';
+        import { apiCall, getCori } from '/script/api.js';
 
         const utente = requireAuth(['direttore', 'responsabile']);
         if (!utente) throw new Error();
@@ -153,6 +168,175 @@
                 msg.textContent = res?.message || 'Errore nel salvataggio.';
             }
         });
+
+
+        // ── CANTI SETTIMANA ────────────────────────────────────────────────────
+
+        const me = await apiCall('/auth/me');
+        const coriMe = me.cori || [];
+
+        const tabsSettimana = document.getElementById('tabs-cori-settimana');
+        tabsSettimana.innerHTML = coriMe.map((c, i) => `
+  <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}" data-nome="${c.nome}">
+    ${c.nome}
+  </button>
+`).join('');
+
+        let coroAttivoId = coriMe[0]?._id;
+        let coroAttivoNome = coriMe[0]?.nome;
+
+        document.querySelectorAll('.tab-coro').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
+                btn.classList.add('attivo');
+                coroAttivoId = btn.dataset.id;
+                coroAttivoNome = btn.dataset.nome;
+                caricaPannelloSettimana(coroAttivoId);
+            });
+        });
+
+        async function caricaPannelloSettimana(coroId) {
+            const pannello = document.getElementById('pannello-settimana');
+            pannello.innerHTML = '<p class="vuoto">Caricamento…</p>';
+
+            const canti = await apiCall(`/canti-settimana/${coroId}`);
+
+            const domenica = (canti || []).filter(c => c.tipo === 'domenica');
+            const nuovi = (canti || []).filter(c => c.tipo === 'nuovo');
+            const tempoForte = (canti || []).filter(c => c.tipo === 'tempo_forte');
+
+            pannello.innerHTML = `
+
+    <!-- CANTI DOMENICA -->
+    <div class="sottosezione">
+      <div class="sottosezione-header">
+        <h4>🕊 Canti della domenica</h4>
+        <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'domenica')">Svuota</button>
+      </div>
+
+      <div class="form-inline">
+        <input type="date" id="data-domenica" style="flex:0 0 auto">
+        <input type="text" id="ind-domenica" placeholder="Indicazione (es. Ingresso)" style="flex:1">
+        <input type="text" id="tit-domenica" placeholder="Titolo canto" style="flex:2">
+        <input type="url"  id="lnk-domenica" placeholder="Link (es. /canti/nome)" style="flex:2">
+        <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
+      </div>
+
+      <div class="lista-settimana" id="lista-domenica">
+        ${domenica.length === 0
+                    ? '<p class="vuoto">Nessun canto inserito.</p>'
+                    : domenica.map(c => rigaCanto(c)).join('')}
+      </div>
+    </div>
+
+    <!-- NUOVI CANTI -->
+    <div class="sottosezione">
+      <div class="sottosezione-header">
+        <h4>🆕 Nuovi canti da imparare</h4>
+        <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'nuovo')">Svuota</button>
+      </div>
+
+      <div class="form-inline">
+        <input type="text" id="tit-nuovo" placeholder="Titolo canto" style="flex:2">
+        <input type="url"  id="lnk-nuovo" placeholder="Link (es. /canti/nome)" style="flex:2">
+        <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'nuovo')">+</button>
+      </div>
+
+      <div class="lista-settimana" id="lista-nuovo">
+        ${nuovi.length === 0
+                    ? '<p class="vuoto">Nessun canto inserito.</p>'
+                    : nuovi.map(c => rigaCanto(c)).join('')}
+      </div>
+    </div>
+
+    <!-- TEMPI FORTI -->
+    <div class="sottosezione">
+      <div class="sottosezione-header">
+        <h4>✨ Canti tempi forti</h4>
+        <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'tempo_forte')">Svuota</button>
+      </div>
+
+      <div class="form-inline">
+        <input type="text" id="tf-nome"   placeholder="Nome tempo forte (es. Avvento)" style="flex:1">
+        <input type="text" id="tit-tempo" placeholder="Titolo canto" style="flex:2">
+        <input type="url"  id="lnk-tempo" placeholder="Link (es. /canti/nome)" style="flex:2">
+        <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'tempo_forte')">+</button>
+      </div>
+
+      <div class="lista-settimana" id="lista-tempo_forte">
+        ${tempoForte.length === 0
+                    ? '<p class="vuoto">Nessun canto inserito.</p>'
+                    : tempoForte.map(c => rigaCanto(c)).join('')}
+      </div>
+    </div>
+  `;
+
+            // Imposta data domenica di default alla prossima domenica
+            const inp = document.getElementById('data-domenica');
+            if (inp) {
+                const oggi = new Date();
+                const diff = (7 - oggi.getDay()) % 7 || 7;
+                const domenica = new Date(oggi);
+                domenica.setDate(oggi.getDate() + diff);
+                inp.valueAsDate = domenica;
+            }
+        }
+
+        function rigaCanto(c) {
+            const dettaglio = c.tipo === 'domenica'
+                ? `<span class="tag-indicazione">${c.indicazione || ''}</span> `
+                : c.tipo === 'tempo_forte'
+                    ? `<span class="tag-indicazione">${c.tempoForte || ''}</span> `
+                    : '';
+            const link = c.link
+                ? `<a href="${c.link}" target="_blank">${c.titolo}</a>`
+                : c.titolo;
+
+            return `
+    <div class="riga-canto-sett" data-id="${c._id}">
+        <span>${dettaglio}${link}</span>
+        <button class="btn-sm danger" onclick="rimuoviCanto('${c._id}')">✕</button>
+    </div>
+  `;
+        }
+
+        window.aggiungiCanto = async (coroId, tipo) => {
+            let body = { coro: coroId, tipo };
+
+            if (tipo === 'domenica') {
+                body.dataDomenica = document.getElementById('data-domenica').value;
+                body.indicazione = document.getElementById('ind-domenica').value.trim();
+                body.titolo = document.getElementById('tit-domenica').value.trim();
+                body.link = document.getElementById('lnk-domenica').value.trim();
+            } else if (tipo === 'nuovo') {
+                body.titolo = document.getElementById('tit-nuovo').value.trim();
+                body.link = document.getElementById('lnk-nuovo').value.trim();
+            } else if (tipo === 'tempo_forte') {
+                body.tempoForte = document.getElementById('tf-nome').value.trim();
+                body.titolo = document.getElementById('tit-tempo').value.trim();
+                body.link = document.getElementById('lnk-tempo').value.trim();
+            }
+
+            if (!body.titolo) { alert('Inserisci almeno il titolo.'); return; }
+
+            await apiCall('/canti-settimana', { method: 'POST', body: JSON.stringify(body) });
+            caricaPannelloSettimana(coroId);
+        };
+
+        window.rimuoviCanto = async (id) => {
+            if (!confirm('Rimuovere questo canto?')) return;
+            await apiCall(`/canti-settimana/${id}`, { method: 'DELETE' });
+            caricaPannelloSettimana(coroAttivoId);
+        };
+
+        window.svuotaSezione = async (coroId, tipo) => {
+            if (!confirm(`Svuotare tutta la sezione?`)) return;
+            await apiCall(`/canti-settimana/coro/${coroId}/tipo/${tipo}`, { method: 'DELETE' });
+            caricaPannelloSettimana(coroId);
+        };
+
+        // Carica il primo coro di default
+        if (coriMe.length > 0) caricaPannelloSettimana(coriMe[0]._id);
 
         caricaCanti();
     </script>

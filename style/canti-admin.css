@@ -99,6 +99,75 @@ input[type="file"] {
     font-style: italic;
 }
 
+.sezione-settimana {
+    margin-bottom: 2rem;
+}
+
+.sottosezione {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.2rem;
+}
+
+.sottosezione-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.sottosezione-header h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.form-inline {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+}
+
+.form-inline input {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    min-width: 0;
+}
+
+.btn-sm-h {
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+}
+
+.riga-canto-sett {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.92rem;
+}
+
+.riga-canto-sett:last-child {
+    border-bottom: none;
+}
+
+.tag-indicazione {
+    display: inline-block;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+    color: #555;
+}
+
 @media screen and (max-width: 768px) {
     .info {
         font-size: 0.7em;
