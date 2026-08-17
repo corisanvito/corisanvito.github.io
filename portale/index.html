@@ -95,6 +95,7 @@
             <ul>
                 <li><a href="/portale/bacheca.html">Bacheca</a></li>
                 <li><a href="/portale/presenze.html">Presenze</a></li>
+                <li><a href="/portale/profilo.html">Profilo</a></li>
             </ul>
         </nav>
     </header>
@@ -108,9 +109,7 @@
             <p id="sottotitolo-ruolo"></p>
         </div>
 
-        <div class="card-grid" id="card-grid">
-            <!-- Le card vengono generate in base al ruolo -->
-        </div>
+        <div class="card-grid" id="card-grid"></div>
     </main>
 
     <footer>
@@ -119,11 +118,15 @@
 
     <script type="module">
         import { requireAuth, logout } from '/script/auth-guard.js';
+        import { apiCall } from '/script/api.js';
 
         const utente = requireAuth();
         if (!utente) throw new Error('Non autenticato');
 
-        document.getElementById('titolo-benvenuto').textContent = `Ciao, ${utente.nome}!`;
+        // Carica dati freschi dal server (per avere cori popolati)
+        const me = await apiCall('/auth/me');
+
+        document.getElementById('titolo-benvenuto').textContent = `Ciao, ${me.nome}!`;
         document.getElementById('btn-logout').addEventListener('click', logout);
 
         const ruoliLabel = {
@@ -133,13 +136,14 @@
             strumentista: 'Strumentista'
         };
 
+        const coriNomi = me.cori?.length ? me.cori.map(c => c.nome).join(', ') : '';
         document.getElementById('sottotitolo-ruolo').textContent =
-            `${ruoliLabel[utente.ruolo] || utente.ruolo}${utente.coro ? ' · ' + utente.coro.nome : ''}`;
+            `${ruoliLabel[me.ruolo] || me.ruolo}${coriNomi ? ' · ' + coriNomi : ''}`;
 
-        // Card in base al ruolo
         const cardsBase = [
             { href: '/portale/bacheca.html', icon: '📋', titolo: 'Bacheca', desc: 'Avvisi e comunicazioni del coro' },
             { href: '/portale/presenze.html', icon: '📊', titolo: 'Presenze', desc: 'Le tue statistiche di presenza' },
+            { href: '/portale/profilo.html', icon: '👤', titolo: 'Il mio profilo', desc: 'Modifica i tuoi dati personali' },
         ];
 
         const cardsAdmin = [
@@ -148,17 +152,16 @@
             { href: '/portale/registro.html', icon: '✅', titolo: 'Registro presenze', desc: 'Segna le presenze alle prove' },
         ];
 
-        const isAdmin = ['direttore', 'responsabile'].includes(utente.ruolo);
+        const isAdmin = ['direttore', 'responsabile'].includes(me.ruolo);
         const cards = isAdmin ? [...cardsBase, ...cardsAdmin] : cardsBase;
 
-        const grid = document.getElementById('card-grid');
-        grid.innerHTML = cards.map(c => `
-      <a class="card" href="${c.href}">
-        <div class="card-icon">${c.icon}</div>
-        <h3>${c.titolo}</h3>
-        <p>${c.desc}</p>
-      </a>
-    `).join('');
+        document.getElementById('card-grid').innerHTML = cards.map(c => `
+            <a class="card" href="${c.href}">
+                <div class="card-icon">${c.icon}</div>
+                <h3>${c.titolo}</h3>
+                <p>${c.desc}</p>
+            </a>
+        `).join('');
     </script>
 </body>
 

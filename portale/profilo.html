@@ -149,10 +149,6 @@
                 <div class="campo-readonly" id="ro-nome"></div>
             </div>
             <div class="campo">
-                <label>Email</label>
-                <div class="campo-readonly" id="ro-email"></div>
-            </div>
-            <div class="campo">
                 <label>Ruolo</label>
                 <div class="campo-readonly" id="ro-ruolo"></div>
             </div>
@@ -161,7 +157,11 @@
                 <div class="campo-readonly" id="ro-cori"></div>
             </div>
 
-            <p class="sezione-titolo">Dati modificabili</p>
+            <p class="sezione-titolo">Dati personali</p>
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" id="p-email">
+            </div>
             <div class="campo">
                 <label>Tipo di voce</label>
                 <select id="p-vocetipo">
@@ -188,6 +188,22 @@
 
             <button class="btn-primary" id="btn-salva">Salva modifiche</button>
             <p class="messaggio" id="msg"></p>
+
+            <p class="sezione-titolo">Cambio password</p>
+            <div class="campo">
+                <label>Password attuale</label>
+                <input type="password" id="p-pwd-attuale" placeholder="••••••••">
+            </div>
+            <div class="campo">
+                <label>Nuova password</label>
+                <input type="password" id="p-pwd-nuova" placeholder="••••••••">
+            </div>
+            <div class="campo">
+                <label>Conferma nuova password</label>
+                <input type="password" id="p-pwd-conferma" placeholder="••••••••">
+            </div>
+            <button class="btn-primary" id="btn-password">Cambia password</button>
+            <p class="messaggio" id="msg-pwd"></p>
         </div>
     </main>
 
@@ -202,48 +218,86 @@
         const utente = requireAuth();
         if (!utente) throw new Error();
 
-        // Carica dati aggiornati dal server
-        const me = await apiCall('/auth/me');
-        if (!me) { document.querySelector('.profilo-card').innerHTML = '<p>Errore nel caricamento.</p>'; }
+        async function carica() {
+            const me = await apiCall('/auth/me');
+            if (!me) {
+                document.querySelector('.profilo-card').innerHTML = '<p>Errore nel caricamento.</p>';
+                return;
+            }
 
-        // Header
-        const iniziali = (me.nome[0] + me.cognome[0]).toUpperCase();
-        document.getElementById('avatar').textContent = iniziali;
-        document.getElementById('profilo-nome').textContent = `${me.nome} ${me.cognome}`;
-        document.getElementById('profilo-ruolo').textContent = me.ruolo;
+            document.getElementById('avatar').textContent = (me.nome[0] + me.cognome[0]).toUpperCase();
+            document.getElementById('profilo-nome').textContent = `${me.nome} ${me.cognome}`;
+            document.getElementById('profilo-ruolo').textContent = me.ruolo;
 
-        // Campi readonly
-        document.getElementById('ro-nome').textContent = `${me.nome} ${me.cognome}`;
-        document.getElementById('ro-email').textContent = me.email;
-        document.getElementById('ro-ruolo').textContent = me.ruolo;
-        document.getElementById('ro-cori').textContent = me.cori?.length ? me.cori.map(c => c.nome).join(', ') : '—';
+            document.getElementById('ro-nome').textContent = `${me.nome} ${me.cognome}`;
+            document.getElementById('ro-ruolo').textContent = me.ruolo;
+            const coriTesto = me.cori?.length
+                ? me.cori.map(c => typeof c === 'object' ? c.nome : c).join(', ')
+                : '—';
+            document.getElementById('ro-cori').textContent = coriTesto;
 
-        // Precompila campi modificabili
-        document.getElementById('p-vocetipo').value = me.tipoVoce || '';
-        document.getElementById('p-telefono').value = me.telefono || '';
-        document.getElementById('p-note').value = me.note || '';
-        if (me.dataNascita) {
-            document.getElementById('p-nascita').value = new Date(me.dataNascita).toISOString().split('T')[0];
-        }
+            document.getElementById('p-email').value = me.email || '';
+            document.getElementById('p-vocetipo').value = me.tipoVoce || '';
+            document.getElementById('p-telefono').value = me.telefono || '';
+            document.getElementById('p-note').value = me.note || '';
+            if (me.dataNascita) {
+                document.getElementById('p-nascita').value = new Date(me.dataNascita).toISOString().split('T')[0];
+            }
 
-        document.getElementById('btn-salva').addEventListener('click', async () => {
-            const body = {
-                tipoVoce: document.getElementById('p-vocetipo').value,
-                dataNascita: document.getElementById('p-nascita').value || null,
-                telefono: document.getElementById('p-telefono').value.trim(),
-                note: document.getElementById('p-note').value.trim()
+            document.getElementById('btn-salva').onclick = async () => {
+                const body = {
+                    email: document.getElementById('p-email').value.trim(),
+                    tipoVoce: document.getElementById('p-vocetipo').value,
+                    dataNascita: document.getElementById('p-nascita').value || null,
+                    telefono: document.getElementById('p-telefono').value.trim(),
+                    note: document.getElementById('p-note').value.trim()
+                };
+                const res = await apiCall(`/users/${me._id}/profilo`, { method: 'PATCH', body: JSON.stringify(body) });
+                const msg = document.getElementById('msg');
+                if (res?._id) {
+                    msg.className = 'messaggio ok';
+                    msg.textContent = '✓ Profilo aggiornato!';
+                } else {
+                    msg.className = 'messaggio err';
+                    msg.textContent = res?.message || 'Errore nel salvataggio.';
+                }
             };
 
-            const res = await apiCall(`/users/${me._id}/profilo`, { method: 'PATCH', body: JSON.stringify(body) });
-            const msg = document.getElementById('msg');
-            if (res?._id) {
-                msg.className = 'messaggio ok';
-                msg.textContent = '✓ Profilo aggiornato!';
-            } else {
-                msg.className = 'messaggio err';
-                msg.textContent = res?.message || 'Errore nel salvataggio.';
-            }
-        });
+            document.getElementById('btn-password').onclick = async () => {
+                const attuale = document.getElementById('p-pwd-attuale').value;
+                const nuova = document.getElementById('p-pwd-nuova').value;
+                const conferma = document.getElementById('p-pwd-conferma').value;
+                const msg = document.getElementById('msg-pwd');
+
+                if (!attuale || !nuova || !conferma) {
+                    msg.className = 'messaggio err'; msg.textContent = 'Compila tutti i campi.'; return;
+                }
+                if (nuova !== conferma) {
+                    msg.className = 'messaggio err'; msg.textContent = 'Le password non coincidono.'; return;
+                }
+                if (nuova.length < 6) {
+                    msg.className = 'messaggio err'; msg.textContent = 'Minimo 6 caratteri.'; return;
+                }
+
+                const res = await apiCall(`/users/${me._id}/password`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ passwordAttuale: attuale, passwordNuova: nuova })
+                });
+
+                if (res?.message === 'ok') {
+                    msg.className = 'messaggio ok';
+                    msg.textContent = '✓ Password aggiornata!';
+                    document.getElementById('p-pwd-attuale').value = '';
+                    document.getElementById('p-pwd-nuova').value = '';
+                    document.getElementById('p-pwd-conferma').value = '';
+                } else {
+                    msg.className = 'messaggio err';
+                    msg.textContent = res?.message || 'Errore nel cambio password.';
+                }
+            };
+        }
+
+        carica();
     </script>
 </body>
 
