@@ -60,9 +60,7 @@
                 <!-- Testo del canto -->
                 <div class="campo">
                     <label for="testo_canto" class="label-input">Testo del canto</label>
-                    <p class="info">Scopri come scrivere il testo del canto correttamente: <a
-                            href="../system/docs/guida-scrittura-canti">Guida alla formattazione e alla scrittura
-                            corretta del canto</a>. Si raccomanda di visualizzare la guida prima di richiedere un canto.
+                    <p class="info"><a href="../system/docs/guida-scrittura-canti">Guida alla formattazione e alla scrittura corretta del canto</a>.
                     </p>
                     <textarea id="testo_canto" name="testo_canto" rows="15" required></textarea>
                 </div>
@@ -101,10 +99,6 @@
                 Inserire questo canto come pagina HTML, aggiornare la lista su excel, la pagina canti.html e il file canti.json">
             </form>
         </div>
-
-        <div id="lista-canti">
-            <p class="vuoto">Caricamento…</p>
-        </div>
     </main>
 
     <footer>
@@ -112,35 +106,11 @@
     </footer>
 
     <script type="module">
-        import { requireAuth } from '/script/auth-guard.js';
+        /*import { requireAuth } from '/script/auth-guard.js';
         import { apiCall } from '/script/api.js';
 
         const utente = requireAuth(['direttore', 'responsabile']);
-        if (!utente) throw new Error();
-
-        async function caricaCanti() {
-            const canti = await apiCall('/canti');
-            const lista = document.getElementById('lista-canti');
-            if (!canti || canti.length === 0) {
-                lista.innerHTML = '<p class="vuoto">Nessun canto inserito.</p>';
-                return;
-            }
-            lista.innerHTML = canti.map(c => `
-                <div class="canto-card">
-                    <div class="canto-info">
-                        <h3>${c.titolo}</h3>
-                        <p>${c.autore || ''}${c.categoria ? ' · ' + c.categoria : ''}</p>
-                    </div>
-                    <div class="canto-azioni">
-                        <label class="upload-label">
-                            📎 Carica PDF
-                            <input type="file" accept=".pdf" onchange="uploadPdf('${c._id}', this)">
-                        </label>
-                        <button class="btn-sm danger" onclick="eliminaCanto('${c._id}')">Elimina</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+        if (!utente) throw new Error();*/
 
         document.getElementById('btn-aggiungi').addEventListener('click', async () => {
             const titolo = document.getElementById('c-titolo').value.trim();
