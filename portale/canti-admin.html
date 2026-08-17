@@ -34,11 +34,8 @@
             </div>
             <div class="campo"><label>Testo</label><textarea id="c-testo" placeholder="Testo del canto…"></textarea>
             </div>
-            <div class="campo"><label>Accordi</label><textarea id="c-accordi" placeholder="Accordi…"></textarea></div>
-            <div class="campo">
-                <label>Assegna ai cori</label>
-                <div id="check-cori" style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.3rem"></div>
-            </div>
+            <div class="campo"><label>Note</label><textarea id="c-note" placeholder="Note aggiuntive…"
+                    style="min-height:60px"></textarea></div>
             <button class="btn-primary" id="btn-aggiungi">Aggiungi canto</button>
             <p class="messaggio" id="msg-canto"></p>
         </div>
@@ -54,21 +51,10 @@
 
     <script type="module">
         import { requireAuth } from '/script/auth-guard.js';
-        import { apiCall, getCori } from '/script/api.js';
+        import { apiCall } from '/script/api.js';
 
         const utente = requireAuth(['direttore', 'responsabile']);
         if (!utente) throw new Error();
-
-        const cori = await getCori();
-
-        // Checkbox cori per il form
-        const checkCori = document.getElementById('check-cori');
-        (cori || []).forEach(c => {
-            checkCori.innerHTML += `
-        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer">
-          <input type="checkbox" value="${c._id}"> ${c.nome}
-        </label>`;
-        });
 
         async function caricaCanti() {
             const canti = await apiCall('/canti');
@@ -78,48 +64,44 @@
                 return;
             }
             lista.innerHTML = canti.map(c => `
-        <div class="canto-card">
-          <div class="canto-info">
-            <h3>${c.titolo}</h3>
-            <p>${c.autore || ''}${c.categoria ? ' · ' + c.categoria : ''}${c.cori?.length ? ' · ' + c.cori.map(x => x.nome).join(', ') : ''}</p>
-          </div>
-          <div class="canto-azioni">
-            <label class="upload-label">
-              📎 Carica PDF
-              <input type="file" accept=".pdf" onchange="uploadPdf('${c._id}', this)">
-            </label>
-            <button class="btn-sm danger" onclick="eliminaCanto('${c._id}')">Elimina</button>
-          </div>
-        </div>
-      `).join('');
+                <div class="canto-card">
+                    <div class="canto-info">
+                        <h3>${c.titolo}</h3>
+                        <p>${c.autore || ''}${c.categoria ? ' · ' + c.categoria : ''}</p>
+                    </div>
+                    <div class="canto-azioni">
+                        <label class="upload-label">
+                            📎 Carica PDF
+                            <input type="file" accept=".pdf" onchange="uploadPdf('${c._id}', this)">
+                        </label>
+                        <button class="btn-sm danger" onclick="eliminaCanto('${c._id}')">Elimina</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         document.getElementById('btn-aggiungi').addEventListener('click', async () => {
             const titolo = document.getElementById('c-titolo').value.trim();
             if (!titolo) { alert('Il titolo è obbligatorio.'); return; }
 
-            const coriSelezionati = [...checkCori.querySelectorAll('input:checked')].map(i => i.value);
-
             const body = {
                 titolo,
                 autore: document.getElementById('c-autore').value.trim(),
                 categoria: document.getElementById('c-categoria').value.trim(),
                 testo: document.getElementById('c-testo').value.trim(),
-                accordi: document.getElementById('c-accordi').value.trim(),
-                cori: coriSelezionati
+                note: document.getElementById('c-note').value.trim()
             };
 
             const res = await apiCall('/canti', { method: 'POST', body: JSON.stringify(body) });
             const msg = document.getElementById('msg-canto');
             if (res?._id) {
                 msg.className = 'messaggio ok';
-                msg.textContent = '✓ Canto aggiunto!';
+                msg.textContent = '✓ Canto aggiunto e notifica inviata!';
                 document.getElementById('c-titolo').value = '';
                 document.getElementById('c-autore').value = '';
                 document.getElementById('c-categoria').value = '';
                 document.getElementById('c-testo').value = '';
-                document.getElementById('c-accordi').value = '';
-                checkCori.querySelectorAll('input').forEach(i => i.checked = false);
+                document.getElementById('c-note').value = '';
                 caricaCanti();
             } else {
                 msg.className = 'messaggio err';
@@ -138,7 +120,6 @@
             if (!file) return;
             const formData = new FormData();
             formData.append('file', file);
-
             const token = localStorage.getItem('csv_token');
             const res = await fetch(`https://corisanvito-backend.onrender.com/canti/${id}/upload`, {
                 method: 'POST',

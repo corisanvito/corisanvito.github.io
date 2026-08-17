@@ -27,10 +27,10 @@
         <div class="form-nuovo">
             <h3>Nuovo account</h3>
             <div class="form-row">
-                <div class="campo"><label>Nome</label><input type="text" id="u-nome"></div>
-                <div class="campo"><label>Cognome</label><input type="text" id="u-cognome"></div>
-                <div class="campo"><label>Email</label><input type="email" id="u-email"></div>
-                <div class="campo"><label>Password temporanea</label><input type="text" id="u-password"></div>
+                <div class="campo"><label>Nome *</label><input type="text" id="u-nome"></div>
+                <div class="campo"><label>Cognome *</label><input type="text" id="u-cognome"></div>
+                <div class="campo"><label>Email *</label><input type="email" id="u-email"></div>
+                <div class="campo"><label>Password temporanea *</label><input type="text" id="u-password"></div>
                 <div class="campo">
                     <label>Ruolo</label>
                     <select id="u-ruolo">
@@ -42,7 +42,26 @@
                 </div>
                 <div class="campo">
                     <label>Cori</label>
-                    <div id="check-cori-utente" style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.3rem"></div>
+                    <select id="u-cori" multiple size="3"
+                        style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.95rem">
+                        <!-- popolato da JS -->
+                    </select>
+                    <small style="color:#888;font-size:0.78rem">Tieni Ctrl (o Cmd) per selezionare più cori</small>
+                </div>
+                <div class="campo">
+                    <label>Tipo di voce</label>
+                    <select id="u-vocetipo">
+                        <option value="">—</option>
+                        <option value="bianca">Bianca</option>
+                        <option value="soprano">Soprano</option>
+                        <option value="contralto">Contralto</option>
+                        <option value="tenore">Tenore</option>
+                        <option value="basso">Basso</option>
+                    </select>
+                </div>
+                <div class="campo"><label>Data di nascita</label><input type="date" id="u-nascita"></div>
+                <div class="campo"><label>Telefono</label><input type="tel" id="u-telefono"></div>
+                <div class="campo"><label>Note</label><input type="text" id="u-note" placeholder="Note aggiuntive…">
                 </div>
             </div>
             <button class="btn-primary" id="btn-crea">Crea account</button>
@@ -56,14 +75,15 @@
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Ruolo</th>
-                        <th>Coro</th>
+                        <th>Cori</th>
+                        <th>Voce</th>
                         <th>Stato</th>
                         <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-utenti">
                     <tr>
-                        <td colspan="6">Caricamento…</td>
+                        <td colspan="7">Caricamento…</td>
                     </tr>
                 </tbody>
             </table>
@@ -83,52 +103,66 @@
 
         const cori = await getCori();
 
-        // popola checkbox cori
-        const checkCoriUtente = document.getElementById('check-cori-utente');
+        // Popola select multipla cori
+        const selCori = document.getElementById('u-cori');
         (cori || []).forEach(c => {
-            checkCoriUtente.innerHTML += `
-    <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer">
-        <input type="checkbox" value="${c._id}"> ${c.nome}
-    </label>`;
+            const o = document.createElement('option');
+            o.value = c._id;
+            o.textContent = c.nome;
+            selCori.appendChild(o);
         });
 
         async function caricaUtenti() {
             const utenti = await apiCall('/users');
             const tbody = document.getElementById('tbody-utenti');
             if (!utenti || utenti.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="color:#888">Nessun utente.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="color:#888">Nessun utente.</td></tr>';
                 return;
             }
             tbody.innerHTML = utenti.map(u => `
-        <tr>
-          <td>${u.nome} ${u.cognome}</td>
-          <td>${u.email}</td>
-          <td>${u.ruolo}</td>
-          <td>${u.cori ? u.cori.nome : '—'}</td>
-          <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
-          <td>
-            ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}')">Attiva</button>` : ''}
-            <button class="btn-sm danger" onclick="eliminaUtente('${u._id}')">Elimina</button>
-          </td>
-        </tr>
-      `).join('');
+                <tr>
+                    <td>${u.nome} ${u.cognome}</td>
+                    <td>${u.email}</td>
+                    <td>${u.ruolo}</td>
+                    <td>${u.cori?.length ? u.cori.map(c => c.nome).join(', ') : '—'}</td>
+                    <td>${u.tipoVoce || '—'}</td>
+                    <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
+                    <td>
+                        ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}')">Attiva</button>` : ''}
+                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}')">Elimina</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         document.getElementById('btn-crea').addEventListener('click', async () => {
+            const coriSelezionati = [...selCori.selectedOptions].map(o => o.value);
             const body = {
                 nome: document.getElementById('u-nome').value.trim(),
                 cognome: document.getElementById('u-cognome').value.trim(),
                 email: document.getElementById('u-email').value.trim(),
                 password: document.getElementById('u-password').value,
                 ruolo: document.getElementById('u-ruolo').value,
-                cori: [...document.getElementById('check-cori-utente').querySelectorAll('input:checked')].map(i => i.value)
+                cori: coriSelezionati,
+                tipoVoce: document.getElementById('u-vocetipo').value,
+                dataNascita: document.getElementById('u-nascita').value || null,
+                telefono: document.getElementById('u-telefono').value.trim(),
+                note: document.getElementById('u-note').value.trim()
             };
             if (!body.nome || !body.cognome || !body.email || !body.password) {
-                alert('Compila tutti i campi obbligatori.'); return;
+                alert('Compila tutti i campi obbligatori (*)'); return;
             }
             const res = await apiCall('/users', { method: 'POST', body: JSON.stringify(body) });
             const msg = document.getElementById('msg-crea');
             msg.textContent = res?.message || 'Account creato!';
+            msg.className = res?.message?.includes('attesa') ? 'messaggio ok' : 'messaggio err';
+            if (res?.message?.includes('attesa')) {
+                // reset form
+                ['u-nome', 'u-cognome', 'u-email', 'u-password', 'u-telefono', 'u-note'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('u-nascita').value = '';
+                document.getElementById('u-vocetipo').value = '';
+                [...selCori.options].forEach(o => o.selected = false);
+            }
             caricaUtenti();
         });
 

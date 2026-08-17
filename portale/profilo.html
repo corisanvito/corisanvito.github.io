@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2e2a35">
+    <title>Il mio profilo | Cori San Vito</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <style>
+        .profilo-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+
+        .profilo-header {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--c-grey);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .profilo-nome {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .profilo-ruolo {
+            font-size: 0.88rem;
+            color: #888;
+        }
+
+        .campo {
+            margin-bottom: 1.2rem;
+        }
+
+        .campo label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .campo input,
+        .campo select,
+        .campo textarea {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .campo-readonly {
+            padding: 0.6rem 0.9rem;
+            background: #f8f8f8;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .btn-primary {
+            background: var(--c-grey);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.7rem 1.6rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .messaggio {
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .ok {
+            color: #2e7d32;
+        }
+
+        .err {
+            color: #c0392b;
+        }
+
+        .sezione-titolo {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #aaa;
+            margin: 1.5rem 0 1rem;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1><a href="/">Cori San Vito</a></h1>
+        <nav>
+            <ul>
+                <li><a href="/portale/index.html">Dashboard</a></li>
+                <li><a href="/portale/profilo.html" class="active">Profilo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Il mio profilo</h2>
+        <div class="profilo-card">
+            <div class="profilo-header">
+                <div class="avatar" id="avatar">…</div>
+                <div>
+                    <div class="profilo-nome" id="profilo-nome">Caricamento…</div>
+                    <div class="profilo-ruolo" id="profilo-ruolo"></div>
+                </div>
+            </div>
+
+            <p class="sezione-titolo">Dati non modificabili</p>
+            <div class="campo">
+                <label>Nome e cognome</label>
+                <div class="campo-readonly" id="ro-nome"></div>
+            </div>
+            <div class="campo">
+                <label>Email</label>
+                <div class="campo-readonly" id="ro-email"></div>
+            </div>
+            <div class="campo">
+                <label>Ruolo</label>
+                <div class="campo-readonly" id="ro-ruolo"></div>
+            </div>
+            <div class="campo">
+                <label>Cori</label>
+                <div class="campo-readonly" id="ro-cori"></div>
+            </div>
+
+            <p class="sezione-titolo">Dati modificabili</p>
+            <div class="campo">
+                <label>Tipo di voce</label>
+                <select id="p-vocetipo">
+                    <option value="">—</option>
+                    <option value="bianca">Bianca</option>
+                    <option value="soprano">Soprano</option>
+                    <option value="contralto">Contralto</option>
+                    <option value="tenore">Tenore</option>
+                    <option value="basso">Basso</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Data di nascita</label>
+                <input type="date" id="p-nascita">
+            </div>
+            <div class="campo">
+                <label>Telefono</label>
+                <input type="tel" id="p-telefono" placeholder="+39 …">
+            </div>
+            <div class="campo">
+                <label>Note personali</label>
+                <textarea id="p-note" placeholder="Eventuali note…" style="min-height:80px"></textarea>
+            </div>
+
+            <button class="btn-primary" id="btn-salva">Salva modifiche</button>
+            <p class="messaggio" id="msg"></p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+    </footer>
+
+    <script type="module">
+        import { requireAuth } from '/script/auth-guard.js';
+        import { apiCall } from '/script/api.js';
+
+        const utente = requireAuth();
+        if (!utente) throw new Error();
+
+        // Carica dati aggiornati dal server
+        const me = await apiCall('/auth/me');
+        if (!me) { document.querySelector('.profilo-card').innerHTML = '<p>Errore nel caricamento.</p>'; }
+
+        // Header
+        const iniziali = (me.nome[0] + me.cognome[0]).toUpperCase();
+        document.getElementById('avatar').textContent = iniziali;
+        document.getElementById('profilo-nome').textContent = `${me.nome} ${me.cognome}`;
+        document.getElementById('profilo-ruolo').textContent = me.ruolo;
+
+        // Campi readonly
+        document.getElementById('ro-nome').textContent = `${me.nome} ${me.cognome}`;
+        document.getElementById('ro-email').textContent = me.email;
+        document.getElementById('ro-ruolo').textContent = me.ruolo;
+        document.getElementById('ro-cori').textContent = me.cori?.length ? me.cori.map(c => c.nome).join(', ') : '—';
+
+        // Precompila campi modificabili
+        document.getElementById('p-vocetipo').value = me.tipoVoce || '';
+        document.getElementById('p-telefono').value = me.telefono || '';
+        document.getElementById('p-note').value = me.note || '';
+        if (me.dataNascita) {
+            document.getElementById('p-nascita').value = new Date(me.dataNascita).toISOString().split('T')[0];
+        }
+
+        document.getElementById('btn-salva').addEventListener('click', async () => {
+            const body = {
+                tipoVoce: document.getElementById('p-vocetipo').value,
+                dataNascita: document.getElementById('p-nascita').value || null,
+                telefono: document.getElementById('p-telefono').value.trim(),
+                note: document.getElementById('p-note').value.trim()
+            };
+
+            const res = await apiCall(`/users/${me._id}/profilo`, { method: 'PATCH', body: JSON.stringify(body) });
+            const msg = document.getElementById('msg');
+            if (res?._id) {
+                msg.className = 'messaggio ok';
+                msg.textContent = '✓ Profilo aggiornato!';
+            } else {
+                msg.className = 'messaggio err';
+                msg.textContent = res?.message || 'Errore nel salvataggio.';
+            }
+        });
+    </script>
+</body>
+
+</html>
