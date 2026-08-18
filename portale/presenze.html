@@ -45,7 +45,7 @@
   </header>
 
   <main>
-    <h2>Le mie presenze</h2>
+    <h2 id="titolo-presenze">Presenze</h2>
     <div id="contenuto">
       <p>Caricamento…</p>
     </div>
@@ -57,10 +57,14 @@
 
   <script type="module">
     import { requireAuth } from '/script/auth-guard.js';
-    import { apiCall } from '/script/api.js';
+    import { apiCall, getCori } from '/script/api.js';
 
     const utente = requireAuth();
     if (!utente) throw new Error();
+
+    document.getElementById('titolo-presenze').textContent = isAdmin
+      ? 'Presenze coristi'
+      : 'Le mie presenze';
 
     const isAdmin = ['direttore', 'responsabile'].includes(utente.ruolo);
     const contenuto = document.getElementById('contenuto');
@@ -98,8 +102,7 @@
       `;
     } else {
       // Vista admin: schede per coro
-      const me = await apiCall('/auth/me');
-      const cori = me.cori || [];
+      const cori = await getCori();
 
       if (cori.length === 0) {
         contenuto.innerHTML = '<p style="color:#888">Nessun coro assegnato.</p>';

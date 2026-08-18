@@ -90,25 +90,13 @@
 
         const selCoro = document.getElementById('sel-coro');
 
-        if (utente.ruolo === 'direttore') {
-            // Il direttore vede tutti i cori
-            const cori = await getCori();
-            (cori || []).forEach(c => {
-                const o = document.createElement('option');
-                o.value = c._id;
-                o.textContent = c.nome;
-                selCoro.appendChild(o);
-            });
-        } else {
-            // Il responsabile vede solo i suoi cori
-            const me = await apiCall('/auth/me');
-            (me.cori || []).forEach(c => {
-                const o = document.createElement('option');
-                o.value = c._id;
-                o.textContent = c.nome;
-                selCoro.appendChild(o);
-            });
-        }
+        const cori = await getCori();
+        (cori || []).forEach(c => {
+            const o = document.createElement('option');
+            o.value = c._id;
+            o.textContent = c.nome;
+            selCoro.appendChild(o);
+        });
 
         let presenzaMap = {};
 
