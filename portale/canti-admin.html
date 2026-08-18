@@ -219,6 +219,28 @@
         const cantiRes = await apiCall('/canti');
         listaCanti = (cantiRes || []).map(c => c.titolo).sort();
 
+        window.aggiornaCampoDomenica = () => {
+            const ind = document.getElementById('ind-domenica')?.value;
+            const campo = document.getElementById('campo-canto-domenica');
+            if (!campo) return;
+
+            if (ind === 'Salmo') {
+                campo.innerHTML = `
+            <input type="text" id="tit-domenica" placeholder="Es. Salmo XVIII domenica anno A ordinario"
+                style="flex:2;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+            <input type="url" id="lnk-domenica-salmo" placeholder="Link esterno"
+                style="flex:1;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+        `;
+            } else {
+                campo.innerHTML = `
+            <select id="tit-domenica" style="flex:1;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                <option value="">Scegli un canto…</option>
+                ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+            </select>
+        `;
+            }
+        };
+
         async function caricaPannelloSettimana(coroId) {
             const pannello = document.getElementById('pannello-settimana');
             pannello.innerHTML = '<p class="vuoto">Caricamento…</p>';
@@ -241,21 +263,21 @@
                 <div class="form-inline">
                     <input type="date" id="data-domenica" style="flex:0 0 auto">
                     <select id="ind-domenica" style="flex:1;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-          ${INDICAZIONI.map(i => `<option value="${i}">${i}</option>`).join('')}
+                            ${INDICAZIONI.map(i => `<option value="${i}">${i}</option>`).join('')}
                     </select>
                     <select id="tit-domenica" style="flex:2;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                            <option value="">Scegli un canto…</option>
-          ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        <option value="">Scegli un canto…</option>
+                            ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
                     </select>
-                <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
-            </div>
+                    <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
+                </div>
 
-        <div class="lista-settimana" id="lista-domenica">
-        ${domenica.length === 0
+                <div class="lista-settimana" id="lista-domenica">
+                ${domenica.length === 0
                     ? '<p class="vuoto">Nessun canto inserito.</p>'
                     : domenica.map(c => rigaCanto(c)).join('')}
-        </div>
-    </div>
+                </div>
+            </div>
 
     <!-- NUOVI CANTI -->
     <div class="sottosezione">
@@ -338,12 +360,15 @@
             let body = { coro: coroId, tipo };
 
             if (tipo === 'domenica') {
-                const titolo = document.getElementById('tit-domenica').value;
-                if (!titolo) { alert('Scegli un canto.'); return; }
+                const ind = document.getElementById('ind-domenica').value;
+                const titolo = document.getElementById('tit-domenica').value.trim();
+                if (!titolo) { alert('Compila il campo del canto.'); return; }
+                body.indicazione = ind;
                 body.dataDomenica = document.getElementById('data-domenica').value;
-                body.indicazione = document.getElementById('ind-domenica').value;
                 body.titolo = titolo;
-                body.link = '/' + titleToLink(titolo);
+                body.link = ind === 'Salmo'
+                    ? (document.getElementById('lnk-domenica-salmo')?.value.trim() || '')
+                    : '/' + titleToLink(titolo);
             } else if (tipo === 'nuovo') {
                 const titolo = document.getElementById('tit-nuovo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
