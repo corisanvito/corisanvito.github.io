@@ -182,6 +182,54 @@ input[type="file"] {
     white-space: nowrap;
 }
 
+.tabella-domenica-wrap {
+    overflow-x: auto;
+    margin-top: 0.5rem;
+}
+
+.tabella-domenica {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.tabella-domenica thead tr {
+    background: var(--c-grey);
+    color: white;
+}
+
+.tabella-domenica th {
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+.tabella-domenica th:last-child {
+    width: 2rem;
+}
+
+.tabella-domenica td {
+    padding: 0.45rem 0.8rem;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.tabella-domenica tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabella-domenica tbody tr:hover {
+    background: #f8f8f8;
+}
+
+.tabella-domenica td:first-child {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
 .riga-canto-sett {
     display: flex;
     align-items: center;

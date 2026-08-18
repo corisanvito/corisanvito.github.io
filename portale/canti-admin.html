@@ -226,7 +226,12 @@
 
             const canti = await apiCall(`/canti-settimana/${coroId}`);
 
-            const domenica = (canti || []).filter(c => c.tipo === 'domenica');
+            const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+            const domenica = (canti || []).filter(c => {
+                if (c.tipo !== 'domenica') return false;
+                if (!c.dataDomenica) return true;
+                return new Date(c.dataDomenica) >= oggi;
+            });
             const nuovi = (canti || []).filter(c => c.tipo === 'nuovo');
             const tempoForte = (canti || []).filter(c => c.tipo === 'tempo_forte');
 
@@ -256,7 +261,10 @@
                 <div class="lista-settimana" id="lista-domenica">
                 ${domenica.length === 0
                     ? '<p class="vuoto">Nessun canto inserito.</p>'
-                    : domenica.map(c => rigaCanto(c)).join('')}
+                    : `<div class="tabella-domenica-wrap"><table class="tabella-domenica">
+                        <thead><tr><th>Indicazione</th><th>Canto</th><th>Data</th><th></th></tr></thead>
+                        <tbody>${domenica.map(c => rigaCantoDomenica(c)).join('')}</tbody>
+                       </table></div>`}
                 </div>
             </div>
 
@@ -346,6 +354,21 @@
                     }
                 });
             }
+        }
+
+        function rigaCantoDomenica(c) {
+            const link = c.link
+                ? `<a href="${c.link}" target="_blank">${c.titolo}</a>`
+                : c.titolo;
+            const data = c.dataDomenica
+                ? new Date(c.dataDomenica).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                : '—';
+            return `<tr data-id="${c._id}">
+                <td>${c.indicazione || '—'}</td>
+                <td>${link}</td>
+                <td style="white-space:nowrap">${data}</td>
+                <td><button class="btn-sm danger" onclick="rimuoviCanto('${c._id}')">✕</button></td>
+            </tr>`;
         }
 
         function rigaCanto(c) {
