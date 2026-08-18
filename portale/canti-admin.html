@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Pulsante di invio -->
-                <button type="submit" class="btn-primary">Invia</button>
+                <button type="submit" class="btn-primary" id="btn-invia">Invia</button>
 
                 <!-- Campi nascosti per FormSubmit -->
                 <input type="hidden" name="_subject" id="subject" value="">
@@ -176,7 +176,7 @@
 
         const tabsSettimana = document.getElementById('tabs-cori-settimana');
         tabsSettimana.innerHTML = coriMe.map((c, i) => `
-            <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}" data-nome="${c.nome}">
+            <button class="tab-coro ${i === 0 ? 'attivo' : ''} btn-primary" data-id="${c._id}" data-nome="${c.nome}">
                 ${c.nome}
             </button>
         `).join('');

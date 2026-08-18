@@ -57,11 +57,19 @@
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s;
-    margin-top: 1rem;
+}
+
+.btn-primary.attivo {
+    color: var(--c-grey);
+    background-color: white;
 }
 
 .btn-primary:hover {
     opacity: 0.85;
+}
+
+#btn-invia {
+    margin-top: 1rem;
 }
 
 .canto-card {
@@ -180,7 +188,7 @@ input[type="file"] {
 .form-inline select {
     min-width: 0;
     width: auto;
-    height: 2.5rem;
+    max-height: 2.5rem;
     box-sizing: border-box;
 }
 
