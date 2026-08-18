@@ -78,6 +78,26 @@
     opacity: 0.85;
 }
 
+.btn-sm {
+    border: none;
+    border-radius: 5px;
+    padding: 0.4rem 0.9rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-sm:hover {
+    opacity: 0.85;
+}
+
+.btn-sm.danger {
+    background: #c0392b;
+    color: white;
+}
+
 #btn-invia {
     margin-top: 1rem;
 }
