@@ -4,8 +4,8 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
-stringa_da_sostituire = 'admin/aggiungi-canto">Area riservata</a></li>'
-nuova_stringa = 'portale">Area riservata</a></li>'
+stringa_da_sostituire = '.html'
+nuova_stringa = ''
 
 
 def chiedi_cartella():
