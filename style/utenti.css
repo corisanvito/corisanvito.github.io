@@ -138,3 +138,9 @@ tr:last-child td {
     font-size: 0.9rem;
     color: #2e7d32;
 }
+
+@media screen and (max-width: 768px) {
+    .tabella-wrap {
+        margin-bottom: 2rem;
+    }
+}
