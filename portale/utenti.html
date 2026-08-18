@@ -157,8 +157,7 @@
         }
 
         // Genera tab cori
-        const me = await apiCall('/auth/me');
-        const coriMe = me.cori || [];
+        const coriMe = await getCori();
 
         const tabsCori = document.getElementById('tabs-cori');
         tabsCori.innerHTML = coriMe.map((c, i) => `
