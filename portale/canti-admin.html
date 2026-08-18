@@ -162,7 +162,6 @@
                 document.getElementById('c-categoria').value = '';
                 document.getElementById('c-testo').value = '';
                 document.getElementById('c-note').value = '';
-                caricaCanti();
             } else {
                 msg.className = 'messaggio err';
                 msg.textContent = res?.message || 'Errore nel salvataggio.';
@@ -266,8 +265,10 @@
       </div>
 
       <div class="form-inline">
-        <input type="text" id="tit-nuovo" placeholder="Titolo canto" style="flex:2">
-        <input type="url"  id="lnk-nuovo" placeholder="Link (es. /canti/nome)" style="flex:2">
+        <select id="tit-nuovo" style="flex:2;padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+            <option value="">Scegli un canto…</option>
+                ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
         <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'nuovo')">+</button>
       </div>
 
@@ -374,8 +375,6 @@
 
         // Carica il primo coro di default
         if (coriMe.length > 0) caricaPannelloSettimana(coriMe[0]._id);
-
-        caricaCanti();
     </script>
 </body>
 
