@@ -48,3 +48,8 @@ export const getPresenze = () => apiCall('/presenze');
 export const getCanti = () => apiCall('/canti');
 export const getCori = () => apiCall('/cori');
 export const getCantiSettimana = (coroId) => apiCall(`/canti-settimana/${coroId}`);
+// Pubblica — senza auth, usata dalla homepage
+export async function getCantiSettimanaPublic(coroId) {
+    const res = await fetch(`${API_URL}/canti-settimana/${coroId}`);
+    return res.json();
+}
