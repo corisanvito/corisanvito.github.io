@@ -59,9 +59,19 @@
     transition: opacity 0.2s;
 }
 
-.btn-primary.attivo {
+.tab-coro {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.tab-coro:not(.attivo) {
     color: var(--c-grey);
     background: white;
+}
+
+.tab-coro.attivo {
+    background: var(--c-grey);
+    color: white;
 }
 
 .btn-primary:hover {
@@ -69,11 +79,6 @@
 }
 
 #btn-invia {
-    margin-top: 1rem;
-}
-
-.tab-coro {
-    margin-bottom: 1rem;
     margin-top: 1rem;
 }
 
