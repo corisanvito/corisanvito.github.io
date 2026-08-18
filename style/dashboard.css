@@ -77,3 +77,28 @@
     flex-wrap: wrap;
     gap: 0.5rem;
 }
+
+@media (max-width: 480px) {
+    .card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 0.8rem;
+    }
+
+    .card-icon {
+        font-size: 1.6rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .card h3 {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .card p {
+        width: 100%;
+        margin-top: 0.2rem;
+    }
+}
