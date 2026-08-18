@@ -59,9 +59,30 @@
     transition: opacity 0.2s;
 }
 
-.btn-primary.attivo {
+.tab-coro {
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    background: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.tab-coro.attivo {
+    background: var(--c-grey);
+    color: white;
+    border-color: var(--c-grey);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.tab-coro:not(.attivo):hover {
+    border-color: var(--c-grey);
     color: var(--c-grey);
-    background-color: white;
 }
 
 .btn-primary:hover {
