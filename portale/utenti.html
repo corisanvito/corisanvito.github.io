@@ -119,29 +119,6 @@
             selCori.appendChild(o);
         });
 
-        async function caricaUtenti() {
-            const utenti = await apiCall('/users');
-            const tbody = document.getElementById('tbody-utenti');
-            if (!utenti || utenti.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="color:#888">Nessun utente.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = utenti.map(u => `
-                <tr>
-                    <td>${u.nome} ${u.cognome}</td>
-                    <td>${u.email}</td>
-                    <td>${u.ruolo}</td>
-                    <td>${u.cori?.length ? u.cori.map(c => c.nome).join(', ') : '—'}</td>
-                    <td>${u.tipoVoce || '—'}</td>
-                    <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
-                    <td>
-                        ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}')">Attiva</button>` : ''}
-                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}')"><i class="fa-solid fa-trash"></i> Elimina</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
         document.getElementById('btn-crea').addEventListener('click', async () => {
             const coriSelezionati = [...selCori.selectedOptions].map(o => o.value);
             const body = {
@@ -170,21 +147,16 @@
                 document.getElementById('u-vocetipo').value = '';
                 [...selCori.options].forEach(o => o.selected = false);
             }
-            caricaUtenti();
         });
 
         window.attivaUtente = async (id) => {
             await apiCall(`/users/${id}/attiva`, { method: 'PATCH' });
-            caricaUtenti();
         };
 
         window.eliminaUtente = async (id) => {
             if (!confirm('Eliminare questo utente?')) return;
             await apiCall(`/users/${id}`, { method: 'DELETE' });
-            caricaUtenti();
         };
-
-        caricaUtenti();
 
         const me = await apiCall('/auth/me');
         const coriMe = me.cori || [];
