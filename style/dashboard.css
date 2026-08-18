@@ -15,6 +15,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.2rem;
+    margin-bottom: 1.2rem;
 }
 
 .card {
@@ -61,6 +62,7 @@
     cursor: pointer;
     color: var(--c-grey);
     transition: background 0.2s;
+    align-self: end;
 }
 
 .btn-logout:hover {
