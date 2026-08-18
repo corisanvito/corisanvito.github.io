@@ -119,23 +119,28 @@
             selCori.appendChild(o);
         });
 
-        // Carica e mostra gli utenti del coro attivo
+        // Carica e mostra gli utenti del coro attivo (o tutti se coroId === 'tutti')
         async function caricaUtentiCoro(coroId) {
             const pannello = document.getElementById('pannello-utenti');
             pannello.innerHTML = '<p>Caricamento…</p>';
 
+            const tutti = coroId === 'tutti';
             const utenti = await apiCall('/users');
-            const filtrati = (utenti || []).filter(u => u.cori?.some(c => c._id === coroId));
+            const filtrati = tutti
+                ? (utenti || [])
+                : (utenti || []).filter(u => u.cori?.some(c => c._id === coroId));
 
             if (filtrati.length === 0) {
-                pannello.innerHTML = '<p style="color:#888;font-style:italic">Nessun utente in questo coro.</p>';
+                pannello.innerHTML = `<p style="color:#888;font-style:italic">Nessun utente ${tutti ? '' : 'in questo coro'}.</p>`;
                 return;
             }
+
+            const colonnaCoro = tutti ? '<th>Coro</th>' : '';
 
             pannello.innerHTML = `
                 <div class="tabella-wrap">
                     <table>
-                        <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th><th>Stato</th><th>Azioni</th></tr></thead>
+                        <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th>${colonnaCoro}<th>Stato</th><th>Azioni</th></tr></thead>
                         <tbody>
                             ${filtrati.map(u => `
                                 <tr>
@@ -143,6 +148,7 @@
                                     <td>${u.email}</td>
                                     <td>${u.ruolo}</td>
                                     <td>${u.tipoVoce || '—'}</td>
+                                    ${tutti ? `<td>${(u.cori || []).map(c => c.nome).join(', ') || '—'}</td>` : ''}
                                     <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
                                     <td>
                                         ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
@@ -160,9 +166,10 @@
         const coriMe = await getCori();
 
         const tabsCori = document.getElementById('tabs-cori');
-        tabsCori.innerHTML = coriMe.map((c, i) => `
-            <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>
-        `).join('');
+        tabsCori.innerHTML = `<button class="tab-coro attivo" data-id="tutti">Tutti</button>` +
+            coriMe.map(c => `
+                <button class="tab-coro" data-id="${c._id}">${c.nome}</button>
+            `).join('');
 
         document.querySelectorAll('.tab-coro').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -172,8 +179,8 @@
             });
         });
 
-        // Carica primo coro di default
-        if (coriMe.length > 0) caricaUtentiCoro(coriMe[0]._id);
+        // Carica "Tutti" di default
+        caricaUtentiCoro('tutti');
 
         // Crea nuovo account
         document.getElementById('btn-crea').addEventListener('click', async () => {
