@@ -168,6 +168,77 @@ input[type="file"] {
     color: #555;
 }
 
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    align-items: center;
+}
+
+.form-inline input,
+.form-inline select {
+    min-width: 0;
+    width: auto;
+}
+
+#campo-canto-domenica {
+    flex: 1 1 200px;
+    display: flex;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+#campo-canto-domenica input,
+#campo-canto-domenica select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
+#ind-domenica {
+    flex: 1 1 150px;
+}
+
+#data-domenica {
+    flex: 0 0 auto;
+}
+
+#tit-nuovo,
+#tit-tempo {
+    flex: 1 1 200px;
+}
+
+#tf-nome {
+    flex: 1 1 150px;
+}
+
+.btn-sm-h {
+    flex: 0 0 auto;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    align-self: center;
+}
+
+@media (max-width: 600px) {
+    .form-inline {
+        flex-direction: column;
+    }
+
+    .form-inline input,
+    .form-inline select,
+    #campo-canto-domenica,
+    #campo-canto-domenica input,
+    #campo-canto-domenica select {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .btn-sm-h {
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .info {
         font-size: 0.7em;
