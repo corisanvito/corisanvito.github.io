@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="/style/tab-cori.css">
 
   <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32"
-      data-utcoffset="2"></script>
+    data-utcoffset="2"></script>
 </head>
 
 <body>
@@ -103,82 +103,81 @@
 
       if (cori.length === 0) {
         contenuto.innerHTML = '<p style="color:#888">Nessun coro assegnato.</p>';
-        return;
-      }
+      } else {
+        // Tabs cori
+        contenuto.innerHTML = `
+          <div class="tabs-cori">
+            ${cori.map((c, i) => `
+              <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>
+            `).join('')}
+          </div>
+          <div id="pannello-coro"><p>Caricamento…</p></div>
+        `;
 
-      // Tabs cori
-      contenuto.innerHTML = `
-        <div class="tabs-cori">
-          ${cori.map((c, i) => `
-            <button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>
-          `).join('')}
-        </div>
-        <div id="pannello-coro"><p>Caricamento…</p></div>
-      `;
+        async function caricaCoro(coroId, coroNome) {
+          const pannello = document.getElementById('pannello-coro');
+          pannello.innerHTML = '<p>Caricamento…</p>';
 
-      async function caricaCoro(coroId, coroNome) {
-        const pannello = document.getElementById('pannello-coro');
-        pannello.innerHTML = '<p>Caricamento…</p>';
+          const presenze = await apiCall(`/presenze/coro/${coroId}`);
+          if (!presenze || presenze.length === 0) {
+            pannello.innerHTML = '<p style="color:#888;font-style:italic">Nessuna presenza registrata per questo coro.</p>';
+            return;
+          }
 
-        const presenze = await apiCall(`/presenze/coro/${coroId}`);
-        if (!presenze || presenze.length === 0) {
-          pannello.innerHTML = '<p style="color:#888;font-style:italic">Nessuna presenza registrata per questo coro.</p>';
-          return;
+          // Raggruppa per corista
+          const map = {};
+          presenze.forEach(p => {
+            const uid = p.utente._id;
+            if (!map[uid]) map[uid] = { nome: p.utente.nome + ' ' + p.utente.cognome, presenti: 0, totale: 0, righe: [] };
+            map[uid].totale++;
+            if (p.presente) map[uid].presenti++;
+            map[uid].righe.push(p);
+          });
+
+          pannello.innerHTML = Object.entries(map).map(([uid, d]) => `
+            <div class="corista-sezione">
+              <div class="corista-header">
+                <span class="corista-nome-admin">${d.nome}</span>
+                <span class="corista-perc">${Math.round(d.presenti / d.totale * 100)}% (${d.presenti}/${d.totale})</span>
+              </div>
+              <div class="tabella-wrap">
+                <table>
+                  <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th><th></th></tr></thead>
+                  <tbody>
+                    ${d.righe.map(p => `
+                      <tr>
+                        <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
+                        <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
+                        <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
+                        <td>${p.note || '—'}</td>
+                        <td><button class="btn-sm danger" onclick="eliminaPresenza('${p._id}', '${coroId}', '${coroNome}')">Elimina</button></td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `).join('');
         }
 
-        // Raggruppa per corista
-        const map = {};
-        presenze.forEach(p => {
-          const uid = p.utente._id;
-          if (!map[uid]) map[uid] = { nome: p.utente.nome + ' ' + p.utente.cognome, presenti: 0, totale: 0, righe: [] };
-          map[uid].totale++;
-          if (p.presente) map[uid].presenti++;
-          map[uid].righe.push(p);
+        // Click sui tab
+        document.querySelectorAll('.tab-coro').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
+            btn.classList.add('attivo');
+            caricaCoro(btn.dataset.id, btn.textContent);
+          });
         });
 
-        pannello.innerHTML = Object.entries(map).map(([uid, d]) => `
-          <div class="corista-sezione">
-            <div class="corista-header">
-              <span class="corista-nome-admin">${d.nome}</span>
-              <span class="corista-perc">${Math.round(d.presenti / d.totale * 100)}% (${d.presenti}/${d.totale})</span>
-            </div>
-            <div class="tabella-wrap">
-              <table>
-                <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th><th></th></tr></thead>
-                <tbody>
-                  ${d.righe.map(p => `
-                    <tr>
-                      <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
-                      <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
-                      <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
-                      <td>${p.note || '—'}</td>
-                      <td><button class="btn-sm danger" onclick="eliminaPresenza('${p._id}', '${coroId}', '${coroNome}')">Elimina</button></td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        `).join('');
+        window.eliminaPresenza = async (id, coroId, coroNome) => {
+          if (!confirm('Eliminare questa presenza?')) return;
+          await apiCall(`/presenze/${id}`, { method: 'DELETE' });
+          caricaCoro(coroId, coroNome);
+        };
+
+        // Carica il primo coro di default
+        caricaCoro(cori[0]._id, cori[0].nome);
       }
-
-      // Click sui tab
-      document.querySelectorAll('.tab-coro').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
-          btn.classList.add('attivo');
-          caricaCoro(btn.dataset.id, btn.textContent);
-        });
-      });
-
-      window.eliminaPresenza = async (id, coroId, coroNome) => {
-        if (!confirm('Eliminare questa presenza?')) return;
-        await apiCall(`/presenze/${id}`, { method: 'DELETE' });
-        caricaCoro(coroId, coroNome);
-      };
-
-      // Carica il primo coro di default
-      caricaCoro(cori[0]._id, cori[0].nome);
     }
   </script>
 </body>
