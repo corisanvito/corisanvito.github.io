@@ -1,118 +1,160 @@
-@font-face { font-family: 'Pinyon Script'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/PinyonScript-Regular.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Walter Turncoat'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/WalterTurncoat-Regular.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-
-.home-page main {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 2rem;
+body {
+    background: #f0f2f7;
+    color: #555555;
+    display: block;
 }
 
-section {
-    margin-bottom: 2rem;
-}
-
-aside, .centre-column {
+header {
+    background-color: #555555;
+    text-align: center;
+    height: 9rem;
+    padding: 2rem 1rem 1.5rem;
+    position: static;
+    /* non sticky sulla root */
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    justify-content: center;
 }
 
-.div-canti {
-    background-color: white;
-    border-radius: 5px;
-    padding: 1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+header h1 {
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    flex: 1;
 }
 
-.canto-link {
-    transition: all 0.2s ease;
-    line-height: 1.6rem;
+header p {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+    flex: 2;
 }
 
-.canto-link:not(:last-child) {
-    margin-bottom: 1rem;
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem;
+    gap: 1.5rem;
+    min-height: calc(100vh - 9rem - 4rem);
 }
 
-.canto-link a {
-    color: #061a40;
-}
-
-.warning {
-    border-radius: 5px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 5px solid transparent;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.warning h3 {
-    margin-top: 0;
-    margin-bottom: 0.8rem;
-    font-size: 1.4rem;
-    text-align: center;
-}
-
-.warning .closing {
-    font-family: "Walter Turncoat";
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin-top: 1.2rem;
-    text-align: center;
-}
-
-.christmas .closing {
-    font-family: "Pinyon Script";
+.scelta-titolo {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #666;
     font-weight: 600;
-    font-style: normal;
+    margin-bottom: 0.5rem;
+}
+
+.cori-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 860px;
+}
+
+.coro-card {
+    background: white;
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    border-top: 5px solid var(--stripe);
+    transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.coro-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
+    text-decoration: none;
+}
+
+.coro-card .orario {
     font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--stripe);
     line-height: 1;
 }
 
-.restart, .end {
-    background: linear-gradient(#ebeafa, #ebeafa) padding-box,
-                linear-gradient(115deg, #061a40, #0446bf) border-box;
+.coro-card .nome {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #555555;
 }
 
-.christmas {
-    background: linear-gradient(#faeaea, #faeaea) padding-box,
-                linear-gradient(115deg, #56050b, #cf0a17) border-box;
+.coro-card .desc {
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.4;
 }
 
-.christmas .warning-content b { color: #325632; }
-
-.christmas .closing, .christmas h3 { color: #700a11; }
-
-.calendar-section iframe {
-    width: 100%;
-    height: 400px;
-    border: none;
-    border-radius: 5px;
+.coro-card .vai {
+    margin-top: auto;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--stripe);
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-#tempi-forti, #sezione-nuovi-canti {
-    display: none;
+/* Colori per carta */
+.card-10 {
+    --stripe: #0047AB;
 }
 
-@media (max-width: 968px) {
-    .home-page main {
+.card-1115 {
+    --stripe: #568203;
+}
+
+.card-estate {
+    --stripe: #E44D2E;
+}
+
+footer {
+    background-color: #555555;
+    text-align: center;
+    height: 4rem;
+    padding: 1.2rem;
+}
+
+footer a.privacy {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 640px) {
+    .cori-grid {
         grid-template-columns: 1fr;
-    }
-    
-    aside {
-        padding-top: 1rem;
+        max-width: 420px;
     }
 
-    .home-page main, aside, .centre-column {
+    .coro-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 1.2rem 1.4rem;
         gap: 1rem;
     }
 
-    section {
-        margin-bottom: 1rem;
+    .coro-card .orario {
+        font-size: 1.7rem;
+        min-width: 3.5rem;
     }
-}
 
-@media (max-width: 426px) {
-    .calendar-section iframe {
-        height: 260px;
+    .coro-card .desc {
+        display: none;
+    }
+
+    .coro-card .vai {
+        margin-top: 0;
+        margin-left: auto;
     }
 }
