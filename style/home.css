@@ -131,6 +131,45 @@ footer a.privacy {
     color: rgba(255, 255, 255, 0.6);
 }
 
+.oppure {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 860px;
+    color: #aaa;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.oppure::before,
+.oppure::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+
+.extra-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 860px;
+}
+
+.card-extra {
+    --stripe: #555555;
+}
+
+@media (max-width: 640px) {
+    .extra-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+    }
+}
+
 @media (max-width: 640px) {
     .cori-grid {
         grid-template-columns: 1fr;
