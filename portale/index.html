@@ -83,15 +83,15 @@
             `${ruoliLabel[me.ruolo] || me.ruolo}${coriNomi ? ' · ' + coriNomi : ''}`;
 
         const cardsBase = [
-            { href: '/portale/bacheca.html', icon: '📋', titolo: 'Bacheca', desc: 'Avvisi e comunicazioni del coro' },
-            { href: '/portale/presenze.html', icon: '📊', titolo: 'Presenze', desc: 'Le tue statistiche di presenza' },
-            { href: '/portale/profilo.html', icon: '👤', titolo: 'Il mio profilo', desc: 'Modifica i tuoi dati personali' },
+            { href: '/portale/bacheca.html', icon: '<i class="fa-solid fa-clipboard"></i>', titolo: 'Bacheca', desc: 'Avvisi e comunicazioni del coro' },
+            { href: '/portale/presenze.html', icon: '<i class="fa-solid fa-chart-simple"></i>', titolo: 'Presenze', desc: 'Le tue statistiche di presenza' },
+            { href: '/portale/profilo.html', icon: '<i class="fa-solid fa-user"></i>', titolo: 'Il mio profilo', desc: 'Modifica i tuoi dati personali' },
         ];
 
         const cardsAdmin = [
-            { href: '/portale/utenti.html', icon: '👥', titolo: 'Gestione utenti', desc: 'Crea e attiva gli account' },
-            { href: '/portale/canti-admin.html', icon: '🎵', titolo: 'Gestione canti', desc: 'Aggiungi, modifica, elimina canti' },
-            { href: '/portale/registro.html', icon: '✅', titolo: 'Registro presenze', desc: 'Segna le presenze alle prove' },
+            { href: '/portale/utenti.html', icon: '<i class="fa-solid fa-users-gear"></i>', titolo: 'Gestione utenti', desc: 'Crea e attiva gli account' },
+            { href: '/portale/canti-admin.html', icon: '<i class="fa-solid fa-music"></i>', titolo: 'Gestione canti', desc: 'Aggiungi, modifica, elimina canti' },
+            { href: '/portale/registro.html', icon: '<i class="fa-solid fa-list-check"></i>', titolo: 'Registro presenze', desc: 'Segna le presenze alle prove' },
         ];
 
         const isAdmin = ['direttore', 'responsabile'].includes(me.ruolo);
