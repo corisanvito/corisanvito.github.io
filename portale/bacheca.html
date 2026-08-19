@@ -81,7 +81,7 @@
         const utente = requireAuth();
         if (!utente) throw new Error();
 
-        const isAdmin = ['direttore', 'responsabile'].includes(utente.ruolo);
+        const isAdmin = ['admin', 'direttore', 'responsabile'].includes(utente.ruolo);
         const lista = document.getElementById('lista-avvisi');
 
         async function caricaAvvisi() {
@@ -107,8 +107,8 @@
 
             const sel = document.getElementById('coro-avviso');
 
-            if (utente.ruolo === 'direttore') {
-                // Il direttore vede tutti i cori
+            if (utente.ruolo === 'admin') {
+                // L'admin vede tutti i cori
                 const cori = await getCori();
                 (cori || []).forEach(c => {
                     const o = document.createElement('option');
@@ -117,7 +117,7 @@
                     sel.appendChild(o);
                 });
             } else {
-                // Il responsabile vede solo i suoi cori
+                // Il responsabile e il direttore vedono solo i suoi cori
                 const me = await apiCall('/auth/me');
                 (me.cori || []).forEach(c => {
                     const o = document.createElement('option');

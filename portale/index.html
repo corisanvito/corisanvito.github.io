@@ -73,6 +73,7 @@
         document.getElementById('btn-logout').addEventListener('click', logout);
 
         const ruoliLabel = {
+            admin: 'Admin',
             direttore: 'Direttore',
             responsabile: 'Responsabile',
             corista: 'Corista',
@@ -95,7 +96,7 @@
             { href: '/portale/registro', icon: '<i class="fa-solid fa-list-check"></i>', titolo: 'Registro presenze', desc: 'Segna le presenze alle prove' },
         ];
 
-        const isAdmin = ['direttore', 'responsabile', 'admin'].includes(me.ruolo);
+        const isAdmin = ['admin', 'direttore', 'responsabile'].includes(me.ruolo);
         const cards = isAdmin ? [...cardsBase, ...cardsAdmin] : cardsBase;
 
         document.getElementById('card-grid').innerHTML = cards.map(c => `

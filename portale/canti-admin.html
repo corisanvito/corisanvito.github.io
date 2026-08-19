@@ -138,7 +138,7 @@
         import { requireAuth } from '/script/auth-guard.js';
         import { apiCall, getCori } from '/script/api.js';
 
-        const utente = requireAuth(['direttore', 'responsabile']);
+        const utente = requireAuth(['admin', 'direttore', 'responsabile']);
         if (!utente) throw new Error();
 
         document.getElementById('btn-aggiungi')?.addEventListener('click', async () => {

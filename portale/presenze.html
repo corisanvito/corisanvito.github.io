@@ -62,7 +62,7 @@
     const utente = requireAuth();
     if (!utente) throw new Error();
 
-    const isAdmin = ['direttore', 'responsabile'].includes(utente.ruolo);
+    const isAdmin = ['admin', 'direttore', 'responsabile'].includes(utente.ruolo);
     const contenuto = document.getElementById('contenuto');
 
     document.getElementById('titolo-presenze').textContent = isAdmin
