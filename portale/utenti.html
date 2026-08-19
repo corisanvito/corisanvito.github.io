@@ -65,11 +65,9 @@
                 </div>
                 <div class="campo">
                     <label>Cori</label>
-                    <select id="u-cori" multiple size="3"
-                        style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.95rem">
+                    <div id="u-cori" class="cori-selector">
                         <!-- popolato da JS -->
-                    </select>
-                    <small style="color:#888;font-size:0.78rem">Tieni Ctrl (o Cmd) per selezionare più cori</small>
+                    </div>
                 </div>
                 <div class="campo">
                     <label>Tipo di voce</label>
@@ -110,13 +108,30 @@
 
         const cori = await getCori();
 
-        // Popola select multipla cori
+        // Popola selettore cori
         const selCori = document.getElementById('u-cori');
+
         (cori || []).forEach(c => {
-            const o = document.createElement('option');
-            o.value = c._id;
-            o.textContent = c.nome;
-            selCori.appendChild(o);
+            const button = document.createElement('button');
+
+            button.type = 'button';
+            button.className = 'coro-option';
+            button.dataset.id = c._id;
+            button.innerHTML = `<i class="fa-regular fa-circle"></i>${c.nome}`;
+
+            button.addEventListener('click', () => {
+                button.classList.toggle('selezionato');
+
+                const icon = button.querySelector('i');
+
+                if (button.classList.contains('selezionato')) {
+                    icon.className = 'fa-solid fa-circle-check';
+                } else {
+                    icon.className = 'fa-regular fa-circle';
+                }
+            });
+
+            selCori.appendChild(button);
         });
 
         // Carica e mostra gli utenti del coro attivo (o tutti se coroId === 'tutti')
@@ -186,7 +201,9 @@
 
         // Crea nuovo account
         document.getElementById('btn-crea').addEventListener('click', async () => {
-            const coriSelezionati = [...selCori.selectedOptions].map(o => o.value);
+            const coriSelezionati = [
+                ...selCori.querySelectorAll('.coro-option.selezionato')
+            ].map(o => o.dataset.id);
             const body = {
                 nome: document.getElementById('u-nome').value.trim(),
                 cognome: document.getElementById('u-cognome').value.trim(),
@@ -211,7 +228,12 @@
                 ['u-nome', 'u-cognome', 'u-email', 'u-password', 'u-telefono', 'u-note'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('u-nascita').value = '';
                 document.getElementById('u-vocetipo').value = '';
-                [...selCori.options].forEach(o => o.selected = false);
+                selCori.querySelectorAll('.coro-option').forEach(o => {
+                    o.classList.remove('selezionato');
+
+                    const icon = o.querySelector('i');
+                    icon.className = 'fa-regular fa-circle';
+                });
 
                 // ricarica il tab attivo
                 const tabAttivo = document.querySelector('.tab-coro.attivo');

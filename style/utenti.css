@@ -139,6 +139,40 @@ tr:last-child td {
     color: #2e7d32;
 }
 
+.cori-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.coro-option {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    background: #fff;
+    color: #333;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.coro-option:hover {
+    border-color: var(--c-accent);
+    background: #f5f8fc;
+}
+
+.coro-option.selezionato {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: white;
+}
+
+.coro-option i {
+    margin-right: 0.35rem;
+}
+
 @media screen and (max-width: 768px) {
     .tabella-wrap {
         margin-bottom: 2rem;
