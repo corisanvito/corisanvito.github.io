@@ -163,12 +163,6 @@ tr:last-child td {
     background: #f5f8fc;
 }
 
-.coro-option.selezionato {
-    background: var(--c-accent);
-    border-color: var(--c-accent);
-    color: white;
-}
-
 .coro-option i {
     margin-right: 0.35rem;
 }
