@@ -71,22 +71,16 @@
                 </div>
                 <div class="campo">
                     <label>Tipo di voce / Strumento</label>
-                    <div id="u-vocetipo" class="cori-selector">
-                        <button type="button" class="coro-option" data-value="bianca"><i
-                                class="fa-regular fa-circle"></i> Bianca</button>
-                        <button type="button" class="coro-option" data-value="soprano"><i
-                                class="fa-regular fa-circle"></i> Soprano</button>
-                        <button type="button" class="coro-option" data-value="contralto"><i
-                                class="fa-regular fa-circle"></i> Contralto</button>
-                        <button type="button" class="coro-option" data-value="tenore"><i
-                                class="fa-regular fa-circle"></i> Tenore</button>
-                        <button type="button" class="coro-option" data-value="basso"><i
-                                class="fa-regular fa-circle"></i> Basso</button>
-                        <button type="button" class="coro-option" data-value="chitarra"><i
-                                class="fa-regular fa-circle"></i> Chitarra</button>
-                        <button type="button" class="coro-option" data-value="pianoforte"><i
-                                class="fa-regular fa-circle"></i> Pianoforte</button>
-                    </div>
+                    <select id="u-vocetipo">
+                        <option value="">— Nessuno —</option>
+                        <option value="bianca">Bianca</option>
+                        <option value="soprano">Soprano</option>
+                        <option value="contralto">Contralto</option>
+                        <option value="tenore">Tenore</option>
+                        <option value="basso">Basso</option>
+                        <option value="chitarra">Chitarra</option>
+                        <option value="pianoforte">Pianoforte</option>
+                    </select>
                 </div>
                 <div class="campo"><label>Data di nascita</label><input type="date" id="u-nascita"></div>
                 <div class="campo"><label>Telefono</label><input type="tel" id="u-telefono"></div>
@@ -128,7 +122,7 @@
             selCori.appendChild(button);
         });
 
-        // Logica toggle per bottoni selezionabili
+        // Logica toggle per bottoni selezionabili (cori)
         function toggleOption(btn) {
             btn.classList.toggle('selezionato');
             const icon = btn.querySelector('i');
@@ -136,11 +130,6 @@
                 ? 'fa-solid fa-circle-check'
                 : 'fa-regular fa-circle';
         }
-
-        // Aggiungi toggle anche ai bottoni voce/strumento
-        document.querySelectorAll('#u-vocetipo .coro-option').forEach(btn => {
-            btn.addEventListener('click', () => toggleOption(btn));
-        });
 
         // Carica e mostra gli utenti del coro attivo (o tutti se coroId === 'tutti')
         async function caricaUtentiCoro(coroId) {
@@ -207,7 +196,6 @@
         // Crea nuovo account
         document.getElementById('btn-crea').addEventListener('click', async () => {
             const coriSelezionati = [...selCori.querySelectorAll('.coro-option.selezionato')].map(o => o.dataset.id);
-            const vociSelezionate = [...document.querySelectorAll('#u-vocetipo .coro-option.selezionato')].map(o => o.dataset.value);
             const body = {
                 nome: document.getElementById('u-nome').value.trim(),
                 cognome: document.getElementById('u-cognome').value.trim(),
@@ -215,7 +203,7 @@
                 password: document.getElementById('u-password').value,
                 ruolo: document.getElementById('u-ruolo').value,
                 cori: coriSelezionati,
-                tipoVoce: vociSelezionate.join(', '),
+                tipoVoce: document.getElementById('u-vocetipo').value,
                 dataNascita: document.getElementById('u-nascita').value || null,
                 telefono: document.getElementById('u-telefono').value.trim(),
                 note: document.getElementById('u-note').value.trim()
@@ -230,11 +218,8 @@
             if (res?.message?.includes('attesa')) {
                 ['u-nome', 'u-cognome', 'u-email', 'u-password', 'u-telefono', 'u-note'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('u-nascita').value = '';
+                document.getElementById('u-vocetipo').value = '';
                 selCori.querySelectorAll('.coro-option').forEach(o => {
-                    o.classList.remove('selezionato');
-                    o.querySelector('i').className = 'fa-regular fa-circle';
-                });
-                document.querySelectorAll('#u-vocetipo .coro-option').forEach(o => {
                     o.classList.remove('selezionato');
                     o.querySelector('i').className = 'fa-regular fa-circle';
                 });
