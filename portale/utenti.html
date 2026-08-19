@@ -126,43 +126,42 @@
 
             const tutti = coroId === 'tutti';
             const utenti = await apiCall('/users');
-            const filtrati = (utenti || []).filter(u =>
-                u.cori?.some(c => (c._id || c).toString() === coroId) && u.ruolo !== 'admin'
-            );
-
-            console.log('coroId cercato:', coroId);
-            console.log('utenti ricevuti:', utenti?.map(u => ({ nome: u.nome, cori: u.cori })));
+            const filtrati = (utenti || []).filter(u => {
+                if (u.ruolo === 'admin') return false;
+                if (tutti) return true;
+                return u.cori?.some(c => (c._id || c).toString() === coroId);
+            });
 
             if (filtrati.length === 0) {
-                pannello.innerHTML = `<p style="color:#888;font-style:italic">Nessun utente ${tutti ? '' : 'in questo coro'}.</p>`;
+                pannello.innerHTML = `<p style="color:#888;font-style:italic">Nessun utente${tutti ? '' : ' in questo coro'}.</p>`;
                 return;
             }
 
-            const colonnaCoro = tutti ? '<th>Coro</th>' : '';
+            const colonnaCoro = tutti ? '<th>Cori</th>' : '';
 
             pannello.innerHTML = `
-                <div class="tabella-wrap">
-                    <table>
-                        <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th>${colonnaCoro}<th>Stato</th><th>Azioni</th></tr></thead>
-                        <tbody>
-                            ${filtrati.map(u => `
-                                <tr>
-                                    <td>${u.nome} ${u.cognome}</td>
-                                    <td>${u.email}</td>
-                                    <td>${u.ruolo}</td>
-                                    <td>${u.tipoVoce || '—'}</td>
-                                    ${tutti ? `<td>${(u.cori || []).map(c => c.nome).join(', ') || '—'}</td>` : ''}
-                                    <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
-                                    <td>
-                                        ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
-                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+        <div class="tabella-wrap">
+            <table>
+                <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th>${colonnaCoro}<th>Stato</th><th>Azioni</th></tr></thead>
+                <tbody>
+                    ${filtrati.map(u => `
+                        <tr>
+                            <td>${u.nome} ${u.cognome}</td>
+                            <td>${u.email}</td>
+                            <td>${u.ruolo}</td>
+                            <td>${u.tipoVoce || '—'}</td>
+                            ${tutti ? `<td>${(u.cori || []).map(c => c.nome).join(', ') || '—'}</td>` : ''}
+                            <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
+                            <td>
+                                ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
+                                <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
         }
 
         // Genera tab cori
