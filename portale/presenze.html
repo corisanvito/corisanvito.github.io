@@ -137,6 +137,7 @@
           // Raggruppa per corista
           const map = {};
           presenze.forEach(p => {
+            if (!p.utente) return; // salta presenze con utente eliminato
             const uid = p.utente._id;
             if (!map[uid]) map[uid] = { nome: p.utente.nome + ' ' + p.utente.cognome, presenti: 0, totale: 0, righe: [] };
             map[uid].totale++;
