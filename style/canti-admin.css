@@ -65,12 +65,12 @@
 }
 
 .tab-coro:not(.attivo) {
-    color: var(--c-grey);
+    color: var(--c-purple);
     background: white;
 }
 
 .tab-coro.attivo {
-    background: var(--c-grey);
+    background: var(--c-purple);
     color: white;
 }
 
@@ -194,7 +194,7 @@ input[type="file"] {
 }
 
 .tabella-domenica thead tr {
-    background: var(--c-grey);
+    background: var(--c-purple);
     color: white;
 }
 
