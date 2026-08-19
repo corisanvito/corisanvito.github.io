@@ -167,7 +167,7 @@
                                     <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
                                     <td>
                                         ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
-                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"style="color: #301934;"></i> Elimina</button>
+                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
                                     </td>
                                 </tr>
                             `).join('')}
