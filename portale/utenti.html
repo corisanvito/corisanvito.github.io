@@ -70,15 +70,23 @@
                     </div>
                 </div>
                 <div class="campo">
-                    <label>Tipo di voce</label>
-                    <select id="u-vocetipo">
-                        <option value="">—</option>
-                        <option value="bianca">Bianca</option>
-                        <option value="soprano">Soprano</option>
-                        <option value="contralto">Contralto</option>
-                        <option value="tenore">Tenore</option>
-                        <option value="basso">Basso</option>
-                    </select>
+                    <label>Tipo di voce / Strumento</label>
+                    <div id="u-vocetipo" class="cori-selector">
+                        <button type="button" class="coro-option" data-value="bianca"><i
+                                class="fa-regular fa-circle"></i> Bianca</button>
+                        <button type="button" class="coro-option" data-value="soprano"><i
+                                class="fa-regular fa-circle"></i> Soprano</button>
+                        <button type="button" class="coro-option" data-value="contralto"><i
+                                class="fa-regular fa-circle"></i> Contralto</button>
+                        <button type="button" class="coro-option" data-value="tenore"><i
+                                class="fa-regular fa-circle"></i> Tenore</button>
+                        <button type="button" class="coro-option" data-value="basso"><i
+                                class="fa-regular fa-circle"></i> Basso</button>
+                        <button type="button" class="coro-option" data-value="chitarra"><i
+                                class="fa-regular fa-circle"></i> Chitarra</button>
+                        <button type="button" class="coro-option" data-value="pianoforte"><i
+                                class="fa-regular fa-circle"></i> Pianoforte</button>
+                    </div>
                 </div>
                 <div class="campo"><label>Data di nascita</label><input type="date" id="u-nascita"></div>
                 <div class="campo"><label>Telefono</label><input type="tel" id="u-telefono"></div>
@@ -110,28 +118,28 @@
 
         // Popola selettore cori
         const selCori = document.getElementById('u-cori');
-
         (cori || []).forEach(c => {
             const button = document.createElement('button');
-
             button.type = 'button';
             button.className = 'coro-option';
             button.dataset.id = c._id;
-            button.innerHTML = `<i class="fa-regular fa-circle"></i>${c.nome}`;
-
-            button.addEventListener('click', () => {
-                button.classList.toggle('selezionato');
-
-                const icon = button.querySelector('i');
-
-                if (button.classList.contains('selezionato')) {
-                    icon.className = 'fa-solid fa-circle-check';
-                } else {
-                    icon.className = 'fa-regular fa-circle';
-                }
-            });
-
+            button.innerHTML = `<i class="fa-regular fa-circle"></i> ${c.nome}`;
+            button.addEventListener('click', () => toggleOption(button));
             selCori.appendChild(button);
+        });
+
+        // Logica toggle per bottoni selezionabili
+        function toggleOption(btn) {
+            btn.classList.toggle('selezionato');
+            const icon = btn.querySelector('i');
+            icon.className = btn.classList.contains('selezionato')
+                ? 'fa-solid fa-circle-check'
+                : 'fa-regular fa-circle';
+        }
+
+        // Aggiungi toggle anche ai bottoni voce/strumento
+        document.querySelectorAll('#u-vocetipo .coro-option').forEach(btn => {
+            btn.addEventListener('click', () => toggleOption(btn));
         });
 
         // Carica e mostra gli utenti del coro attivo (o tutti se coroId === 'tutti')
@@ -155,38 +163,35 @@
             const colonnaCoro = tutti ? '<th>Cori</th>' : '';
 
             pannello.innerHTML = `
-        <div class="tabella-wrap">
-            <table>
-                <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce</th>${colonnaCoro}<th>Stato</th><th>Azioni</th></tr></thead>
-                <tbody>
-                    ${filtrati.map(u => `
-                        <tr>
-                            <td>${u.nome} ${u.cognome}</td>
-                            <td>${u.email}</td>
-                            <td>${u.ruolo}</td>
-                            <td>${u.tipoVoce || '—'}</td>
-                            ${tutti ? `<td>${(u.cori || []).map(c => c.nome).join(', ') || '—'}</td>` : ''}
-                            <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
-                            <td>
-                                ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
-                                <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
+                <div class="tabella-wrap">
+                    <table>
+                        <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Voce / Strumento</th>${colonnaCoro}<th>Stato</th><th>Azioni</th></tr></thead>
+                        <tbody>
+                            ${filtrati.map(u => `
+                                <tr>
+                                    <td>${u.nome} ${u.cognome}</td>
+                                    <td>${u.email}</td>
+                                    <td>${u.ruolo}</td>
+                                    <td>${u.tipoVoce || '—'}</td>
+                                    ${tutti ? `<td>${(u.cori || []).map(c => c.nome).join(', ') || '—'}</td>` : ''}
+                                    <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
+                                    <td>
+                                        ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
+                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
 
         // Genera tab cori
         const coriMe = await getCori();
-
         const tabsCori = document.getElementById('tabs-cori');
         tabsCori.innerHTML = `<button class="tab-coro attivo" data-id="tutti">Tutti</button>` +
-            coriMe.map(c => `
-                <button class="tab-coro" data-id="${c._id}">${c.nome}</button>
-            `).join('');
+            coriMe.map(c => `<button class="tab-coro" data-id="${c._id}">${c.nome}</button>`).join('');
 
         document.querySelectorAll('.tab-coro').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -201,9 +206,8 @@
 
         // Crea nuovo account
         document.getElementById('btn-crea').addEventListener('click', async () => {
-            const coriSelezionati = [
-                ...selCori.querySelectorAll('.coro-option.selezionato')
-            ].map(o => o.dataset.id);
+            const coriSelezionati = [...selCori.querySelectorAll('.coro-option.selezionato')].map(o => o.dataset.id);
+            const vociSelezionate = [...document.querySelectorAll('#u-vocetipo .coro-option.selezionato')].map(o => o.dataset.value);
             const body = {
                 nome: document.getElementById('u-nome').value.trim(),
                 cognome: document.getElementById('u-cognome').value.trim(),
@@ -211,7 +215,7 @@
                 password: document.getElementById('u-password').value,
                 ruolo: document.getElementById('u-ruolo').value,
                 cori: coriSelezionati,
-                tipoVoce: document.getElementById('u-vocetipo').value,
+                tipoVoce: vociSelezionate.join(', '),
                 dataNascita: document.getElementById('u-nascita').value || null,
                 telefono: document.getElementById('u-telefono').value.trim(),
                 note: document.getElementById('u-note').value.trim()
@@ -224,30 +228,26 @@
             msg.textContent = res?.message || 'Account creato!';
             msg.className = res?.message?.includes('attesa') ? 'messaggio ok' : 'messaggio err';
             if (res?.message?.includes('attesa')) {
-                // reset form
                 ['u-nome', 'u-cognome', 'u-email', 'u-password', 'u-telefono', 'u-note'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('u-nascita').value = '';
-                document.getElementById('u-vocetipo').value = '';
                 selCori.querySelectorAll('.coro-option').forEach(o => {
                     o.classList.remove('selezionato');
-
-                    const icon = o.querySelector('i');
-                    icon.className = 'fa-regular fa-circle';
+                    o.querySelector('i').className = 'fa-regular fa-circle';
                 });
-
-                // ricarica il tab attivo
+                document.querySelectorAll('#u-vocetipo .coro-option').forEach(o => {
+                    o.classList.remove('selezionato');
+                    o.querySelector('i').className = 'fa-regular fa-circle';
+                });
                 const tabAttivo = document.querySelector('.tab-coro.attivo');
                 if (tabAttivo) caricaUtentiCoro(tabAttivo.dataset.id);
             }
         });
 
-        // Attiva utente
         window.attivaUtente = async (id, coroId) => {
             await apiCall(`/users/${id}/attiva`, { method: 'PATCH' });
             caricaUtentiCoro(coroId);
         };
 
-        // Elimina utente
         window.eliminaUtente = async (id, coroId) => {
             if (!confirm('Eliminare questo utente?')) return;
             await apiCall(`/users/${id}`, { method: 'DELETE' });

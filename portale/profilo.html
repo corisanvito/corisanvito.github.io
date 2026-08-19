@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione canti | Cori San Vito</title>
+    <title>Il mio profilo | Cori San Vito</title>
 
     <link rel="icon" href="../images/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
@@ -74,15 +74,23 @@
                 <input type="email" id="p-email">
             </div>
             <div class="campo">
-                <label>Tipo di voce</label>
-                <select id="p-vocetipo">
-                    <option value="">—</option>
-                    <option value="bianca">Bianca</option>
-                    <option value="soprano">Soprano</option>
-                    <option value="contralto">Contralto</option>
-                    <option value="tenore">Tenore</option>
-                    <option value="basso">Basso</option>
-                </select>
+                <label>Tipo di voce / Strumento</label>
+                <div id="p-vocetipo" class="cori-selector">
+                    <button type="button" class="coro-option" data-value="bianca"><i class="fa-regular fa-circle"></i>
+                        Bianca</button>
+                    <button type="button" class="coro-option" data-value="soprano"><i class="fa-regular fa-circle"></i>
+                        Soprano</button>
+                    <button type="button" class="coro-option" data-value="contralto"><i
+                            class="fa-regular fa-circle"></i> Contralto</button>
+                    <button type="button" class="coro-option" data-value="tenore"><i class="fa-regular fa-circle"></i>
+                        Tenore</button>
+                    <button type="button" class="coro-option" data-value="basso"><i class="fa-regular fa-circle"></i>
+                        Basso</button>
+                    <button type="button" class="coro-option" data-value="chitarra"><i class="fa-regular fa-circle"></i>
+                        Chitarra</button>
+                    <button type="button" class="coro-option" data-value="pianoforte"><i
+                            class="fa-regular fa-circle"></i> Pianoforte</button>
+                </div>
             </div>
             <div class="campo">
                 <label>Data di nascita</label>
@@ -129,6 +137,31 @@
         const utente = requireAuth();
         if (!utente) throw new Error();
 
+        // Logica toggle per bottoni voce/strumento
+        function toggleOption(btn) {
+            btn.classList.toggle('selezionato');
+            const icon = btn.querySelector('i');
+            icon.className = btn.classList.contains('selezionato')
+                ? 'fa-solid fa-circle-check'
+                : 'fa-regular fa-circle';
+        }
+
+        document.querySelectorAll('#p-vocetipo .coro-option').forEach(btn => {
+            btn.addEventListener('click', () => toggleOption(btn));
+        });
+
+        // Imposta i bottoni voce in base ai valori salvati (stringa separata da virgola)
+        function impostaVoci(tipoVoce) {
+            const valori = (tipoVoce || '').split(',').map(v => v.trim()).filter(Boolean);
+            document.querySelectorAll('#p-vocetipo .coro-option').forEach(btn => {
+                const selezionato = valori.includes(btn.dataset.value);
+                btn.classList.toggle('selezionato', selezionato);
+                btn.querySelector('i').className = selezionato
+                    ? 'fa-solid fa-circle-check'
+                    : 'fa-regular fa-circle';
+            });
+        }
+
         async function carica() {
             const me = await apiCall('/auth/me');
             if (!me) {
@@ -148,17 +181,22 @@
             document.getElementById('ro-cori').textContent = coriTesto;
 
             document.getElementById('p-email').value = me.email || '';
-            document.getElementById('p-vocetipo').value = me.tipoVoce || '';
             document.getElementById('p-telefono').value = me.telefono || '';
             document.getElementById('p-note').value = me.note || '';
             if (me.dataNascita) {
                 document.getElementById('p-nascita').value = new Date(me.dataNascita).toISOString().split('T')[0];
             }
 
+            // Imposta bottoni voce/strumento
+            impostaVoci(me.tipoVoce);
+
             document.getElementById('btn-salva').onclick = async () => {
+                const vociSelezionate = [...document.querySelectorAll('#p-vocetipo .coro-option.selezionato')]
+                    .map(o => o.dataset.value)
+                    .join(', ');
                 const body = {
                     email: document.getElementById('p-email').value.trim(),
-                    tipoVoce: document.getElementById('p-vocetipo').value,
+                    tipoVoce: vociSelezionate,
                     dataNascita: document.getElementById('p-nascita').value || null,
                     telefono: document.getElementById('p-telefono').value.trim(),
                     note: document.getElementById('p-note').value.trim()
