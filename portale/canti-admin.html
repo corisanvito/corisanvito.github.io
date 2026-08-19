@@ -170,21 +170,27 @@
             }
         });
 
-
         // ── CANTI SETTIMANA ────────────────────────────────────────────────────
 
         const me = await apiCall('/auth/me');
-        const coriMe = me.cori || [];
+
+        // Scegli la lista dei cori da mostrare: admin → tutti, altrimenti i suoi
+        let coriDisponibili = [];
+        if (me.ruolo === 'admin') {
+            coriDisponibili = await getCori();   // deve restituire l'array completo
+        } else {
+            coriDisponibili = me.cori || [];
+        }
 
         const tabsSettimana = document.getElementById('tabs-cori-settimana');
-        tabsSettimana.innerHTML = coriMe.map((c, i) => `
+        tabsSettimana.innerHTML = coriDisponibili.map((c, i) => `
             <button class="tab-coro ${i === 0 ? 'attivo' : ''} btn-primary" data-id="${c._id}" data-nome="${c.nome}">
                 ${c.nome}
             </button>
         `).join('');
 
-        let coroAttivoId = coriMe[0]?._id;
-        let coroAttivoNome = coriMe[0]?.nome;
+        let coroAttivoId = coriDisponibili[0]?._id;
+        let coroAttivoNome = coriDisponibili[0]?.nome;
 
         document.querySelectorAll('.tab-coro').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -216,7 +222,6 @@
             'Comunione', 'Comunione (2)', 'Congedo', 'Canto da ripassare'
         ];
 
-        // Carica lista canti dal backend
         let listaCanti = [];
         const cantiRes = await apiCall('/canti');
         listaCanti = (cantiRes || []).map(c => c.titolo).sort();
@@ -237,87 +242,85 @@
             const tempoForte = (canti || []).filter(c => c.tipo === 'tempo_forte');
 
             pannello.innerHTML = `
-
-            <!-- CANTI DOMENICA -->
-            <div class="sottosezione">
-                <div class="sottosezione-header">
-                    <h4><i class="fa-solid fa-cross"style="color: #301934;"></i> Canti della domenica</h4>
-                    <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'domenica')">Svuota</button>
-                </div>
-
-                <div class="form-inline">
-                    <input type="date" id="data-domenica">
-                    <select id="ind-domenica" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                        ${INDICAZIONI.map(i => `<option value="${i}">${i}</option>`).join('')}
-                    </select>
-                    <div id="campo-canto-domenica" style="display:flex;gap:0.5rem;min-width:0">
-                        <select id="tit-domenica" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                            <option value="">Scegli un canto…</option>
-                            ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
-                        </select>
+                <!-- CANTI DOMENICA -->
+                <div class="sottosezione">
+                    <div class="sottosezione-header">
+                        <h4><i class="fa-solid fa-cross"style="color: #301934;"></i> Canti della domenica</h4>
+                        <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'domenica')">Svuota</button>
                     </div>
-                    <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
-                </div>
-
-                <div class="lista-settimana" id="lista-domenica">
-                ${domenica.length === 0
+    
+                    <div class="form-inline">
+                        <input type="date" id="data-domenica">
+                        <select id="ind-domenica" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                            ${INDICAZIONI.map(i => `<option value="${i}">${i}</option>`).join('')}
+                        </select>
+                        <div id="campo-canto-domenica" style="display:flex;gap:0.5rem;min-width:0">
+                            <select id="tit-domenica" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                                <option value="">Scegli un canto…</option>
+                                ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+                            </select>
+                        </div>
+                        <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
+                    </div>
+    
+                    <div class="lista-settimana" id="lista-domenica">
+                    ${domenica.length === 0
                     ? '<p class="vuoto">Nessun canto inserito.</p>'
                     : `<div class="tabella-domenica-wrap"><table class="tabella-domenica">
-                        <thead><tr><th>Indicazione</th><th>Canto</th><th>Data</th><th></th></tr></thead>
-                        <tbody>${domenica.map(c => rigaCantoDomenica(c)).join('')}</tbody>
-                       </table></div>`}
+                            <thead><tr><th>Indicazione</th><th>Canto</th><th>Data</th><th></th></tr></thead>
+                            <tbody>${domenica.map(c => rigaCantoDomenica(c)).join('')}</tbody>
+                           </table></div>`}
+                    </div>
                 </div>
-            </div>
-
-            <!-- NUOVI CANTI -->
-            <div class="sottosezione">
-              <div class="sottosezione-header">
-                <h4><i class="fa-solid fa-headphones"style="color: #301934;"></i> Nuovi canti da imparare</h4>
-                <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'nuovo')">Svuota</button>
-              </div>
-
-              <div class="form-inline">
-                <select id="tit-nuovo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                    <option value="">Scegli un canto…</option>
-                    ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
-                </select>
-                <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'nuovo')">+</button>
-              </div>
-
-              <div class="lista-settimana" id="lista-nuovo">
-                ${nuovi.length === 0
+    
+                <!-- NUOVI CANTI -->
+                <div class="sottosezione">
+                  <div class="sottosezione-header">
+                    <h4><i class="fa-solid fa-headphones"style="color: #301934;"></i> Nuovi canti da imparare</h4>
+                    <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'nuovo')">Svuota</button>
+                  </div>
+    
+                  <div class="form-inline">
+                    <select id="tit-nuovo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                        <option value="">Scegli un canto…</option>
+                        ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                    <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'nuovo')">+</button>
+                  </div>
+    
+                  <div class="lista-settimana" id="lista-nuovo">
+                    ${nuovi.length === 0
                     ? '<p class="vuoto">Nessun canto inserito.</p>'
                     : nuovi.map(c => rigaCanto(c)).join('')}
-              </div>
-            </div>
-
-            <!-- TEMPI FORTI -->
-            <div class="sottosezione">
-                <div class="sottosezione-header">
-                    <h4><i class="fa-solid fa-bell"style="color: #301934;"></i> Canti tempi forti</h4>
-                    <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'tempo_forte')">Svuota</button>
+                  </div>
                 </div>
-
-                <div class="form-inline">
-                    <input type="text" id="tf-nome" placeholder="Nome tempo forte (es. Avvento)"
-                    style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem"
-                    value="${tempoForte.length > 0 ? tempoForte[0].tempoForte : ''}">
-                    <select id="tit-tempo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                        <option value="">Scegli un canto…</option>
-                    ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
-                    </select>
-                    <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'tempo_forte')">+</button>
-                </div>
-
-                <div class="lista-settimana" id="lista-tempo_forte">
-                ${tempoForte.length === 0
+    
+                <!-- TEMPI FORTI -->
+                <div class="sottosezione">
+                    <div class="sottosezione-header">
+                        <h4><i class="fa-solid fa-bell"style="color: #301934;"></i> Canti tempi forti</h4>
+                        <button class="btn-sm danger" onclick="svuotaSezione('${coroId}', 'tempo_forte')">Svuota</button>
+                    </div>
+    
+                    <div class="form-inline">
+                        <input type="text" id="tf-nome" placeholder="Nome tempo forte (es. Avvento)"
+                        style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem"
+                        value="${tempoForte.length > 0 ? tempoForte[0].tempoForte : ''}">
+                        <select id="tit-tempo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                            <option value="">Scegli un canto…</option>
+                        ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        </select>
+                        <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'tempo_forte')">+</button>
+                    </div>
+    
+                    <div class="lista-settimana" id="lista-tempo_forte">
+                    ${tempoForte.length === 0
                     ? '<p class="vuoto">Nessun canto inserito.</p>'
                     : tempoForte.map(c => rigaCanto(c)).join('')}
+                    </div>
                 </div>
-            </div>
-          `;
+            `;
 
-            // Imposta data domenica di default alla prossima domenica
             const inp = document.getElementById('data-domenica');
             if (inp) {
                 const oggi = new Date();
@@ -327,7 +330,6 @@
                 inp.valueAsDate = domenica;
             }
 
-            // Event listener per cambio indicazione (gestisce il caso "Salmo")
             const selInd = document.getElementById('ind-domenica');
             if (selInd) {
                 selInd.addEventListener('change', () => {
@@ -383,11 +385,11 @@
                 : c.titolo;
 
             return `
-    <div class="riga-canto-sett" data-id="${c._id}">
-        <span>${dettaglio}${link}</span>
-        <button class="btn-sm danger" onclick="rimuoviCanto('${c._id}')">✕</button>
-    </div>
-  `;
+        <div class="riga-canto-sett" data-id="${c._id}">
+            <span>${dettaglio}${link}</span>
+            <button class="btn-sm danger" onclick="rimuoviCanto('${c._id}')">✕</button>
+        </div>
+      `;
         }
 
         window.aggiungiCanto = async (coroId, tipo) => {
@@ -432,8 +434,8 @@
             caricaPannelloSettimana(coroId);
         };
 
-        // Carica il primo coro di default
-        if (coriMe.length > 0) caricaPannelloSettimana(coriMe[0]._id);
+        // Carica il primo coro di default, se presente
+        if (coriDisponibili.length > 0) caricaPannelloSettimana(coriDisponibili[0]._id);
     </script>
 </body>
 
