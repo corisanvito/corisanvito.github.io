@@ -126,9 +126,9 @@
 
             const tutti = coroId === 'tutti';
             const utenti = await apiCall('/users');
-            const filtrati = tutti
-                ? (utenti || [])
-                : (utenti || []).filter(u => u.cori?.some(c => c._id === coroId));
+            const filtrati = (utenti || []).filter(u =>
+                u.cori?.some(c => c._id === coroId) && u.ruolo !== 'admin'
+            );
 
             if (filtrati.length === 0) {
                 pannello.innerHTML = `<p style="color:#888;font-style:italic">Nessun utente ${tutti ? '' : 'in questo coro'}.</p>`;
