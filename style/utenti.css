@@ -141,13 +141,17 @@ tr:last-child td {
 
 .cori-selector {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
 }
 
 .coro-option {
-    padding: 0.5rem 0.8rem;
+    width: auto;
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
     border: 1px solid #ddd;
     border-radius: 999px;
     background: #fff;
