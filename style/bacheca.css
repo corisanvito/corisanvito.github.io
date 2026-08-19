@@ -22,7 +22,7 @@
 
 .tag-coro {
     display: inline-block;
-    background: var(--c-grey);
+    background: var(--c-purple);
     color: white;
     font-size: 0.75rem;
     border-radius: 4px;
@@ -103,7 +103,7 @@
 }
 
 .btn-primary {
-    background: var(--c-grey);
+    background: var(--c-purple);
     color: white;
     border: none;
     border-radius: 5px;

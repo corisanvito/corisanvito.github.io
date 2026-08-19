@@ -18,3 +18,7 @@ body main a {
 body main a:hover {
     color: var(--c-primary);
 }
+
+nav {
+    background-color: color-mix(in srgb, var(--c-purple) 98%, transparent);
+}

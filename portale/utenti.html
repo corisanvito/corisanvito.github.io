@@ -88,7 +88,7 @@
                 <div class="campo"><label>Note</label><input type="text" id="u-note" placeholder="Note aggiuntive…">
                 </div>
             </div>
-            <button class="btn-primary" id="btn-crea"><i class="fa-solid fa-user-plus"></i> Crea account</button>
+            <button class="btn-primary" id="btn-crea"><i class="fa-solid fa-user-plus"style="color: #301934;"></i> Crea account</button>
             <p class="messaggio" id="msg-crea"></p>
         </div>
 
@@ -118,7 +118,7 @@
             button.type = 'button';
             button.className = 'coro-option';
             button.dataset.id = c._id;
-            button.innerHTML = `<i class="fa-regular fa-circle"></i> ${c.nome}`;
+            button.innerHTML = `<i class="fa-regular fa-circle"style="color: #301934;"></i> ${c.nome}`;
             button.addEventListener('click', () => toggleOption(button));
             selCori.appendChild(button);
         });
@@ -167,7 +167,7 @@
                                     <td><span class="badge ${u.attivo ? 'attivo' : 'inattivo'}">${u.attivo ? 'Attivo' : 'In attesa'}</span></td>
                                     <td>
                                         ${!u.attivo ? `<button class="btn-sm ok" onclick="attivaUtente('${u._id}', '${coroId}')">Attiva</button>` : ''}
-                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"></i> Elimina</button>
+                                        <button class="btn-sm danger" onclick="eliminaUtente('${u._id}', '${coroId}')"><i class="fa-solid fa-trash"style="color: #301934;"></i> Elimina</button>
                                     </td>
                                 </tr>
                             `).join('')}

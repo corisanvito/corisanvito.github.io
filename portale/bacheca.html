@@ -97,7 +97,7 @@
                     <p class="avviso-meta">${a.autore ? a.autore.nome + ' ' + a.autore.cognome : ''} · ${new Date(a.createdAt).toLocaleDateString('it-IT')}</p>
                     <p class="avviso-testo">${a.testo}</p>
                     ${isAdmin ? `<div class="azioni-avviso">
-                        <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')"><i class="fa-solid fa-trash"></i> Elimina</button>
+                        <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')"><i class="fa-solid fa-trash"style="color: #301934;"></i> Elimina</button>
                     </div>` : ''}
                 </div>
             `).join('');
