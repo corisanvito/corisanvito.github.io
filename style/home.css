@@ -129,6 +129,10 @@ main {
     --stripe: #682860;
 }
 
+.card-campiscuola {
+    --stripe: #c69500;
+}
+
 footer {
     background-color: #555555;
     text-align: center;

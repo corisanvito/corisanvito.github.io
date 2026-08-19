@@ -11,14 +11,12 @@
 }
 
 .repertorio-header .evento-data {
-    color: #7892AF;
     font-style: italic;
 }
 
 .repertorio-header p {
     width: 100%;
     margin-top: 0.3rem;
-    color: #061a40;
 }
 
 .scaletta {
@@ -43,7 +41,6 @@
 .scaletta-voce .numero {
     flex: 0 0 1.8rem;
     font-weight: bold;
-    color: rgba(6, 26, 64, 0.4);
     text-align: right;
 }
 
@@ -55,7 +52,6 @@
 }
 
 .scaletta-voce .titolo-canto a {
-    color: #14416E;
     text-decoration: none;
     font-weight: 600;
 }
@@ -67,7 +63,6 @@
 .scaletta-voce .momento {
     flex: 0 0 auto;
     font-size: 0.85rem;
-    color: #7892AF;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     align-self: center;
@@ -77,12 +72,10 @@
 .scaletta-voce .nota {
     font-size: 0.9rem;
     font-style: italic;
-    color: #061a40b3;
 }
 
 /* Voce senza link (es. canto non ancora presente sul sito) */
 .scaletta-voce .titolo-canto.senza-link {
-    color: #061a40;
     font-weight: 600;
 }
 
