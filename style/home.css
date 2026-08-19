@@ -121,6 +121,14 @@ main {
     --stripe: #E44D2E;
 }
 
+.card-canti {
+    --stripe: #1B1B1B;
+}
+
+.card-portale {
+    --stripe: #682860;
+}
+
 footer {
     background-color: #555555;
     text-align: center;
@@ -159,10 +167,6 @@ footer a.privacy {
     width: 100%;
     max-width: 860px;
     margin-bottom: 2rem;
-}
-
-.card-extra {
-    --stripe: #555555;
 }
 
 @media (max-width: 640px) {

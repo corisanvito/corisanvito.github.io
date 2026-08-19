@@ -34,7 +34,7 @@ aside, .centre-column {
 }
 
 .canto-link a {
-    color: #061a40;
+    color: #1b1b1b;
 }
 
 .warning {
@@ -70,7 +70,7 @@ aside, .centre-column {
 
 .restart, .end {
     background: linear-gradient(#ebeafa, #ebeafa) padding-box,
-                linear-gradient(115deg, #061a40, #0446bf) border-box;
+                linear-gradient(115deg, #1b1b1b, #0446bf) border-box;
 }
 
 .christmas {

@@ -18,12 +18,12 @@
 .login-card h2 {
     margin-bottom: 0.3rem;
     font-size: 1.4rem;
-    color: var(--c-grey);
+    color: var(--c-purple);
 }
 
 .login-card .sottotitolo {
     font-size: 0.9rem;
-    color: #888;
+    color: #888888;
     margin-bottom: 2rem;
 }
 
@@ -36,30 +36,30 @@
     font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
-    color: var(--c-grey);
+    color: var(--c-purple);
 }
 
 .campo input {
     width: 100%;
     padding: 0.7rem 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     border-radius: 5px;
     font-family: inherit;
     font-size: 1rem;
-    color: var(--c-grey);
+    color: var(--c-purple);
     background: var(--c-white);
     transition: border-color 0.2s;
 }
 
 .campo input:focus {
-    border-color: var(--c-grey);
+    border-color: var(--c-purple);
     outline: none;
 }
 
 .btn-login {
     width: 100%;
     padding: 0.8rem;
-    background-color: var(--c-grey);
+    background-color: var(--c-purple);
     color: white;
     border: none;
     border-radius: 5px;

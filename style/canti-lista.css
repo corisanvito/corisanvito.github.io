@@ -14,14 +14,14 @@
 .alfabeto-nav a {
     text-align: center;
     margin: 0 3.6vw;
-    color: #2e2a35;
+    color: #1b1b1b;
     text-decoration: none;
     font-weight: bolder;
     white-space: nowrap;
 }
 
 .inactive {
-    color: #2e2a3566 !important;
+    color: #1B1B1B66 !important;
     display: none;
 }
 
@@ -49,8 +49,8 @@
 }
 
 .lettera-gruppo h3 {
-    color: #2c3e50;
-    border-bottom: 1px solid #e0e0e0;
+    color: #1B1B1B;
+    border-bottom: 1px solid #F5F5F5;
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -67,21 +67,21 @@
     display: block;
     padding: 0;
     margin-bottom: -8px;
-    color: #2e2a35;
+    color: #1B1B1B;
     text-decoration: none;
 }
 
 .canto-link a:hover {
     text-decoration: underline;
-    background-color: #f8f9fa;
+    background-color: #F5F5F5;
 }
 
 .back-to-top {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background-color: #2e2a35;
-    color: white;
+    background-color: #1B1B1B;
+    color: #F5F5F5;
     width: 50px;
     height: 50px;
     border-radius: 50%;

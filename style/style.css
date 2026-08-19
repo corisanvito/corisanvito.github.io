@@ -6,8 +6,10 @@
 @font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url('/fonts/Poppins900.woff2') format('woff2'); }
 
 * {
-    --c-grey: #2e2a35;
-    --c-white:   #f8f9fa;
+    --c-grey: #1B1B1B;
+    --c-white: #F5F5F5;
+    --c-purple: #682860;
+    --c-yellow: #FFBF00;
 }
 
 * {

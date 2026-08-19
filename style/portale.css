@@ -1,0 +1,20 @@
+body header {
+    background-color: var(--c-purple);
+}
+
+body footer {
+    background-color: var(--c-purple);
+}
+
+body h2,
+body h3 {
+    color: var(--c-purple);
+}
+
+body main a {
+    color: var(--c-purple);
+}
+
+body main a:hover {
+    color: var(--c-primary);
+}
