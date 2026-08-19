@@ -130,6 +130,9 @@
                 u.cori?.some(c => (c._id || c).toString() === coroId) && u.ruolo !== 'admin'
             );
 
+            console.log('coroId cercato:', coroId);
+            console.log('utenti ricevuti:', utenti?.map(u => ({ nome: u.nome, cori: u.cori })));
+
             if (filtrati.length === 0) {
                 pannello.innerHTML = `<p style="color:#888;font-style:italic">Nessun utente ${tutti ? '' : 'in questo coro'}.</p>`;
                 return;
