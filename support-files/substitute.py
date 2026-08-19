@@ -4,8 +4,8 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
-stringa_da_sostituire = '.html'
-nuova_stringa = ''
+stringa_da_sostituire = 'text-file.png'
+nuova_stringa = 'text-file.svg'
 
 
 def chiedi_cartella():
