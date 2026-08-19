@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
-<head><meta charset="UTF-8">
+
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Richiedi un canto</title>
     <link rel="stylesheet" href="../style/style.css">
@@ -12,8 +14,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
-    <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32" data-utcoffset="2"></script>
+    <script src="https://cdn.counter.dev/script.js" data-id="0b8a28a7-bd9e-4970-aa87-bd107e273a32"
+        data-utcoffset="2"></script>
 </head>
+
 <body>
     <header>
         <h1><a href="../">Cori San Vito</a></h1>
@@ -28,7 +32,7 @@
             <ul>
                 <li><a href="..">Home</a></li>
                 <li><a href="../canti">Canti</a></li>
-                <li><a href="../calendario">Calendario</a></li>              
+                <li><a href="../calendario">Calendario</a></li>
                 <li><a href="./aggiungi-canto">Area riservata</a></li>
             </ul>
         </nav>
@@ -40,64 +44,54 @@
         </section>
         <section>
             <h2>Richiedi un nuovo canto</h2>
-            <form id="cantoForm" action="https://formsubmit.co/corisanvito@gmail.com" method="POST">                
-                <!-- Nome richiedente
-                <label class="label-input" for="nome_richiedente">Il tuo nome:</label>
-                <input type="text" id="nome_richiedente" name="nome_richiedente" required>
-                -->
+            <form id="cantoForm" action="https://formsubmit.co/corisanvito@gmail.com" method="POST">
 
-                <!-- Email richiedente
-                <label class="label-input" for="email_richiedente">La tua email:</label>
-                <input type="email" id="email_richiedente" name="email_richiedente" required>
-                -->
-
-                <!-- Nome del canto -->
-                <label for="nome_canto" class="label-input">Nome del canto</label>
+                <label class="label-input" for="nome_canto">Nome del canto *</label>
                 <input type="text" id="nome_canto" name="nome_canto" required>
 
-                <!-- Testo del canto -->
-                <label for="testo_canto" class="label-input">Testo del canto</label>
-                <p class="info">Scopri come scrivere il testo del canto correttamente: <a href="../system/docs/guida-scrittura-canti">Guida alla formattazione e alla scrittura corretta del canto</a>. Si raccomanda di visualizzare la guida prima di richiedere un canto.</p>
+                <label class="label-input" for="autore">Autore</label>
+                <input type="text" id="autore" name="autore">
+
+                <label class="label-input" for="categoria">Categoria</label>
+                <input type="text" id="categoria" name="categoria" placeholder="es. avvento, offertorio…">
+
+                <label class="label-input" for="testo_canto">Testo del canto *</label>
+                <p class="info">Scopri come scrivere il testo correttamente: <a
+                        href="../system/docs/guida-scrittura-canti">Guida alla formattazione</a>.</p>
                 <textarea id="testo_canto" name="testo_canto" rows="15" required></textarea>
 
-                <!-- Link YouTube -->
-                <label for="video_youtube" class="label-input">Link YouTube (facoltativo)</label>
-                <input type="url" id="video_youtube" name="video_youtube" placeholder="https://youtube.com/..." />
+                <label class="label-input" for="video_youtube">Link YouTube (facoltativo)</label>
+                <input type="url" id="video_youtube" name="video_youtube" placeholder="https://youtube.com/...">
 
-                <!-- Numero sul libretto -->
-                <label for="numero_libretto" class="label-input">Numero sul libretto (facoltativo)</label>
-                <input type="text" id="numero_libretto" name="numero_libretto" placeholder="Lascia vuoto se non presente nel libretto 'Cantiamo al Signore'" />
+                <label class="label-input" for="numero_libretto">Numero sul libretto (facoltativo)</label>
+                <input type="text" id="numero_libretto" name="numero_libretto"
+                    placeholder="Lascia vuoto se non presente nel libretto 'Cantiamo al Signore'">
 
-                <!-- Note -->
-                <label for="note" class="label-input">Note</label>
-                <input type="text" id="note" name="note" placeholder="" />
-                
-                <!-- Pulsante di invio -->
-                <button type="submit">Invia</button>
+                <label class="label-input" for="note">Note</label>
+                <input type="text" id="note" name="note">
+
+                <button type="submit" class="btn-primary">Invia</button>
 
                 <!-- Campi nascosti per FormSubmit -->
                 <input type="hidden" name="_subject" id="subject" value="">
                 <input type="hidden" name="_next" value="https://corisanvito.github.io/system/grazie">
                 <input type="hidden" name="_captcha" value="true">
-                <input type="hidden" name="_replyto" id="replyto" value="">
-
-                <!-- Riga fissa in fondo alla mail -->
-                <input type="hidden" name="_append" value="--- 
-                Inserire questo canto come pagina HTML, aggiornare la lista su excel, la pagina canti.html e il file canti.json">
+                <input type="hidden" name="_append" value="---
+    Inserire questo canto come pagina HTML, aggiornare la lista su excel, la pagina canti e il file canti.json">
             </form>
         </section>
     </main>
-    
+
     <footer>
         <p>&copy; 2025 Cori San Vito - <a class="privacy" href="../privacy">Privacy</a></p>
     </footer>
 
     <!--<script src="../script/contatore-visite.js"></script>-->
-    
+
 </body>
 
 <script>
-    document.getElementById("cantoForm").addEventListener("submit", function(e) {
+    document.getElementById("cantoForm").addEventListener("submit", function (e) {
         const nomeCanto = document.getElementById("nome_canto").value.trim();
         const subjectInput = document.getElementById("subject");
         subjectInput.value = "Nuovo canto da inserire: " + nomeCanto;
@@ -110,4 +104,5 @@
         */
     });
 </script>
+
 </html>
