@@ -37,7 +37,7 @@
     </div>
 
     <footer>
-        <p>© Cori San Vito — <a class="privacy" href="/privacy.html">Privacy</a></p>
+        <p>© Cori San Vito — <a class="privacy" href="/privacy">Privacy</a></p>
     </footer>
 
     <script type="module">
@@ -45,7 +45,7 @@
 
         // Se già loggato, vai subito al portale
         if (getToken() && getUtente()) {
-            window.location.href = '/portale/index.html';
+            window.location.href = '/portale/';
         }
 
         const btnLogin = document.getElementById('btn-login');
@@ -69,7 +69,7 @@
 
                 if (data.token) {
                     saveAuth(data.token, data.utente);
-                    window.location.href = '/portale/index.html';
+                    window.location.href = '/portale/';
                 } else {
                     mostraErrore(data.message || 'Credenziali non valide.');
                 }
