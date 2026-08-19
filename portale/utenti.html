@@ -127,7 +127,7 @@
             const tutti = coroId === 'tutti';
             const utenti = await apiCall('/users');
             const filtrati = (utenti || []).filter(u =>
-                u.cori?.some(c => c._id === coroId) && u.ruolo !== 'admin'
+                u.cori?.some(c => (c._id || c).toString() === coroId) && u.ruolo !== 'admin'
             );
 
             if (filtrati.length === 0) {
