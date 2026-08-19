@@ -94,3 +94,18 @@ tr:last-child td {
     background: #fdecea;
     color: #c0392b;
 }
+
+.stat-riepilogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.classifica-wrap {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}

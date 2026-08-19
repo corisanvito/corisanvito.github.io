@@ -145,30 +145,95 @@
             map[uid].righe.push(p);
           });
 
-          pannello.innerHTML = Object.entries(map).map(([uid, d]) => `
-            <div class="corista-sezione">
-              <div class="corista-header">
-                <span class="corista-nome-admin">${d.nome}</span>
-                <span class="corista-perc">${Math.round(d.presenti / d.totale * 100)}% (${d.presenti}/${d.totale})</span>
-              </div>
-              <div class="tabella-wrap">
-                <table>
-                  <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th><th></th></tr></thead>
-                  <tbody>
-                    ${d.righe.map(p => `
-                      <tr>
-                        <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
-                        <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
-                        <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
-                        <td>${p.note || '—'}</td>
-                        <td><button class="btn-sm danger" onclick="eliminaPresenza('${p._id}', '${coroId}', '${coroNome}')">Elimina</button></td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          `).join('');
+          // Ordina per percentuale decrescente
+          const coristi = Object.entries(map)
+            .map(([uid, d]) => ({
+              ...d,
+              percentuale: Math.round(d.presenti / d.totale * 100)
+            }))
+            .sort((a, b) => b.percentuale - a.percentuale);
+
+          const mediaPercentuale = Math.round(
+            coristi.reduce((acc, d) => acc + d.percentuale, 0) / coristi.length
+          );
+
+          pannello.innerHTML = `
+  <!-- STATISTICHE RIEPILOGO -->
+  <div class="stat-riepilogo">
+    <div class="stat-card">
+      <div class="stat-numero">${coristi.length}</div>
+      <div class="stat-label">Coristi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-numero">${mediaPercentuale}%</div>
+      <div class="stat-label">Presenza media</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-numero">${presenze.filter(p => p.tipo === 'prova').length}</div>
+      <div class="stat-label">Prove registrate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-numero">${presenze.filter(p => p.tipo === 'celebrazione').length}</div>
+      <div class="stat-label">Celebrazioni registrate</div>
+    </div>
+  </div>
+
+  <!-- CLASSIFICA -->
+  <div class="classifica-wrap">
+    <h4 style="margin-bottom:0.8rem">🏆 Classifica presenze</h4>
+    <div class="tabella-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Corista</th><th>Presenze</th><th>Percentuale</th><th></th></tr></thead>
+        <tbody>
+          ${coristi.map((d, i) => `
+            <tr>
+              <td style="font-weight:700;color:${i === 0 ? '#f4b942' : i === 1 ? '#aaa' : i === 2 ? '#cd7f32' : 'inherit'}">
+                ${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+              </td>
+              <td>${d.nome}</td>
+              <td>${d.presenti}/${d.totale}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:0.5rem">
+                  <div style="flex:1;background:#eee;border-radius:10px;height:8px;min-width:60px">
+                    <div style="width:${d.percentuale}%;background:${d.percentuale >= 75 ? '#2e7d32' : d.percentuale >= 50 ? '#f4b942' : '#c0392b'};height:8px;border-radius:10px"></div>
+                  </div>
+                  <span style="font-weight:600;min-width:2.5rem">${d.percentuale}%</span>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DETTAGLIO PER CORISTA -->
+  <h4 style="margin:1.5rem 0 0.8rem">Dettaglio presenze</h4>
+  ${coristi.map(d => `
+    <div class="corista-sezione">
+      <div class="corista-header">
+        <span class="corista-nome-admin">${d.nome}</span>
+        <span class="corista-perc">${d.percentuale}% (${d.presenti}/${d.totale})</span>
+      </div>
+      <div class="tabella-wrap">
+        <table>
+          <thead><tr><th>Data</th><th>Tipo</th><th>Presenza</th><th>Note</th><th></th></tr></thead>
+          <tbody>
+            ${d.righe.map(p => `
+              <tr>
+                <td>${new Date(p.data).toLocaleDateString('it-IT')}</td>
+                <td>${p.tipo === 'prova' ? 'Prova' : 'Celebrazione'}</td>
+                <td><span class="badge ${p.presente ? 'presente' : 'assente'}">${p.presente ? 'Presente' : 'Assente'}</span></td>
+                <td>${p.note || '—'}</td>
+                <td><button class="btn-sm danger" onclick="eliminaPresenza('${p._id}', '${coroId}', '${coroNome}')">Elimina</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `).join('')}
+`;
         }
 
         // Click sui tab
