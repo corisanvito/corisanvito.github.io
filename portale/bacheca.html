@@ -117,7 +117,7 @@
                     sel.appendChild(o);
                 });
             } else {
-                // Il responsabile e il direttore vedono solo i suoi cori
+                // Il responsabile e il direttore vedono solo i loro cori
                 const me = await apiCall('/auth/me');
                 (me.cori || []).forEach(c => {
                     const o = document.createElement('option');
