@@ -142,33 +142,9 @@
         const utente = requireAuth(['admin', 'direttore', 'responsabile']);
         if (!utente) throw new Error();
 
-        document.getElementById('btn-aggiungi')?.addEventListener('click', async () => {
-            const titolo = document.getElementById('c-titolo').value.trim();
-            if (!titolo) { alert('Il titolo è obbligatorio.'); return; }
-
-            const body = {
-                titolo,
-                autore: document.getElementById('c-autore').value.trim(),
-                categoria: document.getElementById('c-categoria').value.trim(),
-                testo: document.getElementById('c-testo').value.trim(),
-                note: document.getElementById('c-note').value.trim()
-            };
-
-            const res = await apiCall('/canti', { method: 'POST', body: JSON.stringify(body) });
-            const msg = document.getElementById('msg-canto');
-            if (res?._id) {
-                msg.className = 'messaggio ok';
-                msg.textContent = '✓ Canto aggiunto e notifica inviata!';
-                document.getElementById('c-titolo').value = '';
-                document.getElementById('c-autore').value = '';
-                document.getElementById('c-categoria').value = '';
-                document.getElementById('c-testo').value = '';
-                document.getElementById('c-note').value = '';
-            } else {
-                msg.className = 'messaggio err';
-                msg.textContent = res?.message || 'Errore nel salvataggio.';
-            }
-        });
+        // ── IMPOSTA I CAMPI NASCOSTI PER FORMSUBMIT ──
+        document.getElementById('subject').value = 'Nuovo canto da aggiungere - Cori San Vito';
+        document.getElementById('replyto').value = utente.email || 'corisanvito@gmail.com';
 
         // ── CANTI SETTIMANA ────────────────────────────────────────────────────
 
