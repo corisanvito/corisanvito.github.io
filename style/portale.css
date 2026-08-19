@@ -19,8 +19,10 @@ body main a:hover {
     color: var(--c-primary);
 }
 
-nav {
-    background-color: color-mix(in srgb, var(--c-purple) 98%, transparent);
+@media screen and (max-width: 768px) {
+    nav {
+        background-color: color-mix(in srgb, var(--c-grey) 98%, transparent);
+    }
 }
 
 main {
