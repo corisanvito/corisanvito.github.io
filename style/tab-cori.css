@@ -17,9 +17,9 @@
 }
 
 .tab-coro.attivo {
-    background: var(--c-grey);
+    background: var(--c-purple);
     color: white;
-    border-color: var(--c-grey);
+    border-color: var(--c-purple);
 }
 
 .corista-sezione {
@@ -30,7 +30,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
