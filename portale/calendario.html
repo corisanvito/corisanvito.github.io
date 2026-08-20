@@ -80,6 +80,16 @@
 
         let calendarioCorrente = null;
 
+        const COLORI_CORI = {
+            'Coro delle 10': '#061a40',
+            'Coro delle 11:15': '#3b4a1e',
+            'Coro Estivo': '#8b3320',
+        };
+
+        function getColoreCoro(nome) {
+            return COLORI_CORI[nome] || '#301934';
+        }
+
         async function caricaCalendario(coroId, coroNome) {
             const contenuto = document.getElementById('contenuto-calendario');
             contenuto.innerHTML = '<p class="vuoto">Caricamento…</p>';
@@ -103,18 +113,18 @@
                 locale: 'it',
                 height: 'auto',
                 headerToolbar: {
-                    left:   'prev,next today',
+                    left: 'prev,next today',
                     center: 'title',
-                    right:  'dayGridMonth,listMonth'
+                    right: 'dayGridMonth,listMonth'
                 },
                 buttonText: {
-                    today:     'Oggi',
-                    month:     'Mese',
-                    list:      'Lista'
+                    today: 'Oggi',
+                    month: 'Mese',
+                    list: 'Lista'
                 },
                 events: eventi,
                 eventColor: getColoreCoro(coroNome),
-                eventClick: function(info) {
+                eventClick: function (info) {
                     const e = info.event;
                     const start = e.start?.toLocaleDateString('it-IT', {
                         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'

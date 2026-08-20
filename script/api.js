@@ -39,17 +39,6 @@ export async function apiCall(endpoint, options = {}) {
     return res.json();
 }
 
-// Colori fissi per coro (basati su temi-cori.css)
-const COLORI_CORI = {
-    'Coro delle 10':   '#061a40',
-    'Coro delle 11:15': '#3b4a1e',
-    'Coro Estivo':     '#8b3320',
-};
-
-function getColoreCoro(nome) {
-    return COLORI_CORI[nome] || '#1b1b1b';
-}
-
 // Funzioni specifiche
 export const login = (email, password) => apiCall('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
 export const getMe = () => apiCall('/auth/me');
