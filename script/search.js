@@ -23,7 +23,7 @@ function cercaCanti(query) {
     const cantiContainer = document.getElementById('cantiContainer');
     const alfabetoNav = document.getElementById('alfabetoNav');
     const searchInfo = document.getElementById('searchInfo');
-    
+
     if (!query.trim()) {
         // Nessuna query, mostra lista normale
         searchResults.innerHTML = '';
@@ -32,11 +32,11 @@ function cercaCanti(query) {
         searchInfo.innerHTML = `Digita per cercare tra i ${cantiData.length} canti`;
         return;
     }
-    
+
     const queryLower = query.toLowerCase().trim();
     const termini = queryLower.split(' ').filter(term => term.length > 0);
     const risultati = [];
-    
+
     cantiData.forEach(canto => {
         let punteggio = 0;
         const categorie = canto.categorie || [];
@@ -62,22 +62,22 @@ function cercaCanti(query) {
             if (canto.testo.toLowerCase().includes(termine)) punteggio += 0.5;
             if (categorie.some(cat => cat.toLowerCase().includes(termine))) punteggio += 0.3;
         });
-        
+
         if (punteggio > 0) {
-            risultati.push({ 
-                ...canto, 
+            risultati.push({
+                ...canto,
                 punteggio,
                 tutteLeCategorie: categorie.join(', ')
             });
         }
     });
-    
+
     // Ordina per punteggio
     risultati.sort((a, b) => b.punteggio - a.punteggio);
-    
+
     // Mostra risultati
     mostraRisultati(risultati, query);
-    
+
     // Nascondi lista normale
     cantiContainer.classList.add('search-active');
     alfabetoNav.classList.add('search-active');
@@ -88,19 +88,19 @@ function cercaCanti(query) {
 function mostraRisultati(risultati, query) {
     const container = document.getElementById('searchResults');
     const termini = query.toLowerCase().split(' ').filter(term => term.length > 2);
-    
+
     if (risultati.length === 0) {
         container.innerHTML = '<div class="no-results">Nessun canto trovato. Prova con termini diversi.</div>';
         return;
     }
-    
+
     container.innerHTML = risultati.map(canto => {
         let titoloEvidenziato = canto.titolo;
         termini.forEach(termine => {
             const regex = new RegExp(`(${termine})`, 'gi');
             titoloEvidenziato = titoloEvidenziato.replace(regex, '<span class="highlight">$1</span>');
         });
-        
+
         let anteprima = canto.testo ? (canto.testo.substring(0, 120) + '...') : '';
         if (anteprima) {
             termini.forEach(termine => {
@@ -128,27 +128,41 @@ function mostraRisultati(risultati, query) {
 
 // Event listeners per la ricerca
 let searchTimeout;
-document.getElementById('searchInput').addEventListener('input', function(e) {
+document.getElementById('searchInput').addEventListener('input', function (e) {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         cercaCanti(e.target.value);
     }, 300);
 });
 
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
+document.getElementById('searchInput').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         clearTimeout(searchTimeout);
         cercaCanti(e.target.value);
     }
 });
 
-document.getElementById('searchInput').addEventListener('keydown', function(e) {
+document.getElementById('searchInput').addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         this.value = '';
         cercaCanti('');
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     caricaCanti();
+});
+
+const btnClear = document.getElementById('btn-clear-search');
+
+document.getElementById('searchInput').addEventListener('input', function () {
+    btnClear.style.display = this.value ? 'block' : 'none';
+});
+
+btnClear.addEventListener('click', function () {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    input.focus();
+    btnClear.style.display = 'none';
+    cercaCanti('');
 });
