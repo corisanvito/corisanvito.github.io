@@ -113,7 +113,7 @@
                     list:      'Lista'
                 },
                 events: eventi,
-                eventColor: '#301934',
+                eventColor: getColoreCoro(coroNome),
                 eventClick: function(info) {
                     const e = info.event;
                     const start = e.start?.toLocaleDateString('it-IT', {
@@ -129,6 +129,8 @@
             });
 
             calendarioCorrente.render();
+
+            calendarEl.style.setProperty('--cal-color', getColoreCoro(coroNome));
         }
 
         document.querySelectorAll('.tab-coro').forEach(btn => {

@@ -12,24 +12,22 @@
 .fc .fc-toolbar-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--c-purple);
+    color: var(--cal-color, var(--c-purple));
 }
 
 .fc .fc-button-primary {
-    background: var(--c-purple);
-    border-color: var(--c-purple);
+    background: var(--cal-color, var(--c-purple));
+    border-color: var(--cal-color, var(--c-purple));
     font-family: inherit;
     font-size: 0.85rem;
 }
 
 .fc .fc-button-primary:hover {
-    background: var(--c-grey);
-    border-color: var(--c-grey);
+    filter: brightness(1.2);
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active {
-    background: var(--c-grey);
-    border-color: var(--c-grey);
+    filter: brightness(0.85);
 }
 
 .fc .fc-daygrid-event {
