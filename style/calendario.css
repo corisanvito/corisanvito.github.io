@@ -43,8 +43,8 @@
     color: white;
 }
 
-.th {
-    background: var(--cal-color, var(--c-purple));
+th.fc-col-header-cell.fc-day {
+    background: var(--cal-color, var(--c-grey)) !important;
 }
 
 @media (max-width: 600px) {
