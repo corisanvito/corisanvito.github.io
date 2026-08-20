@@ -73,12 +73,8 @@
         const utente = requireAuth(['admin', 'direttore', 'responsabile']);
         if (!utente) throw new Error();
 
-        // ── IMPOSTA I CAMPI NASCOSTI PER FORMSUBMIT ──
-        document.getElementById('subject').value = 'Nuovo canto da aggiungere - Cori San Vito';
-        document.getElementById('replyto').value = utente.email || 'corisanvito@gmail.com';
 
         // ── CANTI SETTIMANA ────────────────────────────────────────────────────
-
         const me = await apiCall('/auth/me');
 
         // Scegli la lista dei cori da mostrare: admin → tutti, altrimenti i suoi
