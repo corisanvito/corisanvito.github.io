@@ -96,6 +96,9 @@ input[type="file"] {
     border: 1px solid var(--c-border);
     transition: background 0.15s;
     white-space: nowrap;
+    flex: 0 0 auto;
+    padding: 0.5rem 1rem;
+    align-self: center;
 }
 
 .tabella-domenica-wrap {
@@ -217,11 +220,9 @@ input[type="file"] {
     flex: 1 1 150px;
 }
 
-.btn-sm-h {
-    flex: 0 0 auto;
-    padding: 0.5rem 1rem;
-    white-space: nowrap;
-    align-self: center;
+.btn-sm.danger {
+    max-width: fit-content;
+    margin: 0;
 }
 
 @media (max-width: 600px) {
