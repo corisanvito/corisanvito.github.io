@@ -1,148 +1,140 @@
-# Coro delle Dieci
->Cantare, suonare, comporre, dirigere, fare musica nella Chiesa sono tra le cose più belle a gloria di Dio. È un privilegio, un dono di Dio esprimere l’arte musicale e aiutare la partecipazione ai divini misteri.  
-*Papa Francesco*
+# Cori San Vito
+
+Sito e portale web per i cori della parrocchia di San Vito e C.M. — Spinea (VE).
+
+Il progetto raccoglie **tre cori** (Coro delle 10, Coro delle 11:15, Coro Estivo) sotto un unico portale, con repertorio condiviso, area riservata per coristi e responsabili, e strumenti di gestione (presenze, utenti, avvisi, canti).
 
 ## Panoramica
-Il sito è sviluppato per il ***Coro delle Dieci*** e include:
-- Homepage con canti della domenica, nuovi canti, tempi forti e calendario
-- Lista completa dei canti organizzata alfabeticamente
-- Sistema di ricerca avanzato nei testi e nei titoli dei canti, oltre che nelle categorie
-- Modalità presentazione per proiezione durante le funzioni o le prove
-- Area amministrativa per aggiungere nuovi canti
-- Calendario delle prove integrato con Google Calendar
 
-## Contenuti musicali
-### Statistiche dei canti
-- **160+ canti** disponibili
+- Homepage di selezione coro, con pagina dedicata per ciascun coro (palette colore e Google Sheet propri)
+- Repertorio canti unificato, con ricerca full-text su titoli, testi e categorie
+- Form pubblico per la richiesta di nuovi canti (via FormSubmit)
+- Area riservata (`/portale`) con autenticazione via token, ruoli e permessi differenziati
+- Calendario prove/celebrazioni per coro, integrato con Google Calendar
+- Registro presenze, statistiche e classifica per coro
+- Gestione utenti (creazione account, attivazione, ruoli)
+- Bacheca avvisi, filtrabile per coro o generale
+- Gestione canti da pannello admin (canti della settimana, repertorio completo)
 
-- **Categorie principali**:
-    - ***Liturgia* cantata**: *Acclamazione al Vangelo* - Alleluia, *Agnello di Dio*, *Aspersione*, *Atto penitenziale* - Kyrie, *Gloria*, *Santo*
+## Repository correlati
 
-    - **Momenti liturgici**: *Comunione*, *Congedo*, *Ingresso*, *Lavanda dei piedi*, *Offertorio*, *Pace*
-    
-    - **Tempi liturgici** (*Avvento*, *Cristo Re*, *Domenica delle Palme*, *Natale*, *Pasqua*, *Quaresima*, *Santi*)
-    
-    - **Altri momenti e temi di preghiera**: *Adorazione* Eucaristica, *Bambini*, *Beatitudini*, *Giubileo*, *GMG*, *Maria*, *Matrimonio*, *Missione*, *Perdono*, *Ringraziamento*, *Scout*, *Spirito Santo*, *Vocazione*
+Questo repository contiene solo il **frontend** (HTML/CSS/JS statico, servito via GitHub Pages). Il backend (API REST, autenticazione, modelli dati) vive in un repository separato:
 
-    - **Canoni**, in particolare quelli di Taizé
+- Backend: Node.js/Express, ospitato su Render
+- Database: MongoDB Atlas
 
-- **Formati disponibili**: Testi (scritti per il sito in HTML e in PDF), spartiti (in PDF), video YouTube
-
-- **Numerazione** secondo il libretto "*Cantiamo al Signore*" della Diocesi di Treviso e il quadernino ad anelli della "*Minicorale*"
-
-
-### Struttura dei canti
-Ogni canto include:
-- testo in formato con strofe, ritornelli, intro/outro e bridge
-- video YouTube integrato (se disponibile)
-- download PDF del testo ed eventuali spartiti
-- riferimento al numero utilizzato nel libretto del coro
-
-## Tecnologie utilizzate
-### Frontend
-- **HTML5** semantico
-- **CSS3**
-- **JavaScript** Vanilla
-
-### Integrazioni
-- **Google Sheets** per i canti della domenica, i nuovi canti e i tempi forti
-- **Google Calendar** per il calendario degli "appuntamenti" con le animazioni delle Sante Messe e le prove in oratorio
-- **FormSubmit** per l'invio e la richiesta di nuovi canti
-- **YouTube Embed** per i video
+Le chiamate API dal frontend passano attraverso i moduli in `/script/api.js` e `/script/auth-guard.js`.
 
 ## Struttura del progetto
+
 ```text
 /
-├── index.html                # Homepage
-├── canti.html                # Lista completa canti
-├── calendario.html           # Calendario prove
-├── privacy.html              # Privacy e note legali
-├── admin/
-│   └── aggiungi-canto.html   # Form aggiunta canti
-├── canti/                    # Pagine singoli canti (160+ file)
-├── style/                    # Fogli di stile
-│   ├── style.css             # Stili base
-│   ├── home.css              # Stili homepage
-│   ├── canti.css             # Stili pagine canti
-│   ├── canti-lista.css       # Stili lista canti
-│   ├── search.css            # Stili ricerca
-│   ├── form.css              # Stili form
-│   └── calendario.css        # Stili calendario
-├── script/                   # JavaScript
-│   ├── anno.js               # Aggiornamento anno
-│   ├── canti-domenica.js     # Caricamento canti domenica
-│   ├── canti-nuovi.js        # Caricamento nuovi canti
-│   ├── canti-tempi-forti.js  # Canti tempi liturgici
-│   ├── search.js             # Sistema ricerca
-│   ├── auto-scroll.js        # Scrolling automatico
-│   ├── up-button.js          # Pulsante torna su
-│   └── get-zoom.js           # Rilevamento zoom
-├── images/                   # Risorse grafiche
-├── pdf-testi/                # PDF testi canti
-├── pdf-spartiti/             # PDF spartiti
+├── index.html                    # Homepage — selezione coro
+├── canti.html                    # Repertorio completo canti
+├── privacy.html                  # Privacy e note legali
+│
+├── coro-10/
+│   └── index.html                # Homepage Coro delle 10
+├── coro-1115/
+│   └── index.html                # Homepage Coro delle 11:15
+├── coro-estate/
+│   └── index.html                # Homepage Coro Estivo
+│
+├── canti/                        # Pagine dei singoli canti
+│
+├── portale/                      # Area riservata (richiede login)
+│   ├── login.html
+│   ├── index.html                # Dashboard, card dinamiche per ruolo
+│   ├── profilo.html              # Dati personali, voce/strumento, cambio password
+│   ├── bacheca.html              # Avvisi per coro / generali
+│   ├── calendario.html           # Calendario prove e celebrazioni
+│   ├── presenze.html             # Statistiche presenze (personali o per coro)
+│   ├── registro.html             # Registrazione presenze (admin/direttore/responsabile)
+│   ├── utenti.html               # Creazione e gestione account
+│   ├── canti-admin.html          # Gestione canti della settimana e repertorio
+│   └── aggiungi-canto.html       # Richiesta di un nuovo canto
+│
 ├── system/
-│   ├── grazie.html            # Ringraziamento dopo l'invio di un canto
+│   ├── grazie.html                # Conferma dopo l'invio di un canto
 │   └── docs/
-│       └── guida-scrittura-canti.html  # Guida formattazione
-└── .github/
-    ├── ISSUE_TEMPLATE/
-    │    ├── bug_report.md
-    │    ├── feature_request.yml
-    │    └── idee_grafiche.yml
-    ├── PULL_REQUEST_TEMPLATE.md
-    └── SECURITY.md
+│       └── guida-scrittura-canti.html
+│
+├── style/
+│   ├── style.css                  # Stili base, variabili CSS, utility riutilizzabili
+│   ├── temi-cori.css              # Palette colore per coro (blu, verde oliva, terracotta)
+│   ├── home.css / home-coro.css   # Homepage generale e homepage per coro
+│   ├── portale.css                # Layout comune area riservata
+│   ├── form.css                   # Stili form
+│   ├── bacheca.css / calendario.css / presenze.css / profilo.css
+│   ├── registro.css / utenti.css / canti-admin.css / tab-cori.css
+│   └── dashboard.css
+│
+├── script/
+│   ├── api.js                     # Wrapper chiamate API verso il backend
+│   ├── auth-guard.js              # Protezione pagine riservate, gestione token
+│   ├── canti-domenica.js          # Canti della domenica da Google Sheets
+│   ├── search.js                  # Motore di ricerca canti
+│   └── ...
+│
+├── images/                        # Favicon, icone, manifest
+├── pdf-testi/                     # PDF testi canti
+├── pdf-spartiti/                  # PDF spartiti
+└── canti.json                     # Metadati e indice dei canti
 ```
 
-## Funzionalità principali
-### Sistema di ricerca
-- Ricerca full-text nei titoli e nei testi dei canti
-- Filtraggio per categorie liturgiche
-- Highlight dei termini trovati
-- Ricerca in tempo reale
+## Tecnologie
 
-### Design responsive
-- Layout adattivo per mobile, tablet e desktop
-- Menu hamburger per dispositivi mobili
-- Ottimizzazione per proiezione (modalità zoom)
+### Frontend
+- HTML5 semantico
+- CSS3 con variabili custom properties (palette per coro sovrascritta via `temi-cori.css`)
+- JavaScript vanilla (ES modules per l'area riservata)
+- Font Awesome per le icone
 
-### Aggiornamenti dinamici
-- **Canti della domenica** caricati da Google Sheets
-- **Nuovi canti** e **Tempi forti** aggiunti automaticamente da Google Sheets
-- **Calendario** sincronizzato con Google Calendar
+### Integrazioni esterne
+- **Google Sheets** — canti della settimana, nuovi canti, tempi forti (per coro)
+- **Google Calendar** — calendario prove e celebrazioni
+- **FormSubmit** — invio richieste di nuovi canti via email
+- **FullCalendar** — rendering del calendario nel portale
+- **counter.dev** — statistiche di visita
 
-### Modalità presentazione
-- Scrolling automatico a diverse velocità
-- Interfaccia semplificata e pulita per la proiezione
-- Nascondimento elementi non essenziali
+## Autenticazione e ruoli
 
-## Richiesta di inserimento di un nuovo canto
-Per proporre l’aggiunta di un nuovo canto al sito, è disponibile [una pagina](coro-delle-dieci.github.io/admin/aggiungi-canto) nel sito.
-Quando un utente compila e invia il modulo, i dati vengono inviati automaticamente via email ai responsabili del coro tramite il servizio FormSubmit.
+L'accesso al portale richiede login (`portale/login.html`); il token viene gestito da `script/auth-guard.js` e verificato ad ogni caricamento di pagina riservata.
 
-### Campi da compilare
-Il modulo richiede i seguenti dati:  
-1. Nome del canto (obbligatorio): inserire il titolo completo del canto.
-2. Testo del canto (obbligatorio): copiare l’intero testo del canto così come deve comparire nel sito.
-3. Link YouTube (facoltativo): inserire il link a un video YouTube del canto (utile per ascolto e apprendimento).
-4. Numero sul libretto (facoltativo): specificare il numero corrispondente sui libretti dei canti.
+Ruoli previsti:
+| Ruolo | Permessi |
+|---|---|
+| `admin` | Accesso completo a tutti i cori e le funzioni |
+| `direttore` | Gestione del proprio coro: presenze, canti, utenti, bacheca |
+| `responsabile` | Come direttore, permessi su funzioni organizzative |
+| `corista` | Area personale: profilo, presenze, bacheca, calendario |
+| `strumentista` | Come corista |
 
-### Come funziona l'invio
-Quando il modulo viene inviato, il sistema genera un’email con oggetto:  
-`Nuovo canto da inserire: [Nome canto]`  
-Il corpo dell’email contiene tutti i dati inseriti dall’utente nei campi del modulo.  
-Il servizio [FormSubmit](formsubmit.co/) recapita l’email direttamente all’indirizzo dei responsabili del coro.  
-I responsabili verificano le informazioni e, se approvate, inseriscono il canto nel sito.
+Le pagine amministrative (`utenti.html`, `registro.html`, `canti-admin.html`) richiedono uno dei ruoli `admin`, `direttore` o `responsabile`.
 
-### Nota bene!
-**Il sistema non consente l’inserimento diretto nel sito: tutte le richieste vengono verificate manualmente.**
+## Sistema di ricerca canti
 
-## Contatti e Supporto
-Email: coro10.sanvito@gmail.com  
+- Ricerca full-text su titoli, testi e categorie
+- Bonus di punteggio per corrispondenze esatte, per evitare che frasi parziali ripetute superino in ranking un titolo corrispondente per intero
+- Filtraggio per categoria liturgica
+- Modalità presentazione con scrolling automatico, per proiezione durante prove e celebrazioni
 
-## Licenza
-Sito sviluppato per uso pastorale senza scopo di lucro. I diritti dei testi e delle musiche appartengono ai rispettivi autori ed editori.
+## Richiesta di un nuovo canto
 
+La pagina `portale/aggiungi-canto.html` permette di proporre un canto da aggiungere al repertorio. L'invio avviene tramite FormSubmit, che recapita un'email ai responsabili con oggetto:
 
-##
->La musica sacra svolge anche un altro compito, quello di saldare insieme la storia cristiana: nella Liturgia risuonano il canto gregoriano, la polifonia, la musica popolare e quella contemporanea. È come se in quel momento a lodare Dio ci fossero tutte le generazioni passate e presenti, ognuna con la propria sensibilità. Non solo, ma la musica sacra – e la musica in genere – crea ponti, avvicina le persone, anche le più lontane; non conosce barriere di nazionalità, di etnia, di colore della pelle, ma coinvolge tutti in un linguaggio superiore, e riesce sempre a mettere in sintonia persone e gruppi di provenienze anche molto differenti. La musica sacra riduce le distanze anche con quei fratelli che a volte sentiamo non vicini. Per questo in ogni parrocchia il gruppo di canto è un gruppo dove si respira disponibilità e aiuto reciproco.  
-*Papa Francesco*
+```
+Nuovo canto da inserire: [Nome canto]
+```
+
+Dopo l'invio, l'utente viene reindirizzato a `system/grazie.html`.
+
+Campi richiesti: nome del canto e testo (obbligatori); autore, categoria, link YouTube, numero sul libretto e note (facoltativi).
+
+**Nota**: l'inserimento non è automatico — ogni richiesta viene verificata manualmente prima di essere pubblicata (pagina HTML, aggiornamento di `canti.json` e del repertorio).
+
+## Design responsive
+
+- Layout adattivo mobile/tablet/desktop, breakpoint principali a 768px e 426px
+- Menu hamburger sotto i 768px
+- Palette dinamica per coro tramite variabile CSS `--c-primary`, sovrascritta per `body.coro-10`, `body.coro-1115`, `body.coro-estate`
