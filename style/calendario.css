@@ -43,7 +43,7 @@
     color: white;
 }
 
-.th.fc-col-header-cell.fc-day {
+.th {
     background: var(--cal-color, var(--c-purple));
 }
 
