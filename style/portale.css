@@ -29,7 +29,7 @@ body main a:hover {
     background: var(--c-purple);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-btn);
     padding: 0.6rem 1.4rem;
     font-family: inherit;
     font-size: 0.95rem;
@@ -48,49 +48,75 @@ body main a:hover {
     font-family: inherit;
     font-size: 0.82rem;
     cursor: pointer;
-    border: 1px solid #ddd;
+    border: 1px solid var(--c-border);
     background: white;
     margin-right: 0.3rem;
     transition: background 0.15s;
 }
-.btn-sm:hover { background: #f0f0f0; }
-.btn-sm.danger { color: #c0392b; border-color: #c0392b; }
-.btn-sm.danger:hover { background: #fdf0f0; }
-.btn-sm.ok { color: #2e7d32; border-color: #2e7d32; }
-.btn-sm.ok:hover { background: #e8f5e9; }
 
-.campo { margin-bottom: 1.2rem; }
+.btn-sm:hover {
+    background: #f0f0f0;
+}
+
+.btn-sm.danger {
+    color: #c0392b;
+    border-color: #c0392b;
+}
+
+.btn-sm.danger:hover {
+    background: #fdf0f0;
+}
+
+.btn-sm.ok {
+    color: #2e7d32;
+    border-color: #2e7d32;
+}
+
+.btn-sm.ok:hover {
+    background: #e8f5e9;
+}
+
+.campo {
+    margin-bottom: 1.2rem;
+}
+
 .campo label {
     display: block;
     font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 0.3rem;
 }
+
 .campo input,
 .campo select,
 .campo textarea {
     width: 100%;
     padding: 0.6rem 0.9rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-btn);
     font-family: inherit;
     font-size: 0.95rem;
     box-sizing: border-box;
 }
-.campo textarea { min-height: 80px; resize: vertical; }
 
-.messaggio { margin-top: 0.8rem; font-size: 0.9rem; }
-.ok { color: #2e7d32; }
-.err { color: #c0392b; }
+.campo textarea {
+    min-height: 80px;
+    resize: vertical;
+}
 
 .tabella-wrap {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
     overflow-x: auto;
     margin-top: 1rem;
 }
-table { width: 100%; border-collapse: collapse; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 th {
     background: var(--c-purple);
     color: white;
@@ -98,13 +124,18 @@ th {
     text-align: left;
     font-size: 0.88rem;
 }
+
 td {
     padding: 0.7rem 1rem;
     border-bottom: 1px solid #f0f0f0;
     font-size: 0.9rem;
 }
-tr:last-child td { border-bottom: none; }
 
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badge varianti – già in style.css, ma qui per sicurezza le ridefiniamo */
 .badge {
     display: inline-block;
     padding: 0.15rem 0.5rem;
@@ -112,10 +143,26 @@ tr:last-child td { border-bottom: none; }
     font-size: 0.78rem;
     font-weight: 600;
 }
-.badge.presente { background: #e8f5e9; color: #2e7d32; }
-.badge.assente  { background: #fdecea; color: #c0392b; }
-.badge.attivo   { background: #e8f5e9; color: #2e7d32; }
-.badge.inattivo { background: #fff3e0; color: #e65100; }
+
+.badge.presente {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.assente {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.badge.attivo {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.badge.inattivo {
+    background: #fff3e0;
+    color: #e65100;
+}
 
 .form-row {
     display: grid;
@@ -124,7 +171,10 @@ tr:last-child td { border-bottom: none; }
     margin-bottom: 1rem;
 }
 
-.vuoto { color: #888; font-style: italic; }
+.vuoto {
+    color: var(--c-text-muted);
+    font-style: italic;
+}
 
 .sezione-titolo {
     font-weight: 600;
@@ -132,8 +182,15 @@ tr:last-child td { border-bottom: none; }
     margin-top: 1.5rem;
 }
 
-.sezione-titolo {
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-    margin-top: 1.5rem;
+.messaggio {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.ok {
+    color: #2e7d32;
+}
+
+.err {
+    color: #c0392b;
 }

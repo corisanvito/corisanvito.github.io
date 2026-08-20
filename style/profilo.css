@@ -1,8 +1,8 @@
 .profilo-card {
     background: white;
-    border-radius: 8px;
+    border-radius: var(--radius-card);
     padding: 2rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-card);
     max-width: 600px;
 }
 
@@ -34,13 +34,13 @@
 
 .profilo-ruolo {
     font-size: 0.88rem;
-    color: #888;
+    color: var(--c-text-muted);
 }
 
 .campo-readonly {
     padding: 0.6rem 0.9rem;
     background: #f8f8f8;
-    border-radius: 5px;
+    border-radius: var(--radius-btn);
     font-size: 0.95rem;
-    color: #555;
+    color: var(--c-text-dark);
 }

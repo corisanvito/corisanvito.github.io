@@ -1,9 +1,9 @@
 .avviso-card {
     background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.2rem;
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .avviso-card h3 {
@@ -12,7 +12,7 @@
 
 .avviso-meta {
     font-size: 0.82rem;
-    color: #888888;
+    color: var(--c-text-muted);
     margin-bottom: 0.8rem;
 }
 
@@ -39,10 +39,10 @@
 
 .form-nuovo {
     background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .form-nuovo h3 {

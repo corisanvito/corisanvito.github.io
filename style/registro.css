@@ -1,26 +1,9 @@
 .form-registro {
     background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
-
-.campo label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-}
-
-.campo input,
-.campo select {
-    width: 100%;
-    padding: 0.6rem 0.9rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 0.95rem;
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .lista-coristi {
@@ -45,7 +28,7 @@
 
 .corista-ruolo {
     font-size: 0.82rem;
-    color: #888;
+    color: var(--c-text-muted);
 }
 
 .toggle-presenza {
@@ -55,8 +38,8 @@
 
 .btn-presenza {
     padding: 0.3rem 0.9rem;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--c-border);
     font-family: inherit;
     font-size: 0.85rem;
     cursor: pointer;

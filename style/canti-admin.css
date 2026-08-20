@@ -1,9 +1,9 @@
 .form-canto {
     background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .form-canto h3 {
@@ -12,38 +12,8 @@
 
 .info {
     font-size: 0.8em;
+    color: var(--c-text-muted);
     margin-bottom: 0.3rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.campo label {
-    display: block;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-    margin-top: 1rem;
-}
-
-.campo input,
-.campo select,
-.campo textarea {
-    width: 100%;
-    padding: 0.6rem 0.9rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 0.95rem;
-}
-
-.campo textarea {
-    min-height: 80px;
-    resize: vertical;
 }
 
 .tab-coro {
@@ -67,9 +37,9 @@
 
 .canto-card {
     background: white;
-    border-radius: 8px;
+    border-radius: var(--radius-card);
     padding: 1.2rem 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-card);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -88,9 +58,9 @@ input[type="file"] {
 
 .sottosezione {
     background: white;
-    border-radius: 8px;
+    border-radius: var(--radius-card);
     padding: 1.2rem 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-card);
     margin-bottom: 1.2rem;
 }
 
@@ -106,17 +76,12 @@ input[type="file"] {
     font-size: 1rem;
 }
 
-.form-inline {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.8rem;
-}
-
-.form-inline input {
+/* .form-inline già definito, ma abbiamo stili specifici per i campi dentro */
+.form-inline input,
+.form-inline select {
     padding: 0.5rem 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-btn);
     font-family: inherit;
     font-size: 0.9rem;
     min-width: 0;
@@ -124,7 +89,18 @@ input[type="file"] {
 
 .btn-sm-h {
     padding: 0.5rem 1rem;
+    border-radius: var(--radius-btn);
+    font-family: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    border: 1px solid var(--c-border);
+    background: white;
+    transition: background 0.15s;
     white-space: nowrap;
+}
+
+.btn-sm-h:hover {
+    background: #f0f0f0;
 }
 
 .tabella-domenica-wrap {
@@ -171,7 +147,7 @@ input[type="file"] {
 
 .tabella-domenica td:first-child {
     font-weight: 600;
-    color: #555;
+    color: var(--c-text-dark);
     white-space: nowrap;
 }
 
@@ -196,7 +172,7 @@ input[type="file"] {
     font-size: 0.78rem;
     font-weight: 600;
     margin-right: 0.3rem;
-    color: #555;
+    color: var(--c-text-dark);
 }
 
 .form-inline {

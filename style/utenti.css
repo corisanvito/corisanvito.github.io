@@ -1,9 +1,9 @@
 .form-nuovo {
     background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+    border-radius: var(--radius-card);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .form-nuovo h3 {
@@ -23,10 +23,10 @@
     width: auto;
     flex: 0 0 auto;
     padding: 0.45rem 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--c-border);
     border-radius: 999px;
     background: #fff;
-    color: #333;
+    color: var(--c-text-dark);
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
@@ -34,7 +34,7 @@
 }
 
 .coro-option:hover {
-    border-color: var(--c-accent);
+    border-color: var(--c-purple);
     background: #f5f8fc;
 }
 

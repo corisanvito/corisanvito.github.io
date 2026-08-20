@@ -1,15 +1,15 @@
 * {
     --c-primary: #2e2a35;
-    --c-light:   #f8f9fa;
+    --c-light: #f8f9fa;
 }
 
 /* Stili specifici per l'area admin */
 .admin-section {
-    background-color: white;
-    border-radius: 5px;
+    background: white;
+    border-radius: var(--radius-card);
     padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--card-margin-bottom);
 }
 
 .admin-actions {
@@ -23,12 +23,16 @@
     background-color: var(--c-primary);
     color: white;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: var(--radius-btn);
     transition: background-color 0.3s;
+    display: inline-block;
+    font-weight: 600;
 }
 
 .admin-btn:hover {
     background-color: var(--c-primary);
+    opacity: 0.85;
+    text-decoration: none;
 }
 
 .admin-table {
@@ -53,7 +57,7 @@
     .admin-actions {
         flex-direction: column;
     }
-    
+
     .admin-table {
         font-size: 0.9rem;
     }
