@@ -60,7 +60,7 @@
     import { requireAuth } from '/script/auth-guard.js';
     import { apiCall, getCori } from '/script/api.js';
 
-    const utente = requireAuth();
+    const utente = requireAuth(['admin', 'direttore', 'responsabile']);
     if (!utente) throw new Error();
 
     const isAdmin = ['admin', 'direttore', 'responsabile'].includes(utente.ruolo);
