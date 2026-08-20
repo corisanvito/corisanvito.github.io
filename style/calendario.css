@@ -1,57 +1,49 @@
-.descrizione {
-    margin-bottom: 1.5rem;
+#contenuto-calendario {
+    margin-top: 1rem;
 }
 
-#calendar {
+#contenuto-calendario .fc {
     background: white;
-    border-radius: 5px;
-    padding: 1.5rem;
+    border-radius: 8px;
+    padding: 1rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Pulsanti (se mai fossero visibili) */
-.fc-button-primary {
-    background-color: #061a40 !important;
-    border-color: #061a40 !important;
-    color: #ffffff !important;
+.fc .fc-toolbar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--c-purple);
 }
 
-.fc-button-primary:hover {
-    background-color: #1c6ea4 !important;
-    border-color: #1c6ea4 !important;
-    color: #ffffff !important;
+.fc .fc-button-primary {
+    background: var(--c-purple);
+    border-color: var(--c-purple);
+    font-family: inherit;
+    font-size: 0.85rem;
 }
 
-.fc-daygrid-day.fc-day-today,
-.fc-timegrid-col.fc-day-today {
-    background-color: rgba(6, 26, 64, 0.06) !important;
+.fc .fc-button-primary:hover {
+    background: var(--c-grey);
+    border-color: var(--c-grey);
 }
 
-/* Stile base degli eventi */
-.fc-event {
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: #ffffff !important;
-    border-color: #ffffff !important;
-    color: #061a40 !important;
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background: var(--c-grey);
+    border-color: var(--c-grey);
 }
 
-/* HOVER: sfondo blu, testo bianco su TUTTI gli elementi interni */
-.fc-event:hover, .fc-event:hover * {
-    background-color: #061a40 !important;
-    color: #ffffff !important;
-    border-color: #061a40 !important;
+.fc .fc-daygrid-event {
+    border-radius: 4px;
+    font-size: 0.8rem;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-    #calendar {
-        padding: 0.75rem;
-    }
+.fc .fc-list-event:hover td {
+    background: #f5f0f6;
 }
 
-@media (max-width: 426px) {
-    #calendar {
-        padding: 0.5rem;
+@media (max-width: 600px) {
+    .fc .fc-toolbar {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
