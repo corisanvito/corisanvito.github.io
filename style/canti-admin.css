@@ -94,13 +94,8 @@ input[type="file"] {
     font-size: 0.82rem;
     cursor: pointer;
     border: 1px solid var(--c-border);
-    background: white;
     transition: background 0.15s;
     white-space: nowrap;
-}
-
-.btn-sm-h:hover {
-    background: #f0f0f0;
 }
 
 .tabella-domenica-wrap {
