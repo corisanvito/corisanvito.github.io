@@ -46,19 +46,6 @@
     resize: vertical;
 }
 
-.btn-primary {
-    background: var(--c-purple);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.6rem 1.4rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
 .tab-coro {
     margin-bottom: 1rem;
     margin-top: 1rem;
@@ -71,30 +58,6 @@
 
 .tab-coro.attivo {
     background: var(--c-purple);
-    color: white;
-}
-
-.btn-primary:hover {
-    opacity: 0.85;
-}
-
-.btn-sm {
-    border: none;
-    border-radius: 5px;
-    padding: 0.4rem 0.9rem;
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.btn-sm:hover {
-    opacity: 0.85;
-}
-
-.btn-sm.danger {
-    background: #c0392b;
     color: white;
 }
 
@@ -117,24 +80,6 @@
 
 input[type="file"] {
     display: none;
-}
-
-.messaggio {
-    margin-top: 0.8rem;
-    font-size: 0.9rem;
-}
-
-.ok {
-    color: #2e7d32;
-}
-
-.err {
-    color: #c0392b;
-}
-
-.vuoto {
-    color: #888;
-    font-style: italic;
 }
 
 .sezione-settimana {

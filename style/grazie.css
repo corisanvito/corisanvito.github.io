@@ -33,20 +33,7 @@
     color: #7f8c8d;
 }
 
-.btn-primary {
-    background: var(--c-purple);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.7rem 1.6rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
 .btn-primary:hover {
-    opacity: 0.85;
     color: white;
     text-decoration: none;
 }

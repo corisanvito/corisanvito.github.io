@@ -6,13 +6,6 @@
     margin-bottom: 2rem;
 }
 
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
 .campo label {
     display: block;
     font-size: 0.9rem;
@@ -83,35 +76,4 @@
     border-color: #c0392b;
     color: #c0392b;
     font-weight: 600;
-}
-
-.btn-primary {
-    background: var(--c-grey);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.7rem 1.6rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    margin-top: 1.2rem;
-}
-
-.btn-primary:hover {
-    opacity: 0.85;
-}
-
-.messaggio {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-.ok {
-    color: #2e7d32;
-}
-
-.err {
-    color: #c0392b;
 }
