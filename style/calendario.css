@@ -39,6 +39,14 @@
     background: #f5f0f6;
 }
 
+.fc-col-header-cell-cushion {
+    color: white;
+}
+
+.th.fc-col-header-cell.fc-day {
+    background: var(--cal-color, var(--c-purple));
+}
+
 @media (max-width: 600px) {
     .fc .fc-toolbar {
         flex-direction: column;
