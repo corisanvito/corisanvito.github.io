@@ -109,6 +109,19 @@ aside, .centre-column {
     section {
         margin-bottom: 1rem;
     }
+
+    /* Ordine mobile: domenica, tempi forti, nuovi */
+    .centre-column {
+        order: 1;
+    }
+
+    aside:has(#tempi-forti) {
+        order: 2;
+    }
+
+    aside:has(#sezione-nuovi-canti) {
+        order: 3;
+    }
 }
 
 @media (max-width: 426px) {
