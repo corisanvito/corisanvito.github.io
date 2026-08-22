@@ -149,8 +149,8 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
     <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
     <link rel="manifest" href="../images/site.webmanifest">
 
-    <meta name="msapplication-TileColor" content="#061a40">
-    <meta name="theme-color" content="#061a40">
+    <meta name="msapplication-TileColor" content="#1b1b1b">
+    <meta name="theme-color" content="#1b1b1b">
 
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/canti.css">
