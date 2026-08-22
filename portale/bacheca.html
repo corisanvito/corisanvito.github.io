@@ -136,6 +136,29 @@
             return btn;
         }
 
+        function resetToggle(container) {
+            container.querySelectorAll('.coro-option').forEach(b => {
+                b.classList.remove('selezionato');
+                b.querySelector('i').className = 'fa-regular fa-circle';
+            });
+        }
+
+        async function pubblicaAvviso(token, titolo, testo, coroId, voci, utentiIds, files) {
+            const fd = new FormData();
+            fd.append('titolo', titolo);
+            fd.append('testo', testo);
+            if (coroId) fd.append('coro', coroId);
+            if (voci) fd.append('destinatariVoci', JSON.stringify(voci));
+            if (utentiIds) fd.append('destinatariUtenti', JSON.stringify(utentiIds));
+            for (const file of files) fd.append('allegati', file);
+            const res = await fetch('https://corisanvito-backend.onrender.com/bacheca', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: fd
+            });
+            return res.json();
+        }
+
         async function caricaAvvisi() {
             const avvisi = await apiCall('/bacheca');
             if (!avvisi || avvisi.length === 0) {
@@ -176,15 +199,12 @@
             const cori = utente.ruolo === 'admin' ? await getCori() : (me.cori || []);
             const tuttiUtenti = await apiCall('/users');
 
-            // Popola toggle cori (per tipo "coro")
             const toggleCori = document.getElementById('toggle-cori');
             cori.forEach(c => toggleCori.appendChild(creaToggleCoro(c)));
 
-            // Popola toggle cori (per tipo "voce")
             const toggleCoriVoci = document.getElementById('toggle-cori-voci');
             cori.forEach(c => toggleCoriVoci.appendChild(creaToggleCoro(c)));
 
-            // Popola checkbox voci
             const checkVoci = document.getElementById('check-voci');
             VOCI.forEach(v => {
                 const label = document.createElement('label');
@@ -193,7 +213,6 @@
                 checkVoci.appendChild(label);
             });
 
-            // Popola checkbox utenti
             const checkUtenti = document.getElementById('check-utenti');
             (tuttiUtenti || []).filter(u => u.ruolo !== 'admin').forEach(u => {
                 const label = document.createElement('label');
@@ -202,7 +221,6 @@
                 checkUtenti.appendChild(label);
             });
 
-            // Mostra/nascondi campi in base al tipo destinatario
             document.getElementById('tipo-destinatari').addEventListener('change', function () {
                 document.getElementById('campo-coro').style.display = this.value === 'coro' ? 'block' : 'none';
                 document.getElementById('campo-voci').style.display = this.value === 'voce' ? 'block' : 'none';
@@ -214,87 +232,51 @@
                 const testo = document.getElementById('testo-avviso').value.trim();
                 const tipo = document.getElementById('tipo-destinatari').value;
                 const msg = document.getElementById('msg-bacheca');
+                const token = localStorage.getItem('csv_token');
+                const files = document.getElementById('allegati-avviso').files;
 
                 if (!titolo || !testo) { alert('Compila titolo e testo.'); return; }
 
-                const formData = new FormData();
-                formData.append('titolo', titolo);
-                formData.append('testo', testo);
-
-                if (tipo === 'coro') {
-                    const coriSelezionati = [...toggleCori.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
-                    // Se nessun coro selezionato = tutti i cori (coro: null)
-                    if (coriSelezionati.length === 1) {
-                        formData.append('coro', coriSelezionati[0]);
-                    } else if (coriSelezionati.length > 1) {
-                        // Pubblica un avviso per ogni coro selezionato
-                        const token = localStorage.getItem('csv_token');
-                        msg.textContent = 'Caricamento in corso…';
-                        msg.className = 'messaggio';
-                        for (const coroId of coriSelezionati) {
-                            const fd = new FormData();
-                            fd.append('titolo', titolo);
-                            fd.append('testo', testo);
-                            fd.append('coro', coroId);
-                            const files = document.getElementById('allegati-avviso').files;
-                            for (const file of files) fd.append('allegati', file);
-                            await fetch('https://corisanvito-backend.onrender.com/bacheca', {
-                                method: 'POST',
-                                headers: { 'Authorization': `Bearer ${token}` },
-                                body: fd
-                            });
-                        }
-                        msg.className = 'messaggio ok';
-                        msg.textContent = '✓ Avvisi pubblicati!';
-                        document.getElementById('titolo-avviso').value = '';
-                        document.getElementById('testo-avviso').value = '';
-                        document.getElementById('allegati-avviso').value = '';
-                        toggleCori.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
-                        caricaAvvisi();
-                        return;
-                    }
-                    // coriSelezionati.length === 0 → nessun coro, avviso per tutti
-                } else if (tipo === 'voce') {
-                    const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
-                    if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
-                    const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
-                    // Se un solo coro selezionato lo inviamo, altrimenti null = tutti
-                    if (coriVociSelezionati.length === 1) formData.append('coro', coriVociSelezionati[0]);
-                    formData.append('destinatariVoci', JSON.stringify(voci));
-                } else if (tipo === 'utenti') {
-                    const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
-                    formData.append('destinatariUtenti', JSON.stringify(utenti));
-                }
-
-                const files = document.getElementById('allegati-avviso').files;
-                for (const file of files) formData.append('allegati', file);
-
-                const token = localStorage.getItem('csv_token');
                 msg.textContent = 'Caricamento in corso…';
                 msg.className = 'messaggio';
 
                 try {
-                    const res = await fetch('https://corisanvito-backend.onrender.com/bacheca', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
-                    });
-                    const data = await res.json();
-
-                    if (data._id) {
-                        msg.className = 'messaggio ok';
-                        msg.textContent = '✓ Avviso pubblicato!';
-                        document.getElementById('titolo-avviso').value = '';
-                        document.getElementById('testo-avviso').value = '';
-                        document.getElementById('allegati-avviso').value = '';
-                        document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
-                        toggleCori.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
-                        toggleCoriVoci.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
-                        caricaAvvisi();
-                    } else {
-                        msg.className = 'messaggio err';
-                        msg.textContent = data.message || 'Errore nella pubblicazione.';
+                    if (tipo === 'coro') {
+                        const coriSelezionati = [...toggleCori.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
+                        if (coriSelezionati.length === 0) {
+                            // nessun coro = avviso per tutti
+                            await pubblicaAvviso(token, titolo, testo, null, null, null, files);
+                        } else {
+                            for (const coroId of coriSelezionati) {
+                                await pubblicaAvviso(token, titolo, testo, coroId, null, null, files);
+                            }
+                        }
+                    } else if (tipo === 'voce') {
+                        const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
+                        if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
+                        const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
+                        if (coriVociSelezionati.length === 0) {
+                            // nessun coro = avviso per quella voce in tutti i cori
+                            await pubblicaAvviso(token, titolo, testo, null, voci, null, files);
+                        } else {
+                            for (const coroId of coriVociSelezionati) {
+                                await pubblicaAvviso(token, titolo, testo, coroId, voci, null, files);
+                            }
+                        }
+                    } else if (tipo === 'utenti') {
+                        const utentiIds = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
+                        await pubblicaAvviso(token, titolo, testo, null, null, utentiIds, files);
                     }
+
+                    msg.className = 'messaggio ok';
+                    msg.textContent = '✓ Avviso pubblicato!';
+                    document.getElementById('titolo-avviso').value = '';
+                    document.getElementById('testo-avviso').value = '';
+                    document.getElementById('allegati-avviso').value = '';
+                    document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
+                    resetToggle(toggleCori);
+                    resetToggle(toggleCoriVoci);
+                    caricaAvvisi();
                 } catch (err) {
                     msg.className = 'messaggio err';
                     msg.textContent = 'Errore di connessione.';
