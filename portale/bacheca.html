@@ -65,20 +65,16 @@
                     </select>
                 </div>
 
-                <!-- Selezione coro -->
+                <!-- Selezione coro (toggle multipli) -->
                 <div class="campo" id="campo-coro">
-                    <label>Coro</label>
-                    <select id="coro-avviso">
-                        <option value="">Tutti i cori</option>
-                    </select>
+                    <label>Cori</label>
+                    <div id="toggle-cori" class="cori-selector"></div>
                 </div>
 
-                <!-- Selezione voci -->
+                <!-- Selezione voci + coro (toggle multipli) -->
                 <div class="campo" id="campo-voci" style="display:none">
-                    <label>Coro</label>
-                    <select id="coro-voci">
-                        <option value="">Seleziona coro…</option>
-                    </select>
+                    <label>Cori</label>
+                    <div id="toggle-cori-voci" class="cori-selector"></div>
                     <label style="margin-top:0.8rem;display:block">Voci / Strumenti</label>
                     <div id="check-voci" class="cori-selector"></div>
                 </div>
@@ -122,6 +118,24 @@
 
         const VOCI = ['bianca', 'soprano', 'contralto', 'tenore', 'basso', 'chitarra', 'pianoforte'];
 
+        function toggleOption(btn) {
+            btn.classList.toggle('selezionato');
+            const icon = btn.querySelector('i');
+            icon.className = btn.classList.contains('selezionato')
+                ? 'fa-solid fa-circle-check'
+                : 'fa-regular fa-circle';
+        }
+
+        function creaToggleCoro(c) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'coro-option';
+            btn.dataset.id = c._id;
+            btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${c.nome}`;
+            btn.addEventListener('click', () => toggleOption(btn));
+            return btn;
+        }
+
         async function caricaAvvisi() {
             const avvisi = await apiCall('/bacheca');
             if (!avvisi || avvisi.length === 0) {
@@ -162,23 +176,13 @@
             const cori = utente.ruolo === 'admin' ? await getCori() : (me.cori || []);
             const tuttiUtenti = await apiCall('/users');
 
-            // Popola select coro
-            const selCoro = document.getElementById('coro-avviso');
-            cori.forEach(c => {
-                const o = document.createElement('option');
-                o.value = c._id;
-                o.textContent = c.nome;
-                selCoro.appendChild(o);
-            });
+            // Popola toggle cori (per tipo "coro")
+            const toggleCori = document.getElementById('toggle-cori');
+            cori.forEach(c => toggleCori.appendChild(creaToggleCoro(c)));
 
-            // Popola select coro per voci
-            const selCoroVoci = document.getElementById('coro-voci');
-            cori.forEach(c => {
-                const o = document.createElement('option');
-                o.value = c._id;
-                o.textContent = c.nome;
-                selCoroVoci.appendChild(o);
-            });
+            // Popola toggle cori (per tipo "voce")
+            const toggleCoriVoci = document.getElementById('toggle-cori-voci');
+            cori.forEach(c => toggleCoriVoci.appendChild(creaToggleCoro(c)));
 
             // Popola checkbox voci
             const checkVoci = document.getElementById('check-voci');
@@ -218,25 +222,52 @@
                 formData.append('testo', testo);
 
                 if (tipo === 'coro') {
-                    const coroId = document.getElementById('coro-avviso').value;
-                    if (coroId) formData.append('coro', coroId);
+                    const coriSelezionati = [...toggleCori.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
+                    // Se nessun coro selezionato = tutti i cori (coro: null)
+                    if (coriSelezionati.length === 1) {
+                        formData.append('coro', coriSelezionati[0]);
+                    } else if (coriSelezionati.length > 1) {
+                        // Pubblica un avviso per ogni coro selezionato
+                        const token = localStorage.getItem('csv_token');
+                        msg.textContent = 'Caricamento in corso…';
+                        msg.className = 'messaggio';
+                        for (const coroId of coriSelezionati) {
+                            const fd = new FormData();
+                            fd.append('titolo', titolo);
+                            fd.append('testo', testo);
+                            fd.append('coro', coroId);
+                            const files = document.getElementById('allegati-avviso').files;
+                            for (const file of files) fd.append('allegati', file);
+                            await fetch('https://corisanvito-backend.onrender.com/bacheca', {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}` },
+                                body: fd
+                            });
+                        }
+                        msg.className = 'messaggio ok';
+                        msg.textContent = '✓ Avvisi pubblicati!';
+                        document.getElementById('titolo-avviso').value = '';
+                        document.getElementById('testo-avviso').value = '';
+                        document.getElementById('allegati-avviso').value = '';
+                        toggleCori.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
+                        caricaAvvisi();
+                        return;
+                    }
+                    // coriSelezionati.length === 0 → nessun coro, avviso per tutti
                 } else if (tipo === 'voce') {
-                    const coroVoci = document.getElementById('coro-voci').value;
-                    if (!coroVoci) { alert('Seleziona un coro per la selezione per voce.'); return; }
                     const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
                     if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
-                    formData.append('coro', coroVoci);
+                    const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
+                    // Se un solo coro selezionato lo inviamo, altrimenti null = tutti
+                    if (coriVociSelezionati.length === 1) formData.append('coro', coriVociSelezionati[0]);
                     formData.append('destinatariVoci', JSON.stringify(voci));
                 } else if (tipo === 'utenti') {
                     const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
                     formData.append('destinatariUtenti', JSON.stringify(utenti));
                 }
 
-                // Allegati
                 const files = document.getElementById('allegati-avviso').files;
-                for (const file of files) {
-                    formData.append('allegati', file);
-                }
+                for (const file of files) formData.append('allegati', file);
 
                 const token = localStorage.getItem('csv_token');
                 msg.textContent = 'Caricamento in corso…';
@@ -257,6 +288,8 @@
                         document.getElementById('testo-avviso').value = '';
                         document.getElementById('allegati-avviso').value = '';
                         document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
+                        toggleCori.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
+                        toggleCoriVoci.querySelectorAll('.coro-option').forEach(b => { b.classList.remove('selezionato'); b.querySelector('i').className = 'fa-regular fa-circle'; });
                         caricaAvvisi();
                     } else {
                         msg.className = 'messaggio err';
