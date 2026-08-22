@@ -58,11 +58,43 @@
                 </div>
                 <div class="campo">
                     <label>Destinatari</label>
+                    <select id="tipo-destinatari">
+                        <option value="coro">Tutti i coristi di un coro</option>
+                        <option value="voce">Per voce / strumento</option>
+                        <option value="utenti">Utenti specifici</option>
+                    </select>
+                </div>
+
+                <!-- Selezione coro -->
+                <div class="campo" id="campo-coro">
+                    <label>Coro</label>
                     <select id="coro-avviso">
                         <option value="">Tutti i cori</option>
                     </select>
                 </div>
+
+                <!-- Selezione voci -->
+                <div class="campo" id="campo-voci" style="display:none">
+                    <label>Voci / Strumenti</label>
+                    <div id="check-voci" class="cori-selector"></div>
+                </div>
+
+                <!-- Selezione utenti specifici -->
+                <div class="campo" id="campo-utenti" style="display:none">
+                    <label>Utenti</label>
+                    <div id="check-utenti" class="cori-selector"></div>
+                </div>
+
+                <!-- Allegati -->
+                <div class="campo">
+                    <label>Allegati (max 5 file)</label>
+                    <input type="file" id="allegati-avviso" multiple accept="*/*"
+                        style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
+                    <small style="color:#888;font-size:0.78rem">PDF, audio, video, immagini…</small>
+                </div>
+
                 <button class="btn-primary" id="btn-pubblica">Pubblica</button>
+                <p class="messaggio" id="msg-bacheca"></p>
             </div>
         </div>
         <div id="lista-avvisi">
@@ -84,59 +116,142 @@
         const isAdmin = ['admin', 'direttore', 'responsabile'].includes(utente.ruolo);
         const lista = document.getElementById('lista-avvisi');
 
+        const VOCI = ['bianca', 'soprano', 'contralto', 'tenore', 'basso', 'chitarra', 'pianoforte'];
+
         async function caricaAvvisi() {
             const avvisi = await apiCall('/bacheca');
             if (!avvisi || avvisi.length === 0) {
                 lista.innerHTML = '<p class="vuoto">Nessun avviso al momento.</p>';
                 return;
             }
-            lista.innerHTML = avvisi.map(a => `
-                <div class="avviso-card" data-id="${a._id}">
-                    <h3>${a.titolo}${a.coro ? `<span class="tag-coro">${a.coro.nome}</span>` : '<span class="tag-coro">Tutti</span>'}</h3>
-                    <p class="avviso-meta">${a.autore ? a.autore.nome + ' ' + a.autore.cognome : ''} · ${new Date(a.createdAt).toLocaleDateString('it-IT')}</p>
-                    <p class="avviso-testo">${a.testo}</p>
-                    ${isAdmin ? `<div class="azioni-avviso">
-                        <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')"><i class="fa-solid fa-trash"></i> Elimina</button>
-                    </div>` : ''}
-                </div>
-            `).join('');
+            lista.innerHTML = avvisi.map(a => {
+                // Destinatari
+                let dest = '';
+                if (a.coro) dest = `<span class="tag-coro">${a.coro.nome}</span>`;
+                else if (a.destinatariVoci?.length) dest = `<span class="tag-coro">🎵 ${a.destinatariVoci.join(', ')}</span>`;
+                else if (a.destinatariUtenti?.length) dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
+                else dest = '<span class="tag-coro">Tutti</span>';
+
+                // Allegati
+                const allegati = (a.allegati || []).map(al => `
+                    <a href="${al.downloadLink}" target="_blank" class="allegato-link">
+                        <i class="fa-solid fa-paperclip"></i> ${al.nome}
+                    </a>
+                `).join('');
+
+                return `
+                    <div class="avviso-card" data-id="${a._id}">
+                        <h3>${a.titolo} ${dest}</h3>
+                        <p class="avviso-meta">${a.autore ? a.autore.nome + ' ' + a.autore.cognome : ''} · ${new Date(a.createdAt).toLocaleDateString('it-IT')}</p>
+                        <p class="avviso-testo">${a.testo}</p>
+                        ${allegati ? `<div class="allegati-wrap">${allegati}</div>` : ''}
+                        ${isAdmin ? `<div class="azioni-avviso">
+                            <button class="btn-sm danger" onclick="eliminaAvviso('${a._id}')"><i class="fa-solid fa-trash"></i> Elimina</button>
+                        </div>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         if (isAdmin) {
             document.getElementById('form-nuovo').style.display = 'block';
 
-            const sel = document.getElementById('coro-avviso');
+            const me = await apiCall('/auth/me');
+            const cori = utente.ruolo === 'admin' ? await getCori() : (me.cori || []);
+            const tuttiUtenti = await apiCall('/users');
 
-            if (utente.ruolo === 'admin') {
-                // L'admin vede tutti i cori
-                const cori = await getCori();
-                (cori || []).forEach(c => {
-                    const o = document.createElement('option');
-                    o.value = c._id;
-                    o.textContent = c.nome;
-                    sel.appendChild(o);
-                });
-            } else {
-                // Il responsabile e il direttore vedono solo i loro cori
-                const me = await apiCall('/auth/me');
-                (me.cori || []).forEach(c => {
-                    const o = document.createElement('option');
-                    o.value = c._id;
-                    o.textContent = c.nome;
-                    sel.appendChild(o);
-                });
-            }
+            // Popola select coro
+            const selCoro = document.getElementById('coro-avviso');
+            cori.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c._id;
+                o.textContent = c.nome;
+                selCoro.appendChild(o);
+            });
+
+            // Popola checkbox voci
+            const checkVoci = document.getElementById('check-voci');
+            VOCI.forEach(v => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `<input type="checkbox" value="${v}"> ${v}`;
+                checkVoci.appendChild(label);
+            });
+
+            // Popola checkbox utenti
+            const checkUtenti = document.getElementById('check-utenti');
+            (tuttiUtenti || []).filter(u => u.ruolo !== 'admin').forEach(u => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `<input type="checkbox" value="${u._id}"> ${u.nome} ${u.cognome}`;
+                checkUtenti.appendChild(label);
+            });
+
+            // Mostra/nascondi campi in base al tipo destinatario
+            document.getElementById('tipo-destinatari').addEventListener('change', function () {
+                document.getElementById('campo-coro').style.display = this.value === 'coro' ? 'block' : 'none';
+                document.getElementById('campo-voci').style.display = this.value === 'voce' ? 'block' : 'none';
+                document.getElementById('campo-utenti').style.display = this.value === 'utenti' ? 'block' : 'none';
+            });
 
             document.getElementById('btn-pubblica').addEventListener('click', async () => {
                 const titolo = document.getElementById('titolo-avviso').value.trim();
                 const testo = document.getElementById('testo-avviso').value.trim();
-                const coro = document.getElementById('coro-avviso').value || null;
+                const tipo = document.getElementById('tipo-destinatari').value;
+                const msg = document.getElementById('msg-bacheca');
+
                 if (!titolo || !testo) { alert('Compila titolo e testo.'); return; }
 
-                await apiCall('/bacheca', { method: 'POST', body: JSON.stringify({ titolo, testo, coro }) });
-                document.getElementById('titolo-avviso').value = '';
-                document.getElementById('testo-avviso').value = '';
-                caricaAvvisi();
+                const formData = new FormData();
+                formData.append('titolo', titolo);
+                formData.append('testo', testo);
+
+                if (tipo === 'coro') {
+                    const coroId = document.getElementById('coro-avviso').value;
+                    if (coroId) formData.append('coro', coroId);
+                } else if (tipo === 'voce') {
+                    const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
+                    formData.append('destinatariVoci', JSON.stringify(voci));
+                } else if (tipo === 'utenti') {
+                    const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
+                    formData.append('destinatariUtenti', JSON.stringify(utenti));
+                }
+
+                // Allegati
+                const files = document.getElementById('allegati-avviso').files;
+                for (const file of files) {
+                    formData.append('allegati', file);
+                }
+
+                // Usa fetch direttamente (non apiCall) perché è FormData
+                const token = localStorage.getItem('csv_token');
+                msg.textContent = 'Caricamento in corso…';
+                msg.className = 'messaggio';
+
+                try {
+                    const res = await fetch('https://corisanvito-backend.onrender.com/bacheca', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    if (data._id) {
+                        msg.className = 'messaggio ok';
+                        msg.textContent = '✓ Avviso pubblicato!';
+                        document.getElementById('titolo-avviso').value = '';
+                        document.getElementById('testo-avviso').value = '';
+                        document.getElementById('allegati-avviso').value = '';
+                        document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
+                        caricaAvvisi();
+                    } else {
+                        msg.className = 'messaggio err';
+                        msg.textContent = data.message || 'Errore nella pubblicazione.';
+                    }
+                } catch (err) {
+                    msg.className = 'messaggio err';
+                    msg.textContent = 'Errore di connessione.';
+                }
             });
         }
 
