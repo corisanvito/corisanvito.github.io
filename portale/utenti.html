@@ -71,8 +71,8 @@
                 </div>
                 <div class="campo">
                     <label>Tipo di voce / Strumento</label>
-                    <select id="u-vocetipo">
-                        <option value="">—</option>
+                    <select id="u-vocetipo" multiple size="2"
+                        style="width:100%;padding:0.4rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.95rem">
                         <option value="bianca">Bianca</option>
                         <option value="soprano">Soprano</option>
                         <option value="contralto">Contralto</option>
@@ -110,19 +110,7 @@
 
         const cori = await getCori();
 
-        // Popola selettore cori
-        const selCori = document.getElementById('u-cori');
-        (cori || []).forEach(c => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'coro-option';
-            button.dataset.id = c._id;
-            button.innerHTML = `<i class="fa-regular fa-circle"style="color: #301934;"></i> ${c.nome}`;
-            button.addEventListener('click', () => toggleOption(button));
-            selCori.appendChild(button);
-        });
-
-        // Logica toggle per bottoni selezionabili (cori)
+        // Logica toggle per bottoni cori
         function toggleOption(btn) {
             btn.classList.toggle('selezionato');
             const icon = btn.querySelector('i');
@@ -130,6 +118,18 @@
                 ? 'fa-solid fa-circle-check'
                 : 'fa-regular fa-circle';
         }
+
+        // Popola selettore cori
+        const selCori = document.getElementById('u-cori');
+        (cori || []).forEach(c => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'coro-option';
+            button.dataset.id = c._id;
+            button.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${c.nome}`;
+            button.addEventListener('click', () => toggleOption(button));
+            selCori.appendChild(button);
+        });
 
         // Carica e mostra gli utenti del coro attivo (o tutti se coroId === 'tutti')
         async function caricaUtentiCoro(coroId) {
@@ -196,6 +196,7 @@
         // Crea nuovo account
         document.getElementById('btn-crea').addEventListener('click', async () => {
             const coriSelezionati = [...selCori.querySelectorAll('.coro-option.selezionato')].map(o => o.dataset.id);
+            const vociSelezionate = [...document.querySelectorAll('#u-vocetipo option:checked')].map(o => o.value);
             const body = {
                 nome: document.getElementById('u-nome').value.trim(),
                 cognome: document.getElementById('u-cognome').value.trim(),
@@ -203,7 +204,7 @@
                 password: document.getElementById('u-password').value,
                 ruolo: document.getElementById('u-ruolo').value,
                 cori: coriSelezionati,
-                tipoVoce: document.getElementById('u-vocetipo').value || '',
+                tipoVoce: vociSelezionate.join(', '),
                 dataNascita: document.getElementById('u-nascita').value || null,
                 telefono: document.getElementById('u-telefono').value.trim(),
                 note: document.getElementById('u-note').value.trim()
@@ -218,7 +219,7 @@
             if (res?.message?.includes('attesa')) {
                 ['u-nome', 'u-cognome', 'u-email', 'u-password', 'u-telefono', 'u-note'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('u-nascita').value = '';
-                document.getElementById('u-vocetipo').value = '';
+                [...document.querySelectorAll('#u-vocetipo option')].forEach(o => o.selected = false);
                 selCori.querySelectorAll('.coro-option').forEach(o => {
                     o.classList.remove('selezionato');
                     o.querySelector('i').className = 'fa-regular fa-circle';
