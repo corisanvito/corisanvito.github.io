@@ -129,14 +129,12 @@
                 return;
             }
             lista.innerHTML = avvisi.map(a => {
-                // Destinatari
                 let dest = '';
-                if (a.coro) dest = `<span class="tag-coro">${a.coro.nome}</span>`;
-                else if (a.destinatariVoci?.length) dest = `<span class="tag-coro">${a.coro ? a.coro.nome + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
+                if (a.destinatariVoci?.length) dest = `<span class="tag-coro">${a.coro ? a.coro.nome + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
                 else if (a.destinatariUtenti?.length) dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
+                else if (a.coro) dest = `<span class="tag-coro">${a.coro.nome}</span>`;
                 else dest = '<span class="tag-coro">Tutti</span>';
 
-                // Allegati
                 const allegati = (a.allegati || []).map(al => `
                     <a href="${al.downloadLink}" target="_blank" class="allegato-link">
                         <i class="fa-solid fa-paperclip"></i> ${al.nome}
@@ -173,6 +171,15 @@
                 selCoro.appendChild(o);
             });
 
+            // Popola select coro per voci
+            const selCoroVoci = document.getElementById('coro-voci');
+            cori.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c._id;
+                o.textContent = c.nome;
+                selCoroVoci.appendChild(o);
+            });
+
             // Popola checkbox voci
             const checkVoci = document.getElementById('check-voci');
             VOCI.forEach(v => {
@@ -180,15 +187,6 @@
                 label.className = 'checkbox-label';
                 label.innerHTML = `<input type="checkbox" value="${v}"> ${v}`;
                 checkVoci.appendChild(label);
-            });
-
-            // Popola select voci
-            const selCoroVoci = document.getElementById('coro-voci');
-            cori.forEach(c => {
-                const o = document.createElement('option');
-                o.value = c._id;
-                o.textContent = c.nome;
-                selCoroVoci.appendChild(o);
             });
 
             // Popola checkbox utenti
@@ -223,18 +221,15 @@
                     const coroId = document.getElementById('coro-avviso').value;
                     if (coroId) formData.append('coro', coroId);
                 } else if (tipo === 'voce') {
-                    const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
-                    formData.append('destinatariVoci', JSON.stringify(voci));
-                } else if (tipo === 'utenti') {
-                    const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
-                    formData.append('destinatariUtenti', JSON.stringify(utenti));
-                } else if (tipo === 'voce') {
                     const coroVoci = document.getElementById('coro-voci').value;
                     if (!coroVoci) { alert('Seleziona un coro per la selezione per voce.'); return; }
                     const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
                     if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
                     formData.append('coro', coroVoci);
                     formData.append('destinatariVoci', JSON.stringify(voci));
+                } else if (tipo === 'utenti') {
+                    const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
+                    formData.append('destinatariUtenti', JSON.stringify(utenti));
                 }
 
                 // Allegati
@@ -243,7 +238,6 @@
                     formData.append('allegati', file);
                 }
 
-                // Usa fetch direttamente (non apiCall) perché è FormData
                 const token = localStorage.getItem('csv_token');
                 msg.textContent = 'Caricamento in corso…';
                 msg.className = 'messaggio';
