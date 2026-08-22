@@ -132,7 +132,7 @@
                 // Destinatari
                 let dest = '';
                 if (a.coro) dest = `<span class="tag-coro">${a.coro.nome}</span>`;
-                else if (a.destinatariVoci?.length) dest = `<span class="tag-coro">🎵 ${a.destinatariVoci.join(', ')}</span>`;
+                else if (a.destinatariVoci?.length) dest = `<span class="tag-coro">${a.coro ? a.coro.nome + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
                 else if (a.destinatariUtenti?.length) dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
                 else dest = '<span class="tag-coro">Tutti</span>';
 
