@@ -75,7 +75,11 @@
 
                 <!-- Selezione voci -->
                 <div class="campo" id="campo-voci" style="display:none">
-                    <label>Voci / Strumenti</label>
+                    <label>Coro</label>
+                    <select id="coro-voci">
+                        <option value="">Seleziona coro…</option>
+                    </select>
+                    <label style="margin-top:0.8rem;display:block">Voci / Strumenti</label>
                     <div id="check-voci" class="cori-selector"></div>
                 </div>
 
@@ -178,6 +182,15 @@
                 checkVoci.appendChild(label);
             });
 
+            // Popola select voci
+            const selCoroVoci = document.getElementById('coro-voci');
+            cori.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c._id;
+                o.textContent = c.nome;
+                selCoroVoci.appendChild(o);
+            });
+
             // Popola checkbox utenti
             const checkUtenti = document.getElementById('check-utenti');
             (tuttiUtenti || []).filter(u => u.ruolo !== 'admin').forEach(u => {
@@ -215,6 +228,13 @@
                 } else if (tipo === 'utenti') {
                     const utenti = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
                     formData.append('destinatariUtenti', JSON.stringify(utenti));
+                } else if (tipo === 'voce') {
+                    const coroVoci = document.getElementById('coro-voci').value;
+                    if (!coroVoci) { alert('Seleziona un coro per la selezione per voce.'); return; }
+                    const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
+                    if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
+                    formData.append('coro', coroVoci);
+                    formData.append('destinatariVoci', JSON.stringify(voci));
                 }
 
                 // Allegati
