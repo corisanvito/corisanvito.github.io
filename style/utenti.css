@@ -10,38 +10,6 @@
     margin-bottom: 1rem;
 }
 
-.cori-selector {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    width: 100%;
-}
-
-.coro-option {
-    width: auto;
-    flex: 0 0 auto;
-    padding: 0.45rem 0.75rem;
-    border: 1px solid var(--c-border);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--c-text-dark);
-    font-family: inherit;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.coro-option:hover {
-    border-color: var(--c-purple);
-    background: #f5f8fc;
-}
-
-.coro-option i {
-    margin-right: 0.35rem;
-}
-
 @media screen and (max-width: 768px) {
     .tabella-wrap {
         margin-bottom: 2rem;
