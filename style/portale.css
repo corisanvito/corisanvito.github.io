@@ -226,3 +226,12 @@ tr:last-child td {
 .coro-option i {
     margin-right: 0.35rem;
 }
+
+.coro-option.selezionato {
+    color: white;
+    border-color: var(--c-purple);
+}
+
+.coro-option.selezionato i {
+    color: white;
+}
