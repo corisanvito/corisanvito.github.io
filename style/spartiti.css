@@ -60,3 +60,7 @@
     vertical-align: middle;
     margin-right: 0.3rem;
 }
+
+.coro-option img {
+    pointer-events: none;
+}
