@@ -270,18 +270,24 @@
 
             const checkVoci = document.getElementById('check-voci');
             VOCI.forEach(v => {
-                const label = document.createElement('label');
-                label.className = 'checkbox-label';
-                label.innerHTML = `<input type="checkbox" value="${v}"> ${v}`;
-                checkVoci.appendChild(label);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'coro-option';
+                btn.dataset.value = v;
+                btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${v}`;
+                btn.addEventListener('click', () => toggleOption(btn));
+                checkVoci.appendChild(btn);
             });
 
             const checkUtenti = document.getElementById('check-utenti');
             (tuttiUtenti || []).filter(u => u.ruolo !== 'admin').forEach(u => {
-                const label = document.createElement('label');
-                label.className = 'checkbox-label';
-                label.innerHTML = `<input type="checkbox" value="${u._id}"> ${u.nome} ${u.cognome}`;
-                checkUtenti.appendChild(label);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'coro-option';
+                btn.dataset.value = u._id;
+                btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${u.nome} ${u.cognome}`;
+                btn.addEventListener('click', () => toggleOption(btn));
+                checkUtenti.appendChild(btn);
             });
 
             document.getElementById('tipo-destinatari').addEventListener('change', function () {
@@ -313,7 +319,7 @@
                             }
                         }
                     } else if (tipo === 'voce') {
-                        const voci = [...document.querySelectorAll('#check-voci input:checked')].map(i => i.value);
+                        const voci = [...document.querySelectorAll('#check-voci .coro-option.selezionato')].map(b => b.dataset.value);
                         if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
                         const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
                         if (coriVociSelezionati.length === 0) {
@@ -324,7 +330,7 @@
                             }
                         }
                     } else if (tipo === 'utenti') {
-                        const utentiIds = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
+                        const utentiIds = [...document.querySelectorAll('#check-utenti .coro-option.selezionato')].map(b => b.dataset.value);
                         await pubblicaAvviso(token, titolo, testo, null, null, utentiIds, fileAccumulati);
                     }
 
@@ -334,7 +340,10 @@
                     document.getElementById('testo-avviso').value = '';
                     fileAccumulati = [];
                     aggiornaListaFile();
-                    document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
+                    document.querySelectorAll('#check-voci .coro-option, #check-utenti .coro-option').forEach(b => {
+                        b.classList.remove('selezionato');
+                        b.querySelector('i').className = 'fa-regular fa-circle';
+                    });
                     resetToggle(toggleCori);
                     resetToggle(toggleCoriVoci);
                     caricaAvvisi();
