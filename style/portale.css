@@ -228,7 +228,7 @@ tr:last-child td {
 }
 
 .coro-option.selezionato {
-    color: white;
+    color: var(--c-purple);
     border-color: var(--c-purple);
 }
 
