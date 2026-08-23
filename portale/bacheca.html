@@ -210,9 +210,9 @@
                 let dest = '';
                 const nomiCori = (a.cori || []).map(c => c.nome).join(', ');
                 if (a.destinatariVoci?.length) {
-                    dest = `<span class="tag-coro">${nomiCori ? nomiCori + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
+                    dest = `<span class="tag-coro">${nomiCori ? nomiCori + ' · ' : ''}<i class="fa-solid fa-microphone" style="color: rgb(255, 255, 255);"></i> ${a.destinatariVoci.join(', ')}</span>`;
                 } else if (a.destinatariUtenti?.length) {
-                    dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
+                    dest = `<span class="tag-coro"><i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i> ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
                 } else if (nomiCori) {
                     dest = `<span class="tag-coro">${nomiCori}</span>`;
                 } else {
