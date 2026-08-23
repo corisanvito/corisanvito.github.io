@@ -127,13 +127,10 @@
             btn.type = 'button';
             btn.className = 'coro-option';
             btn.dataset.value = s.valore;
-            btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${s.label}`;
-            btn.addEventListener('click', () => {
+            btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" class="icona-strumento"> ${s.label}`;
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 btn.classList.toggle('selezionato');
-                const icon = btn.querySelector('i');
-                icon.className = btn.classList.contains('selezionato')
-                    ? 'fa-solid fa-circle-check'
-                    : 'fa-regular fa-circle';
             });
             checkStrumenti.appendChild(btn);
         });
@@ -280,10 +277,7 @@
                 document.getElementById('inp-tonalita').value = '';
                 fileAccumulati = [];
                 aggiornaListaFile();
-                checkStrumenti.querySelectorAll('.coro-option').forEach(b => {
-                    b.classList.remove('selezionato');
-                    b.querySelector('i').className = 'fa-regular fa-circle';
-                });
+                checkStrumenti.querySelectorAll('.coro-option').forEach(b => b.classList.remove('selezionato'));
                 caricaSpartiti();
             } catch (err) {
                 msg.className = 'messaggio err';
