@@ -67,9 +67,12 @@
             </div>
             <div class="campo">
                 <label>File *</label>
-                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg"
-                    style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                <small style="color:#888;font-size:0.78rem">PDF, immagini, audio</small>
+                <button type="button" class="btn-sm" id="btn-aggiungi-file" style="margin-bottom:0.5rem">
+                    <i class="fa-solid fa-paperclip"></i> Aggiungi file
+                </button>
+                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg" style="display:none">
+                <ul id="lista-file" style="list-style:none;padding:0;margin:0"></ul>
+                <small style="color:#888;font-size:0.78rem">PDF, immagini, audio (max 5 file)</small>
             </div>
             <button class="btn-primary" id="btn-carica">
                 <i class="fa-solid fa-upload"></i> Carica
@@ -124,13 +127,53 @@
             btn.type = 'button';
             btn.className = 'coro-option';
             btn.dataset.value = s.valore;
-            btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" class="icona-strumento"> ${s.label}`;
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
+            btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${s.label}`;
+            btn.addEventListener('click', () => {
                 btn.classList.toggle('selezionato');
+                const icon = btn.querySelector('i');
+                icon.className = btn.classList.contains('selezionato')
+                    ? 'fa-solid fa-circle-check'
+                    : 'fa-regular fa-circle';
             });
             checkStrumenti.appendChild(btn);
         });
+
+        // Gestione file accumulati
+        let fileAccumulati = [];
+
+        document.getElementById('btn-aggiungi-file').addEventListener('click', () => {
+            document.getElementById('inp-file').click();
+        });
+
+        document.getElementById('inp-file').addEventListener('change', (e) => {
+            const nuovi = Array.from(e.target.files);
+            for (const f of nuovi) {
+                if (fileAccumulati.length >= 5) { alert('Puoi allegare al massimo 5 file.'); break; }
+                if (!fileAccumulati.find(x => x.name === f.name && x.size === f.size)) {
+                    fileAccumulati.push(f);
+                }
+            }
+            e.target.value = '';
+            aggiornaListaFile();
+        });
+
+        function aggiornaListaFile() {
+            const ul = document.getElementById('lista-file');
+            ul.innerHTML = fileAccumulati.map((f, i) => `
+                <li style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;font-size:0.9rem">
+                    <i class="fa-solid fa-paperclip" style="color:#888"></i>
+                    <span style="flex:1">${f.name}</span>
+                    <button type="button" class="btn-sm danger" onclick="rimuoviFile(${i})">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        window.rimuoviFile = (i) => {
+            fileAccumulati.splice(i, 1);
+            aggiornaListaFile();
+        };
 
         // Carica canti per la tendina
         const canti = await apiCall('/canti');
@@ -158,7 +201,6 @@
                 return;
             }
 
-            // Raggruppa per canto
             const map = {};
             spartiti.forEach(s => {
                 const titolo = s.canto?.titolo || 'Sconosciuto';
@@ -209,44 +251,40 @@
             const cantoId = selCanto.value;
             const tonalita = document.getElementById('inp-tonalita').value.trim();
             const strumenti = [...checkStrumenti.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.value);
-            const file = document.getElementById('inp-file').files[0];
             const msg = document.getElementById('msg-upload');
 
             if (!cantoId) { alert('Seleziona un canto.'); return; }
-            if (!file) { alert('Seleziona un file.'); return; }
+            if (fileAccumulati.length === 0) { alert('Seleziona almeno un file.'); return; }
 
             msg.textContent = 'Caricamento in corso…';
             msg.className = 'messaggio';
 
-            const fd = new FormData();
-            fd.append('canto', cantoId);
-            fd.append('tonalita', tonalita);
-            fd.append('strumenti', JSON.stringify(strumenti));
-            fd.append('file', file);
-
             try {
                 const token = localStorage.getItem('csv_token');
-                const res = await fetch('https://corisanvito-backend.onrender.com/spartiti', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: fd
-                });
-                const data = await res.json();
-
-                if (data._id) {
-                    msg.className = 'messaggio ok';
-                    msg.textContent = '✓ File caricato!';
-                    selCanto.value = '';
-                    document.getElementById('inp-tonalita').value = '';
-                    document.getElementById('inp-file').value = '';
-                    checkStrumenti.querySelectorAll('.coro-option').forEach(b => {
-                        b.classList.remove('selezionato');
+                for (const file of fileAccumulati) {
+                    const fd = new FormData();
+                    fd.append('canto', cantoId);
+                    fd.append('tonalita', tonalita);
+                    fd.append('strumenti', JSON.stringify(strumenti));
+                    fd.append('file', file);
+                    await fetch('https://corisanvito-backend.onrender.com/spartiti', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: fd
                     });
-                    caricaSpartiti();
-                } else {
-                    msg.className = 'messaggio err';
-                    msg.textContent = data.message || 'Errore nel caricamento.';
                 }
+
+                msg.className = 'messaggio ok';
+                msg.textContent = '✓ File caricati!';
+                selCanto.value = '';
+                document.getElementById('inp-tonalita').value = '';
+                fileAccumulati = [];
+                aggiornaListaFile();
+                checkStrumenti.querySelectorAll('.coro-option').forEach(b => {
+                    b.classList.remove('selezionato');
+                    b.querySelector('i').className = 'fa-regular fa-circle';
+                });
+                caricaSpartiti();
             } catch (err) {
                 msg.className = 'messaggio err';
                 msg.textContent = 'Errore di connessione.';
