@@ -103,7 +103,8 @@
 
         const STRUMENTI = [
             'chitarra', 'pianoforte', 'organo', 'basso', 'batteria',
-            'violino', 'flauto', 'tromba', 'coro', 'voce'
+            'violino', 'flauto', 'tromba', 'tamburello', 'maracas',
+            'bongos', 'coro', 'voce'
         ];
 
         // Popola strumenti
@@ -178,10 +179,10 @@
                                     </div>
                                 </div>
                                 ${isAdmin || s.caricatoDa?._id === utente.id
-                                    ? `<button class="btn-sm danger" onclick="eliminaSpartito('${s._id}')">
+                        ? `<button class="btn-sm danger" onclick="eliminaSpartito('${s._id}')">
                                         <i class="fa-solid fa-trash"></i>
                                        </button>`
-                                    : ''}
+                        : ''}
                             </div>
                         `).join('')}
                     </div>
@@ -199,50 +200,50 @@
 
         // Upload
         document.getElementById('btn-carica').addEventListener('click', async () => {
-            const cantoId   = selCanto.value;
-            const tonalita  = document.getElementById('inp-tonalita').value.trim();
+            const cantoId = selCanto.value;
+            const tonalita = document.getElementById('inp-tonalita').value.trim();
             const strumenti = [...checkStrumenti.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.value);
-            const file      = document.getElementById('inp-file').files[0];
-            const msg       = document.getElementById('msg-upload');
+            const file = document.getElementById('inp-file').files[0];
+            const msg = document.getElementById('msg-upload');
 
             if (!cantoId) { alert('Seleziona un canto.'); return; }
-            if (!file)    { alert('Seleziona un file.'); return; }
+            if (!file) { alert('Seleziona un file.'); return; }
 
             msg.textContent = 'Caricamento in corso…';
-            msg.className   = 'messaggio';
+            msg.className = 'messaggio';
 
             const fd = new FormData();
-            fd.append('canto',     cantoId);
-            fd.append('tonalita',  tonalita);
+            fd.append('canto', cantoId);
+            fd.append('tonalita', tonalita);
             fd.append('strumenti', JSON.stringify(strumenti));
-            fd.append('file',      file);
+            fd.append('file', file);
 
             try {
                 const token = localStorage.getItem('csv_token');
-                const res   = await fetch('https://corisanvito-backend.onrender.com/spartiti', {
-                    method:  'POST',
+                const res = await fetch('https://corisanvito-backend.onrender.com/spartiti', {
+                    method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
-                    body:    fd
+                    body: fd
                 });
                 const data = await res.json();
 
                 if (data._id) {
-                    msg.className   = 'messaggio ok';
+                    msg.className = 'messaggio ok';
                     msg.textContent = '✓ File caricato!';
-                    selCanto.value  = '';
+                    selCanto.value = '';
                     document.getElementById('inp-tonalita').value = '';
-                    document.getElementById('inp-file').value     = '';
+                    document.getElementById('inp-file').value = '';
                     checkStrumenti.querySelectorAll('.coro-option').forEach(b => {
                         b.classList.remove('selezionato');
                         b.querySelector('i').className = 'fa-regular fa-circle';
                     });
                     caricaSpartiti();
                 } else {
-                    msg.className   = 'messaggio err';
+                    msg.className = 'messaggio err';
                     msg.textContent = data.message || 'Errore nel caricamento.';
                 }
             } catch (err) {
-                msg.className   = 'messaggio err';
+                msg.className = 'messaggio err';
                 msg.textContent = 'Errore di connessione.';
             }
         });
