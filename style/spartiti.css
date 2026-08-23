@@ -55,8 +55,8 @@
 }
 
 .icona-strumento {
-    width: 1.2rem;
-    height: 1.2rem;
+    max-width: 1.2rem;
+    max-height: 1.2rem;
     vertical-align: middle;
     margin-right: 0.3rem;
 }
