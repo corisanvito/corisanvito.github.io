@@ -167,7 +167,7 @@
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([titolo, files]) => `
                     <div class="spartito-gruppo card-box">
-                        <h3 class="spartito-titolo-canto"><i class="fa-solid fa-music"></i> ${titolo}</h3>
+                        <h3 class="spartito-titolo-canto">${titolo}</h3>
                         ${files.map(s => `
                             <div class="spartito-row">
                                 <div class="spartito-info">
