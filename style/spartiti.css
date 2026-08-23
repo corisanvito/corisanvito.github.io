@@ -1,0 +1,55 @@
+.form-upload {
+    margin-bottom: 2rem;
+}
+
+.form-upload h3 {
+    margin-bottom: 1rem;
+}
+
+.spartito-gruppo {
+    margin-bottom: 1.2rem;
+}
+
+.spartito-titolo-canto {
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    color: var(--c-purple);
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+.spartito-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f8f8f8;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.spartito-row:last-child {
+    border-bottom: none;
+}
+
+.spartito-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.spartito-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+}
+
+.tag-meta {
+    display: inline-block;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
+    color: #555;
+}
