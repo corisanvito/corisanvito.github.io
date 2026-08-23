@@ -53,3 +53,10 @@
     font-size: 0.75rem;
     color: #555;
 }
+
+.icona-strumento {
+    width: 1.2rem;
+    height: 1.2rem;
+    vertical-align: middle;
+    margin-right: 0.3rem;
+}

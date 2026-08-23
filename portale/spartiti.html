@@ -102,9 +102,19 @@
         const isAdmin = ['admin', 'direttore', 'responsabile'].includes(utente.ruolo);
 
         const STRUMENTI = [
-            'chitarra', 'pianoforte', 'organo', 'basso', 'batteria',
-            'violino', 'flauto', 'tromba', 'tamburello', 'maracas',
-            'bongos', 'coro', 'voce'
+            { valore: 'chitarra', label: 'Chitarra', icon: '/images/instruments/guitar.png' },
+            { valore: 'pianoforte', label: 'Pianoforte', icon: '/images/instruments/piano.png' },
+            { valore: 'organo', label: 'Organo', icon: '/images/instruments/organ.png' },
+            { valore: 'basso', label: 'Basso', icon: '/images/instruments/bass.png' },
+            { valore: 'batteria', label: 'Batteria', icon: '/images/instruments/drums.png' },
+            { valore: 'violino', label: 'Violino', icon: '/images/instruments/violin.png' },
+            { valore: 'flauto', label: 'Flauto', icon: '/images/instruments/flute.png' },
+            { valore: 'tromba', label: 'Tromba', icon: '/images/instruments/trumpet.png' },
+            { valore: 'tamburello', label: 'Tamburello', icon: '/images/instruments/tambourine.png' },
+            { valore: 'maracas', label: 'Maracas', icon: '/images/instruments/maracas.png' },
+            { valore: 'bongos', label: 'Bongos', icon: '/images/instruments/bongos.png' },
+            { valore: 'coro', label: 'Coro', icon: '/images/instruments/coro.png' },
+            { valore: 'voce', label: 'Voce', icon: '/images/instruments/voce.png' },
         ];
 
         // Popola strumenti
@@ -113,15 +123,9 @@
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'coro-option';
-            btn.dataset.value = s;
-            btn.innerHTML = `<i class="fa-regular fa-circle" style="color:#301934"></i> ${s}`;
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('selezionato');
-                const icon = btn.querySelector('i');
-                icon.className = btn.classList.contains('selezionato')
-                    ? 'fa-solid fa-circle-check'
-                    : 'fa-regular fa-circle';
-            });
+            btn.dataset.value = s.valore;
+            btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" class="icona-strumento"> ${s.label}`;
+            btn.addEventListener('click', () => btn.classList.toggle('selezionato'));
             checkStrumenti.appendChild(btn);
         });
 
@@ -139,7 +143,6 @@
         let tuttiSpartiti = [];
 
         async function caricaSpartiti() {
-            const lista = document.getElementById('lista-spartiti');
             tuttiSpartiti = await apiCall('/spartiti') || [];
             renderSpartiti(tuttiSpartiti);
         }
@@ -164,7 +167,7 @@
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([titolo, files]) => `
                     <div class="spartito-gruppo card-box">
-                        <h3 class="spartito-titolo-canto">🎵 ${titolo}</h3>
+                        <h3 class="spartito-titolo-canto"><i class="fa-solid fa-music"></i> ${titolo}</h3>
                         ${files.map(s => `
                             <div class="spartito-row">
                                 <div class="spartito-info">
@@ -172,10 +175,10 @@
                                         <i class="fa-solid fa-file"></i> ${s.file.nome}
                                     </a>
                                     <div class="spartito-meta">
-                                        ${s.tonalita ? `<span class="tag-meta">🎼 ${s.tonalita}</span>` : ''}
-                                        ${(s.strumenti || []).map(st => `<span class="tag-meta">🎸 ${st}</span>`).join('')}
-                                        <span class="tag-meta">👤 ${s.caricatoDa ? s.caricatoDa.nome + ' ' + s.caricatoDa.cognome : '—'}</span>
-                                        <span class="tag-meta">📅 ${new Date(s.createdAt).toLocaleDateString('it-IT')}</span>
+                                        ${s.tonalita ? `<span class="tag-meta"><i class="fa-solid fa-key"></i> ${s.tonalita}</span>` : ''}
+                                        ${(s.strumenti || []).map(st => `<span class="tag-meta">${st}</span>`).join('')}
+                                        <span class="tag-meta"><i class="fa-solid fa-user"></i> ${s.caricatoDa ? s.caricatoDa.nome + ' ' + s.caricatoDa.cognome : '—'}</span>
+                                        <span class="tag-meta"><i class="fa-solid fa-calendar"></i> ${new Date(s.createdAt).toLocaleDateString('it-IT')}</span>
                                     </div>
                                 </div>
                                 ${isAdmin || s.caricatoDa?._id === utente.id
@@ -235,7 +238,6 @@
                     document.getElementById('inp-file').value = '';
                     checkStrumenti.querySelectorAll('.coro-option').forEach(b => {
                         b.classList.remove('selezionato');
-                        b.querySelector('i').className = 'fa-regular fa-circle';
                     });
                     caricaSpartiti();
                 } else {
