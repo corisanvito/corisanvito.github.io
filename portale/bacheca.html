@@ -84,9 +84,12 @@
 
                 <div class="campo">
                     <label>Allegati (max 5 file)</label>
-                    <input type="file" id="allegati-avviso" multiple accept="*/*"
-                        style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
-                    <small style="color:#888;font-size:0.78rem">PDF, audio, video, immagini…</small>
+                    <button type="button" class="btn-sm" id="btn-aggiungi-file" style="margin-bottom:0.5rem">
+                        <i class="fa-solid fa-paperclip"></i> Aggiungi file
+                    </button>
+                    <input type="file" id="allegati-avviso" multiple accept="*/*" style="display:none">
+                    <ul id="lista-file" style="list-style:none;padding:0;margin:0"></ul>
+                    <small style="color:#888;font-size:0.78rem">PDF, audio, video, immagini… (max 5 file totali)</small>
                 </div>
 
                 <button class="btn-primary" id="btn-pubblica">Pubblica</button>
@@ -114,6 +117,44 @@
 
         const VOCI = ['bianca', 'soprano', 'contralto', 'tenore', 'basso', 'chitarra', 'pianoforte'];
 
+        // --- Gestione file accumulati ---
+        let fileAccumulati = [];
+
+        document.getElementById('btn-aggiungi-file').addEventListener('click', () => {
+            document.getElementById('allegati-avviso').click();
+        });
+
+        document.getElementById('allegati-avviso').addEventListener('change', (e) => {
+            const nuovi = Array.from(e.target.files);
+            for (const f of nuovi) {
+                if (fileAccumulati.length >= 5) { alert('Puoi allegare al massimo 5 file.'); break; }
+                if (!fileAccumulati.find(x => x.name === f.name && x.size === f.size)) {
+                    fileAccumulati.push(f);
+                }
+            }
+            e.target.value = ''; // reset input così si può riselezionare lo stesso file
+            aggiornaListaFile();
+        });
+
+        function aggiornaListaFile() {
+            const ul = document.getElementById('lista-file');
+            ul.innerHTML = fileAccumulati.map((f, i) => `
+                <li style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;font-size:0.9rem">
+                    <i class="fa-solid fa-paperclip" style="color:#888"></i>
+                    <span style="flex:1">${f.name}</span>
+                    <button type="button" class="btn-sm danger" onclick="rimuoviFile(${i})">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        window.rimuoviFile = (i) => {
+            fileAccumulati.splice(i, 1);
+            aggiornaListaFile();
+        };
+
+        // --- Toggle ---
         function toggleOption(btn) {
             btn.classList.toggle('selezionato');
             const icon = btn.querySelector('i');
@@ -139,7 +180,7 @@
             });
         }
 
-        // Raggruppa avvisi con stesso titolo+testo+voci, unendo i cori nei tag
+        // --- Deduplicazione avvisi ---
         function deduplicaAvvisi(avvisi) {
             const mappa = new Map();
             for (const a of avvisi) {
@@ -150,10 +191,7 @@
                         esistente.cori.push(a.coro);
                     }
                 } else {
-                    mappa.set(chiave, {
-                        ...a,
-                        cori: a.coro ? [a.coro] : []
-                    });
+                    mappa.set(chiave, { ...a, cori: a.coro ? [a.coro] : [] });
                 }
             }
             return [...mappa.values()];
@@ -258,7 +296,6 @@
                 const tipo = document.getElementById('tipo-destinatari').value;
                 const msg = document.getElementById('msg-bacheca');
                 const token = localStorage.getItem('csv_token');
-                const files = document.getElementById('allegati-avviso').files;
 
                 if (!titolo || !testo) { alert('Compila titolo e testo.'); return; }
 
@@ -269,10 +306,10 @@
                     if (tipo === 'coro') {
                         const coriSelezionati = [...toggleCori.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
                         if (coriSelezionati.length === 0) {
-                            await pubblicaAvviso(token, titolo, testo, null, null, null, files);
+                            await pubblicaAvviso(token, titolo, testo, null, null, null, fileAccumulati);
                         } else {
                             for (const coroId of coriSelezionati) {
-                                await pubblicaAvviso(token, titolo, testo, coroId, null, null, files);
+                                await pubblicaAvviso(token, titolo, testo, coroId, null, null, fileAccumulati);
                             }
                         }
                     } else if (tipo === 'voce') {
@@ -280,22 +317,23 @@
                         if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
                         const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
                         if (coriVociSelezionati.length === 0) {
-                            await pubblicaAvviso(token, titolo, testo, null, voci, null, files);
+                            await pubblicaAvviso(token, titolo, testo, null, voci, null, fileAccumulati);
                         } else {
                             for (const coroId of coriVociSelezionati) {
-                                await pubblicaAvviso(token, titolo, testo, coroId, voci, null, files);
+                                await pubblicaAvviso(token, titolo, testo, coroId, voci, null, fileAccumulati);
                             }
                         }
                     } else if (tipo === 'utenti') {
                         const utentiIds = [...document.querySelectorAll('#check-utenti input:checked')].map(i => i.value);
-                        await pubblicaAvviso(token, titolo, testo, null, null, utentiIds, files);
+                        await pubblicaAvviso(token, titolo, testo, null, null, utentiIds, fileAccumulati);
                     }
 
                     msg.className = 'messaggio ok';
                     msg.textContent = '✓ Avviso pubblicato!';
                     document.getElementById('titolo-avviso').value = '';
                     document.getElementById('testo-avviso').value = '';
-                    document.getElementById('allegati-avviso').value = '';
+                    fileAccumulati = [];
+                    aggiornaListaFile();
                     document.querySelectorAll('#check-voci input, #check-utenti input').forEach(i => i.checked = false);
                     resetToggle(toggleCori);
                     resetToggle(toggleCoriVoci);
