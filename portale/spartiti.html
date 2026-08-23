@@ -125,7 +125,10 @@
             btn.className = 'coro-option';
             btn.dataset.value = s.valore;
             btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" class="icona-strumento"> ${s.label}`;
-            btn.addEventListener('click', () => btn.classList.toggle('selezionato'));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                btn.classList.toggle('selezionato');
+            });
             checkStrumenti.appendChild(btn);
         });
 
