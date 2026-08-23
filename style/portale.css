@@ -233,5 +233,5 @@ tr:last-child td {
 }
 
 .coro-option.selezionato i {
-    color: white;
+    color: var(--c-purple);
 }
