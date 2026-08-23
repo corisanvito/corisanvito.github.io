@@ -65,13 +65,11 @@
                     </select>
                 </div>
 
-                <!-- Selezione coro (toggle multipli) -->
                 <div class="campo" id="campo-coro">
                     <label>Cori</label>
                     <div id="toggle-cori" class="cori-selector"></div>
                 </div>
 
-                <!-- Selezione voci + coro (toggle multipli) -->
                 <div class="campo" id="campo-voci" style="display:none">
                     <label>Cori</label>
                     <div id="toggle-cori-voci" class="cori-selector"></div>
@@ -79,13 +77,11 @@
                     <div id="check-voci" class="cori-selector"></div>
                 </div>
 
-                <!-- Selezione utenti specifici -->
                 <div class="campo" id="campo-utenti" style="display:none">
                     <label>Utenti</label>
                     <div id="check-utenti" class="cori-selector"></div>
                 </div>
 
-                <!-- Allegati -->
                 <div class="campo">
                     <label>Allegati (max 5 file)</label>
                     <input type="file" id="allegati-avviso" multiple accept="*/*"
@@ -143,34 +139,47 @@
             });
         }
 
-        async function pubblicaAvviso(token, titolo, testo, coroId, voci, utentiIds, files) {
-            const fd = new FormData();
-            fd.append('titolo', titolo);
-            fd.append('testo', testo);
-            if (coroId) fd.append('coro', coroId);
-            if (voci) fd.append('destinatariVoci', JSON.stringify(voci));
-            if (utentiIds) fd.append('destinatariUtenti', JSON.stringify(utentiIds));
-            for (const file of files) fd.append('allegati', file);
-            const res = await fetch('https://corisanvito-backend.onrender.com/bacheca', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: fd
-            });
-            return res.json();
+        // Raggruppa avvisi con stesso titolo+testo+voci, unendo i cori nei tag
+        function deduplicaAvvisi(avvisi) {
+            const mappa = new Map();
+            for (const a of avvisi) {
+                const chiave = `${a.titolo}||${a.testo}||${(a.destinatariVoci || []).join(',')}||${(a.destinatariUtenti || []).map(u => u._id || u).join(',')}`;
+                if (mappa.has(chiave)) {
+                    const esistente = mappa.get(chiave);
+                    if (a.coro && !esistente.cori.find(c => c._id === a.coro._id)) {
+                        esistente.cori.push(a.coro);
+                    }
+                } else {
+                    mappa.set(chiave, {
+                        ...a,
+                        cori: a.coro ? [a.coro] : []
+                    });
+                }
+            }
+            return [...mappa.values()];
         }
 
         async function caricaAvvisi() {
-            const avvisi = await apiCall('/bacheca');
-            if (!avvisi || avvisi.length === 0) {
+            const avvisiRaw = await apiCall('/bacheca');
+            if (!avvisiRaw || avvisiRaw.length === 0) {
                 lista.innerHTML = '<p class="vuoto">Nessun avviso al momento.</p>';
                 return;
             }
+
+            const avvisi = deduplicaAvvisi(avvisiRaw);
+
             lista.innerHTML = avvisi.map(a => {
                 let dest = '';
-                if (a.destinatariVoci?.length) dest = `<span class="tag-coro">${a.coro ? a.coro.nome + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
-                else if (a.destinatariUtenti?.length) dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
-                else if (a.coro) dest = `<span class="tag-coro">${a.coro.nome}</span>`;
-                else dest = '<span class="tag-coro">Tutti</span>';
+                const nomiCori = (a.cori || []).map(c => c.nome).join(', ');
+                if (a.destinatariVoci?.length) {
+                    dest = `<span class="tag-coro">${nomiCori ? nomiCori + ' · ' : ''}🎵 ${a.destinatariVoci.join(', ')}</span>`;
+                } else if (a.destinatariUtenti?.length) {
+                    dest = `<span class="tag-coro">👤 ${a.destinatariUtenti.map(u => u.nome).join(', ')}</span>`;
+                } else if (nomiCori) {
+                    dest = `<span class="tag-coro">${nomiCori}</span>`;
+                } else {
+                    dest = '<span class="tag-coro">Tutti</span>';
+                }
 
                 const allegati = (a.allegati || []).map(al => `
                     <a href="${al.downloadLink}" target="_blank" class="allegato-link">
@@ -190,6 +199,22 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        async function pubblicaAvviso(token, titolo, testo, coroId, voci, utentiIds, files) {
+            const fd = new FormData();
+            fd.append('titolo', titolo);
+            fd.append('testo', testo);
+            if (coroId) fd.append('coro', coroId);
+            if (voci) fd.append('destinatariVoci', JSON.stringify(voci));
+            if (utentiIds) fd.append('destinatariUtenti', JSON.stringify(utentiIds));
+            for (const file of files) fd.append('allegati', file);
+            const res = await fetch('https://corisanvito-backend.onrender.com/bacheca', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: fd
+            });
+            return res.json();
         }
 
         if (isAdmin) {
@@ -244,7 +269,6 @@
                     if (tipo === 'coro') {
                         const coriSelezionati = [...toggleCori.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
                         if (coriSelezionati.length === 0) {
-                            // nessun coro = avviso per tutti
                             await pubblicaAvviso(token, titolo, testo, null, null, null, files);
                         } else {
                             for (const coroId of coriSelezionati) {
@@ -256,7 +280,6 @@
                         if (voci.length === 0) { alert('Seleziona almeno una voce.'); return; }
                         const coriVociSelezionati = [...toggleCoriVoci.querySelectorAll('.coro-option.selezionato')].map(b => b.dataset.id);
                         if (coriVociSelezionati.length === 0) {
-                            // nessun coro = avviso per quella voce in tutti i cori
                             await pubblicaAvviso(token, titolo, testo, null, voci, null, files);
                         } else {
                             for (const coroId of coriVociSelezionati) {
