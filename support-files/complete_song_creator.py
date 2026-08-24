@@ -18,13 +18,8 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
                     '\n\t\t\t</p>'
                 )
         elif section.startswith('Rit.: '):
-            # La prima riga (o più righe fino a una riga vuota) definisce il ritornello.
-            # Le righe successive (se presenti) vengono trattate come strofe.
             lines_all = section.split('\n')
-            # Prima riga: "Rit.: testo primo rigo"
             chorus_first_line = lines_all[0][6:].strip()
-            # Raccogli tutte le righe del ritornello (finché non troviamo una riga
-            # che finisce con " Rit." o non inizia con "Rit")
             chorus_lines = [chorus_first_line]
             verse_start_idx = 1
             for idx in range(1, len(lines_all)):
@@ -40,7 +35,6 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
                 '\n'.join(f'\t\t\t\t{line}<br>' for line in chorus_lines) +
                 '\n\t\t\t</p>'
             )
-            # Righe rimanenti: trattale come strofa con eventuale " Rit."
             remaining_lines = lines_all[verse_start_idx:]
             if remaining_lines:
                 pending_lines = []
@@ -71,7 +65,6 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
             class_name = "verse"
             content = section
             
-            # Controllo per i prefissi
             if section.startswith("Intro: "):
                 class_name = "intro"
                 content = section[7:].strip()
@@ -82,13 +75,11 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
                 class_name = "bridge"
                 content = section[8:].strip()
 
-            # Processa riga per riga: ogni riga che finisce con " Rit." fa
-            # emettere il blocco accumulato + il ritornello, poi ricomincia.
             lines = content.split('\n')
             pending_lines = []
             for line in lines:
                 if line.endswith(" Rit."):
-                    pending_lines.append(line[:-5].rstrip())  # rimuovi " Rit."
+                    pending_lines.append(line[:-5].rstrip())
                     html_content.append(
                         f'\t\t\t<p class="{class_name}">\n' +
                         '\n'.join(f'\t\t\t\t{l}<br>' for l in pending_lines) +
@@ -103,7 +94,6 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
                     pending_lines = []
                 else:
                     pending_lines.append(line)
-            # Righe rimaste senza Rit. finale
             if pending_lines:
                 html_content.append(
                     f'\t\t\t<p class="{class_name}">\n' +
@@ -113,7 +103,6 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
 
     html_body = '\n'.join(html_content)
 
-    # Sezioni extra
     extra_sections = ''
     if link:
         extra_sections += f'''
@@ -133,7 +122,6 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
         extra_sections += f'''
         </section>'''
 
-    # Creazione filename
     filename = title.lower().replace(" ", "-").replace("'", "-").replace("è", "e").replace("ò", "o").replace("à", "a").replace("(", "").replace(")", "").replace("È", "e").replace("ì", "i").replace(",", "")
     html_template = f'''<!DOCTYPE html>
 <html lang="it">
@@ -224,21 +212,16 @@ def create_song_html(title, song_text, link=None, n1=None, n2=None):
 
 
 def add_song_to_html_list(title, filename):
-    """Aggiunge il canto alla lista in canti.html in ordine alfabetico"""
     script_dir = os.path.dirname(os.path.abspath(__file__))
     html_file_path = os.path.join(script_dir, "..", "canti.html")
     
     with open(html_file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # Trova la lettera iniziale del titolo
     first_letter = title[0].upper()
-    
-    # Se la lettera non è A-Z, usa 'A' come default
     if not first_letter.isalpha():
         first_letter = 'A'
     
-    # Trova il gruppo della lettera corrispondente
     letter_group_pattern = f'<div class="lettera-gruppo" id="{first_letter}">(.*?)</div>'
     match = re.search(letter_group_pattern, content, re.DOTALL)
     
@@ -247,12 +230,9 @@ def add_song_to_html_list(title, filename):
         return False
     
     letter_group = match.group(0)
-    canto_links_section = match.group(1)
     
-    # Crea il nuovo link
     new_link = f'<a href="canti/{filename}">{title}</a><br>'
     
-    # Trova la sezione canto-link specifica
     canto_link_pattern = r'<div class="canto-link">(.*?)</div>'
     canto_link_match = re.search(canto_link_pattern, letter_group, re.DOTALL)
     
@@ -262,34 +242,26 @@ def add_song_to_html_list(title, filename):
     
     old_canto_link_content = canto_link_match.group(1)
     
-    # Trova tutti i link esistenti con i loro href originali
     links_pattern = r'<a href="(canti/[^"]*)">([^<]*)</a><br>'
     existing_links = re.findall(links_pattern, old_canto_link_content)
     
-    # Aggiungi il nuovo link alla lista
     existing_links.append((f"canti/{filename}", title))
-    
-    # Ordina per titolo (ignorando case)
     existing_links.sort(key=lambda x: x[1].lower())
     
-    # Ricostruisci la sezione dei link mantenendo gli href originali
     new_links_content = '\n                        '.join([f'<a href="{href}">{text}</a><br>' for href, text in existing_links])
     
-    # Sostituisci solo la sezione canto-link
     new_canto_link = f'<div class="canto-link">\n                        {new_links_content}\n                    </div>'
     new_letter_group = letter_group.replace(canto_link_match.group(0), new_canto_link)
     
-    # Sostituisci nel contenuto totale
     new_content = content.replace(letter_group, new_letter_group)
     
-    # Scrivi il file aggiornato
     with open(html_file_path, 'w', encoding='utf-8') as f:
         f.write(new_content)
     
     print(f"✅ Canto aggiunto a canti.html nel gruppo '{first_letter}'")
     return True
 
-# --- Aggiornamento JSON con canti e Taizé ---
+
 def update_json_ids(data):
     for i, canto in enumerate(data.get("canti", []), start=1):
         canto["id"] = i
@@ -297,23 +269,29 @@ def update_json_ids(data):
         canto["id"] = i
     return data
 
-def add_song_to_json(title, filename_html, song_text):
+
+def add_song_to_json(title, filename_html, song_text, categorie=None, metadata=None):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     json_file_path = os.path.join(script_dir, "..", "canti.json")
-    
+
     with open(json_file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    
+
+    # Metadata con chiavi di default sempre presenti
+    meta_default = {"Testo": "", "Musica": "", "Album": ""}
+    if metadata:
+        meta_default.update(metadata)
+
     new_canto = {
         "titolo": title,
-        "id": len(data["canti"]) + 1,  # temporaneo, verrà aggiornato
+        "id": len(data["canti"]) + 1,
         "testo": song_text,
-        "categorie": [],
-        "url": f"canti/{filename_html.replace('.html','')}",
-        "fileName": filename_html
+        "categorie": categorie or [],
+        "url": f"canti/{filename_html.replace('.html', '')}",
+        "fileName": filename_html,
+        "metadata": meta_default
     }
-    
-    # Inserimento alfabetico tra i canti normali
+
     inserted = False
     for i, canto in enumerate(data["canti"]):
         if title.lower() < canto["titolo"].lower():
@@ -322,17 +300,53 @@ def add_song_to_json(title, filename_html, song_text):
             break
     if not inserted:
         data["canti"].append(new_canto)
-    
-    # Aggiorna ID di canti e taize
+
     data = update_json_ids(data)
-    
-    # Salva JSON
+
     with open(json_file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"✅ Canto aggiunto a canti.json")
 
 
-# --- Funzione principale ---
+def chiedi_metadata():
+    print("\n--- Metadati (premi Invio per lasciare vuoto) ---")
+    metadata = {}
+
+    campi = [
+        ("Testo", "Testo"),
+        ("Musica", "Musica"),
+        ("Album", "Album"),
+        ("Pubblicazione", "Pubblicazione"),
+        ("Tempo", "Tempo"),
+        ("Categoria/e", "Categoria/e")
+    ]
+
+    for chiave, etichetta in campi:
+        valore = input(f"{etichetta}: ").strip()
+        metadata[chiave] = valore  # aggiunge sempre la chiave, anche se vuota
+
+    while True:
+        extra_key = input("Altro campo metadato (nome, o Invio per finire): ").strip()
+        if not extra_key:
+            break
+        extra_val = input(f"Valore per '{extra_key}': ").strip()
+        metadata[extra_key] = extra_val
+
+    return metadata
+
+
+def chiedi_categorie():
+    print("\n--- Categorie (premi Invio per finire) ---")
+    print("Esempi: ingresso, offertorio, comunione, congedo, natale, pasqua, avvento…")
+    categorie = []
+    while True:
+        cat = input("Categoria: ").strip().lower()
+        if not cat:
+            break
+        categorie.append(cat)
+    return categorie
+
+
 def main():
     title = input("Inserisci il titolo della canzone: ").strip()
     print("Inserisci il testo della canzone (termina con riga vuota + Ctrl+D / Ctrl+Z):")
@@ -348,14 +362,15 @@ def main():
     link = input("Link YouTube (opzionale): ").strip()
     if link:
         link = link.replace("https://youtu.be/", "https://www.youtube-nocookie.com/embed/")
-    
+
     n1 = input("Numero Minicorale (opzionale): ").strip() or None
     n2 = input("Numero libro assemblea (opzionale): ").strip() or None
 
+    categorie = chiedi_categorie()
+    metadata = chiedi_metadata()
+
     filename, filename_html = create_song_html(title, song_text, link, n1, n2)
-    
-    # Qui potresti chiamare add_song_to_html_list(title, filename) se vuoi aggiornare canti.html
-    add_song_to_json(title, filename_html, song_text)
+    add_song_to_json(title, filename_html, song_text, categorie, metadata)
 
 
 if __name__ == "__main__":
