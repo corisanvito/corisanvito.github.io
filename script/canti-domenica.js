@@ -86,20 +86,31 @@ async function caricaCantiDomenica() {
 
                 const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
 
-                if (data && data >= oggi) {
-                    titoloElem.textContent = formattaDataCompleta(data);
-                } else {
-                    titoloElem.textContent = prossimaDomenica();
-                }
+                if (domenica.length > 0) {
+                    const data = domenica[0].dataDomenica
+                        ? new Date(domenica[0].dataDomenica)
+                        : null;
 
-                listaCanti.innerHTML = '';
-                domenica.forEach(c => {
-                    const p = document.createElement('p');
-                    p.classList.add('canto-link');
-                    p.innerHTML = `<a href="${normalizzaUrl(c.link)}"><b>${c.indicazione}:</b> ${c.titolo}</a>`;
-                    listaCanti.appendChild(p);
-                });
-                return; // backend ha i dati, non serve Sheets
+                    const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+
+                    if (data && data < oggi) {
+                        // Data passata — mostra messaggio vuoto
+                        titoloElem.textContent = prossimaDomenica();
+                        listaCanti.innerHTML = '<p>Nessun canto disponibile per questa settimana.</p>';
+                        return;
+                    }
+
+                    // Data futura o assente — mostra i canti
+                    titoloElem.textContent = data ? formattaDataCompleta(data) : prossimaDomenica();
+                    listaCanti.innerHTML = '';
+                    domenica.forEach(c => {
+                        const p = document.createElement('p');
+                        p.classList.add('canto-link');
+                        p.innerHTML = `<a href="${normalizzaUrl(c.link)}"><b>${c.indicazione}:</b> ${c.titolo}</a>`;
+                        listaCanti.appendChild(p);
+                    });
+                    return;
+                }
             }
         } catch { /* fallback a Sheets */ }
     }
