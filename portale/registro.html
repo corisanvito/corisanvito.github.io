@@ -90,7 +90,8 @@
 
         const selCoro = document.getElementById('sel-coro');
 
-        const cori = await getCori();
+        const me = await apiCall('/auth/me');
+        const cori = me.ruolo === 'admin' ? await getCori() : (me.cori || []);
         (cori || []).forEach(c => {
             const o = document.createElement('option');
             o.value = c._id;

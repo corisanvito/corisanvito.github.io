@@ -107,7 +107,8 @@
 
     } else {
       // Vista admin: schede per coro
-      const cori = await getCori();
+      const me2 = await apiCall('/auth/me');
+      const cori = me2.ruolo === 'admin' ? await getCori() : (me2.cori || []);
 
       if (!cori || cori.length === 0) {
         contenuto.innerHTML = '<p style="color:#888">Nessun coro trovato.</p>';

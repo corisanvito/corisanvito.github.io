@@ -108,7 +108,10 @@
         const utente = requireAuth(['admin', 'direttore', 'responsabile']);
         if (!utente) throw new Error();
 
-        const cori = await getCori();
+        const me = await apiCall('/auth/me');
+        const isAdmin = me.ruolo === 'admin';
+
+        const cori = isAdmin ? await getCori() : (me.cori || []);
 
         // Logica toggle per bottoni cori
         function toggleOption(btn) {
@@ -177,7 +180,7 @@
         }
 
         // Genera tab cori
-        const coriMe = await getCori();
+        const coriMe = cori; // usa già quella sopra
         const tabsCori = document.getElementById('tabs-cori');
         tabsCori.innerHTML = `<button class="tab-coro attivo" data-id="tutti">Tutti</button>` +
             coriMe.map(c => `<button class="tab-coro" data-id="${c._id}">${c.nome}</button>`).join('');
