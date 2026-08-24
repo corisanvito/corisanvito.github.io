@@ -79,7 +79,7 @@
       }
     },
     {
-      "titolo": "Agnello di Dio (Buttazzo, Dargenio)",
+      "titolo": "Agnello di Dio (Buttazzo, Dargenio - Esulta il cielo)",
       "id": 6,
       "testo": "Agnello di Dio che togli i peccati del mondo, abbi pietà di noi, pietà di noi. Agnello di Dio che togli i peccati del mondo, abbi pietà di noi, pietà di noi. Agnello di Dio che togli i peccati del mondo, dona a noi la pace, dona a noi la pace.",
       "categorie": [
@@ -156,7 +156,7 @@
       }
     },
     {
-      "titolo": "Agnello di Dio 2 (Buttazzo)",
+      "titolo": "Agnello di Dio 2 (Buttazzo - Sorgente di unità)",
       "id": 10,
       "testo": "Agnello di Dio che togli i peccati del mondo, abbi pietà di noi, abbi pietà di noi. Agnello di Dio che togli i peccati del mondo, abbi pietà di noi, abbi pietà di noi. Agnello di Dio, che togli i peccati del mondo, dona a noi la pace, dona a noi la pace.",
       "categorie": [
@@ -1806,8 +1806,8 @@
         "liturgia",
         "santo"
       ],
-      "url": "canti/santo-gen",
-      "fileName": "santo-gen.html"
+      "url": "canti/santo-gen-rosso-e-gen-verde",
+      "fileName": "santo-gen-rosso-e-gen-verde.html"
     },
     {
       "titolo": "Santo (Giorgi)",
