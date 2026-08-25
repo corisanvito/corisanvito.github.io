@@ -128,9 +128,10 @@
         const cantiRes = await apiCall('/canti');
         listaCanti = (cantiRes || []).map(c => c.titolo).sort();
 
-        // Mappa titolo → url dal database
+        // Mappa titolo → url dal database (chiavi normalizzate con trim per evitare mismatch)
         const cantiUrlMap = {};
-        (cantiRes || []).forEach(c => { cantiUrlMap[c.titolo] = c.url || ''; });
+        (cantiRes || []).forEach(c => { cantiUrlMap[(c.titolo || '').trim()] = c.url || ''; });
+        window._cantiUrlMap = cantiUrlMap; // debug: accessibile da console come window._cantiUrlMap
 
         async function caricaPannelloSettimana(coroId) {
             const pannello = document.getElementById('pannello-settimana');
@@ -310,18 +311,18 @@
                 body.titolo = titolo;
                 body.link = ind === 'Salmo'
                     ? (document.getElementById('lnk-domenica-salmo')?.value.trim() || '')
-                    : '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
+                    : '/' + (cantiUrlMap[titolo.trim()] || titleToLink(titolo));
             } else if (tipo === 'nuovo') {
                 const titolo = document.getElementById('tit-nuovo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.titolo = titolo;
-                body.link = '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
+                body.link = '/' + (cantiUrlMap[titolo.trim()] || titleToLink(titolo));
             } else if (tipo === 'tempo_forte') {
                 const titolo = document.getElementById('tit-tempo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.tempoForte = document.getElementById('tf-nome').value.trim();
                 body.titolo = titolo;
-                body.link = '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
+                body.link = '/' + (cantiUrlMap[titolo.trim()] || titleToLink(titolo));
             }
 
             await apiCall('/canti-settimana', { method: 'POST', body: JSON.stringify(body) });
