@@ -128,6 +128,10 @@
         const cantiRes = await apiCall('/canti');
         listaCanti = (cantiRes || []).map(c => c.titolo).sort();
 
+        // Mappa titolo → url dal database
+        const cantiUrlMap = {};
+        (cantiRes || []).forEach(c => { cantiUrlMap[c.titolo] = c.url || ''; });
+
         async function caricaPannelloSettimana(coroId) {
             const pannello = document.getElementById('pannello-settimana');
             pannello.innerHTML = '<p class="vuoto">Caricamento…</p>';
@@ -306,18 +310,18 @@
                 body.titolo = titolo;
                 body.link = ind === 'Salmo'
                     ? (document.getElementById('lnk-domenica-salmo')?.value.trim() || '')
-                    : '/' + titleToLink(titolo);
+                    : '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
             } else if (tipo === 'nuovo') {
                 const titolo = document.getElementById('tit-nuovo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.titolo = titolo;
-                body.link = '/' + titleToLink(titolo);
+                body.link = '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
             } else if (tipo === 'tempo_forte') {
                 const titolo = document.getElementById('tit-tempo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.tempoForte = document.getElementById('tf-nome').value.trim();
                 body.titolo = titolo;
-                body.link = '/' + titleToLink(titolo);
+                body.link = '/' + (cantiUrlMap[titolo] || titleToLink(titolo));
             }
 
             await apiCall('/canti-settimana', { method: 'POST', body: JSON.stringify(body) });
