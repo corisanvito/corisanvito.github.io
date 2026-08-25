@@ -104,6 +104,20 @@
             });
         });
 
+        function titleToLink(titolo) {
+            return 'canti/' + titolo
+                .toLowerCase()
+                .replace(/\(\)/g, '')
+                .replace(/[()]/g, '')
+                .replace(/à/g, 'a').replace(/è/g, 'e').replace(/é/g, 'e')
+                .replace(/ì/g, 'i').replace(/ò/g, 'o').replace(/ù/g, 'u')
+                .replace(/È/g, 'e')
+                .replace(/'\s/g, '-')
+                .replace(/'/g, '-')
+                .replace(/\s+/g, '-')
+                .replace(/[^a-zA-Z0-9\-]/g, '');
+        }
+
         const INDICAZIONI = [
             'Ingresso', 'Aspersione', 'Atto penitenziale', 'Gloria', 'Salmo',
             'Acclamazione al Vangelo', 'Offertorio', 'Santo', 'Agnello di Dio',
@@ -112,9 +126,7 @@
 
         let listaCanti = [];
         const cantiRes = await apiCall('/canti');
-        listaCanti = (cantiRes || [])
-            .map(c => ({ titolo: c.titolo, url: c.url }))
-            .sort((a, b) => a.titolo.localeCompare(b.titolo, 'it'));
+        listaCanti = (cantiRes || []).map(c => c.titolo).sort();
 
         async function caricaPannelloSettimana(coroId) {
             const pannello = document.getElementById('pannello-settimana');
@@ -147,7 +159,7 @@
                         <div id="campo-canto-domenica" style="display:flex;gap:0.5rem;min-width:0">
                             <select id="tit-domenica" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
                                 <option value="">Scegli un canto…</option>
-                                ${listaCanti.map(c => `<option value="${c.titolo}" data-url="${c.url || ''}">${c.titolo}</option>`).join('')}
+                                ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
                             </select>
                         </div>
                         <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'domenica')">+</button>
@@ -173,7 +185,7 @@
                   <div class="form-inline">
                     <select id="tit-nuovo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
                         <option value="">Scegli un canto…</option>
-                        ${listaCanti.map(c => `<option value="${c.titolo}" data-url="${c.url || ''}">${c.titolo}</option>`).join('')}
+                        ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
                     </select>
                     <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'nuovo')">+</button>
                   </div>
@@ -198,7 +210,7 @@
                         value="${tempoForte.length > 0 ? tempoForte[0].tempoForte : ''}">
                         <select id="tit-tempo" style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
                             <option value="">Scegli un canto…</option>
-                        ${listaCanti.map(c => `<option value="${c.titolo}" data-url="${c.url || ''}">${c.titolo}</option>`).join('')}
+                        ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
                         </select>
                         <button class="btn-primary btn-sm-h" onclick="aggiungiCanto('${coroId}', 'tempo_forte')">+</button>
                     </div>
@@ -241,7 +253,7 @@
                             <select id="tit-domenica"
                                 style="padding:0.5rem 0.8rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.9rem">
                                 <option value="">Scegli un canto…</option>
-                                ${listaCanti.map(c => `<option value="${c.titolo}" data-url="${c.url || ''}">${c.titolo}</option>`).join('')}
+                                ${listaCanti.map(t => `<option value="${t}">${t}</option>`).join('')}
                             </select>
                         `;
                     }
@@ -294,18 +306,18 @@
                 body.titolo = titolo;
                 body.link = ind === 'Salmo'
                     ? (document.getElementById('lnk-domenica-salmo')?.value.trim() || '')
-                    : (document.getElementById('tit-domenica').selectedOptions[0]?.dataset.url || '');
+                    : '/' + titleToLink(titolo);
             } else if (tipo === 'nuovo') {
                 const titolo = document.getElementById('tit-nuovo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.titolo = titolo;
-                body.link = document.getElementById('tit-nuovo').selectedOptions[0]?.dataset.url || '';
+                body.link = '/' + titleToLink(titolo);
             } else if (tipo === 'tempo_forte') {
                 const titolo = document.getElementById('tit-tempo').value;
                 if (!titolo) { alert('Scegli un canto.'); return; }
                 body.tempoForte = document.getElementById('tf-nome').value.trim();
                 body.titolo = titolo;
-                body.link = document.getElementById('tit-tempo').selectedOptions[0]?.dataset.url || '';
+                body.link = '/' + titleToLink(titolo);
             }
 
             await apiCall('/canti-settimana', { method: 'POST', body: JSON.stringify(body) });
