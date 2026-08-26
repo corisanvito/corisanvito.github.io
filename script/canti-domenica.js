@@ -74,21 +74,20 @@ async function caricaCantiDomenica() {
     if (coroId) {
         try {
             const canti = await fetchDalBackend(coroId);
-            const domenica = canti.filter(c => c.tipo === 'domenica');
+            const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+
+            // Filtra per data come nel pannello admin: tiene solo i canti
+            // senza data o con data futura/odierna, scartando quelli vecchi
+            const domenicaTutti = canti.filter(c => c.tipo === 'domenica');
+            const domenica = domenicaTutti.filter(c => {
+                if (!c.dataDomenica) return true;
+                return new Date(c.dataDomenica) >= oggi;
+            });
 
             if (domenica.length > 0) {
                 const data = domenica[0].dataDomenica
                     ? new Date(domenica[0].dataDomenica)
                     : null;
-
-                const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
-
-                if (data && data < oggi) {
-                    // Data passata — mostra messaggio vuoto
-                    titoloElem.textContent = prossimaDomenica();
-                    listaCanti.innerHTML = '<p>Nessun canto disponibile per questa settimana.</p>';
-                    return;
-                }
 
                 // Data futura o assente — mostra i canti
                 titoloElem.textContent = data ? formattaDataCompleta(data) : prossimaDomenica();
