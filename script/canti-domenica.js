@@ -5,8 +5,6 @@
 const API_URL = 'https://corisanvito-backend.onrender.com';
 const SHEET_ID = "1NYcf3upDR8YLuPX0dm__T1ArAZLXBIdNRBgzwC5GCa0";
 
-// Mappa nome foglio → ID coro nel database
-// Sostituisci con gli _id reali dei tuoi cori da MongoDB
 const CORO_IDS = {
     'coro-10': '6a8222a329c53cf968d80891',
     'coro-1115': '6a8222a329c53cf968d80892',
@@ -73,7 +71,6 @@ async function caricaCantiDomenica() {
 
     const coroId = getCoroId();
 
-    // Prova prima il backend
     if (coroId) {
         try {
             const canti = await fetchDalBackend(coroId);
@@ -86,31 +83,23 @@ async function caricaCantiDomenica() {
 
                 const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
 
-                if (domenica.length > 0) {
-                    const data = domenica[0].dataDomenica
-                        ? new Date(domenica[0].dataDomenica)
-                        : null;
-
-                    const oggi = new Date(); oggi.setHours(0, 0, 0, 0);
-
-                    if (data && data < oggi) {
-                        // Data passata — mostra messaggio vuoto
-                        titoloElem.textContent = prossimaDomenica();
-                        listaCanti.innerHTML = '<p>Nessun canto disponibile per questa settimana.</p>';
-                        return;
-                    }
-
-                    // Data futura o assente — mostra i canti
-                    titoloElem.textContent = data ? formattaDataCompleta(data) : prossimaDomenica();
-                    listaCanti.innerHTML = '';
-                    domenica.forEach(c => {
-                        const p = document.createElement('p');
-                        p.classList.add('canto-link');
-                        p.innerHTML = `<a href="${normalizzaUrl(c.link)}"><b>${c.indicazione}:</b> ${c.titolo}</a>`;
-                        listaCanti.appendChild(p);
-                    });
+                if (data && data < oggi) {
+                    // Data passata — mostra messaggio vuoto
+                    titoloElem.textContent = prossimaDomenica();
+                    listaCanti.innerHTML = '<p>Nessun canto disponibile per questa settimana.</p>';
                     return;
                 }
+
+                // Data futura o assente — mostra i canti
+                titoloElem.textContent = data ? formattaDataCompleta(data) : prossimaDomenica();
+                listaCanti.innerHTML = '';
+                domenica.forEach(c => {
+                    const p = document.createElement('p');
+                    p.classList.add('canto-link');
+                    p.innerHTML = `<a href="${normalizzaUrl(c.link)}"><b>${c.indicazione}:</b> ${c.titolo}</a>`;
+                    listaCanti.appendChild(p);
+                });
+                return;
             }
         } catch { /* fallback a Sheets */ }
     }
