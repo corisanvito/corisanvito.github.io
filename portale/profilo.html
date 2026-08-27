@@ -117,6 +117,12 @@
             </div>
             <button class="btn-primary" id="btn-password">Cambia password</button>
             <p class="messaggio" id="msg-pwd"></p>
+
+            <div class="campo manuale">
+                <a href="/manuale/manuale-utente-corisanvito.pdf" target="_blank">
+                    <i class="fa-regular fa-file-pdf"></i> Consulta il manuale utente
+                </a>
+            </div>
         </div>
     </main>
 
@@ -125,7 +131,7 @@
     </footer>
 
     <script type="module">
-        import { requireAuth } from '/script/auth-guard.js';
+        //import { requireAuth } from '/script/auth-guard.js';
         import { apiCall } from '/script/api.js';
 
         const utente = requireAuth();
