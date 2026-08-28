@@ -61,7 +61,7 @@
 	
 	Il portale è composto da due aree principali:
 	\begin{itemize}
-		\item \textbf{Area pubblica} (accessibile a tutti): home page di selezione del coro, repertorio canti con ricerca, pagine di dettaglio per ogni coro.
+		\item \textbf{Area pubblica} (accessibile a tutti): home page di selezione del coro,  con ricerca, pagine di dettaglio per ogni coro.
 		\item \textbf{Area riservata} (\texttt{/portale}): accessibile solo dopo il login, con funzionalità differenziate in base al ruolo.
 	\end{itemize}
 	
@@ -76,32 +76,27 @@
 	L'obiettivo finale è uno solo: che il canto dell'assemblea sia sempre più bello, più partecipato e più consapevole. Tutto il resto -- i repertori, le presenze, la bacheca, gli spartiti -- è al servizio di questo.
 	
 	
-	\section{Come si accede al portale}
-	
-	L'accesso all'area riservata avviene tramite la pagina \texttt{/portale/login}.  
-	Per effettuare il login è necessario disporre di un account e del token di autenticazione fornito dai responsabili (password).
-	
-	
 	\section{Area pubblica (senza login)}
 	
 	\subsection{Home page di selezione coro}
 	
 	La home page principale permette di scegliere il coro di interesse. Ogni coro ha una propria pagina dedicata con una palette colori specifica. In questa pagina si trovano i canti della prossima celebrazione liturgica animata dal coro, i canti da imparare o ripassare e, quando disponibili, i canti dedicati a un tempo forte in particolare (ad esempio, i canti del tempo di Avvento).
 	
-	\subsection{Repertorio canti (\texttt{/canti})}
+	\subsection{Repertorio canti}
+	Il repertorio è unificato per tutti i cori. La lista di tutti i canti disponibili nel sito si trova alla pagina \texttt{/canti}, nella quale si può anche cercare un canto per titolo, momento liturgico, tempo liturgico, lingua e testo.
 	
-	Il repertorio è unificato per tutti i cori e include:
-	
+	Inoltre, nelle pagine dei singoli canti si trovano:
 	\begin{itemize}
-		\item \textbf{Ricerca full-text} su titoli, testi e categorie.
-		\item \textbf{Bonus di punteggio} per corrispondenze esatte, per dare priorità ai titoli completi.
-		\item \textbf{Filtraggio per categoria liturgica}.
-		\item \textbf{Modalità presentazione} con scrolling automatico, utile per la proiezione durante le prove e le celebrazioni.
+		\item il testo completo del canto;
+		\item un video YouTube per ascoltare e studiare il canto;
+		\item il testo in formato PDF, pronto per essere scaricato e stampato;
+		\item in alcuni casi, lo spartito completo per voce.
 	\end{itemize}
+	
+	Se si accede a una di queste pagine in modalità desktop (dal computer), aumentando lo zoom fino al 175\% spariranno tutte le sezioni eccetto il testo. Cliccando sul bottone in basso a destra si può avviare lo scrolling automatico, con la possibilità di regolarne anche la velocità. È una modalità pensata principalmente per la proiezione durante le prove e le celebrazioni.
 	
 	
 	\section{Ruoli e permessi}
-	
 	Il portale prevede tre macro-livelli di accesso, come riassunto nella tabella seguente:
 	
 	\begin{table}[h]
@@ -123,11 +118,15 @@
 	
 	
 	
-	\section{Area riservata (\texttt{/portale})}
-	Dopo il login, l'utente accede alla \textbf{dashboard} (\texttt{/portale/}), dove vengono mostrate le card dinamiche in base al ruolo.
+	\section{Area riservata}
+	L'accesso all'area riservata avviene tramite la pagina \texttt{/portale/login}.\\
+	Per effettuare il login è necessario disporre di un account e del token di autenticazione fornito dai responsabili (password).\\
+	Si raccomanda di cambiare la password dopo il primo accesso, per la sicurezza dell'account, dalla sezione 'Profilo'.\\
+	 
+	Dopo il login, l'utente accede alla \textbf{dashboard} (\texttt{/portale}, dove vengono mostrate le card dinamiche in base al ruolo.\\
 	
 	\subsection{Funzioni per tutte le categorie di utente}
-	\subsubsection{Bacheca avvisi (\texttt{/portale/bacheca})}
+	\subsubsection{Bacheca avvisi}
 	La bacheca mostra gli avvisi, filtrati per:
 	\begin{itemize}
 		\item \textbf{generali} (visibili a tutti)
@@ -135,16 +134,16 @@
 		\item \textbf{personali} (indirizzati ad alcuni utenti specifici)
 	\end{itemize}
 	
-	\subsubsection{Calendario (\texttt{/portale/calendario})}
+	\subsubsection{Calendario}
 	Il calendario integrato con Google Calendar mostra prove, celebrazioni e altri eventi specifici  coro per coro.\\
 	
 	\textbf{Per direttori e responsabili}: per poter modificare il calendario, è necessario che esso sia condiviso con la vostra mail personale. Per eventuali problemi contattare l'amministratore.
 	
-	\subsubsection{Correggi un canto (\texttt{/portale/correggi-canto})}
+	\subsubsection{Correggi un canto}
 	La pagina dà la possibilità ad ogni membro del gruppo di inviare una segnalazione di errore per un canto specifico.\\
 	Colgo l'occasione per ricordare che questo servizio è in continuo aggiornamento, ed è frutto sì del lavoro di sviluppo informatico della sottoscritta, ma anche e soprattutto dello spirito di gruppo e di servizio dei cori che lo utilizzano. È proprio per questo motivo che si decide di inserire questa sezione: per dare spazio a correzioni e segnalazioni che, si sottolinea, sono utili a tutti gli utenti di questo servizio.
 	
-	\subsubsection{Spartiti e accordi (\texttt{/portale/spartiti})}
+	\subsubsection{Spartiti e accordi}
 	Questa sezione, dedicata solo ai musicisti, è, di fatto, un archivio di materiali come spartiti, accordi e altri documenti "musicali", che ognuno ha la possibilità di visualizzare e caricare.\\
 	Per caricare un file bisogna:
 	\begin{itemize}
@@ -156,7 +155,7 @@
 	
 	Nel caso si inserissero più materiali per lo stesso canto, questi verranno raggruppati in una stessa sezione, dove si possono trovare con facilità. Per questo motivo, non preoccupatevi di dover inserire tutto con un solo caricamento!
 	
-	\subsubsection{Profilo personale (\texttt{/portale/profilo})}
+	\subsubsection{Profilo personale}
 	Tutti gli utenti possono:
 	\begin{itemize}
 		\item visualizzare e modificare i propri dati personali
@@ -170,7 +169,7 @@
 	In aggiunta alle pagine elencate sopra, vi sono delle sezioni visibili e utilizzabili esclusivamente dagli utenti con ruolo di \roleresponsabile \space oppure di \roledirettore. \\
 	\textit{Nota: per \roledirettore{} e \roleresponsabile{} le funzioni sono assolutamente identiche.}
 	
-	\subsubsection{Bacheca avvisi (\texttt{/portale/bacheca})}
+	\subsubsection{Bacheca avvisi}
 	L'unica differenza con gli altri utenti consiste nel poter anche aggiungere degli avvisi. Bisognerà inserire:
 	\begin{itemize}
 		\item il titolo dell'avviso;
@@ -181,7 +180,7 @@
 	\textbf{N.B.}: i messaggi saranno visibili esclusivamente agli utenti selezionati.\\
 	I messaggi portano il nome di chi l'ha inserito e la data, e \textbf{possono essere eliminati in qualsiasi momento}.
 	
-	\subsubsection{Gestione canti (\texttt{/portale/canti-admin})}
+	\subsubsection{Gestione canti}
 	Da qui è possibile:
 	\begin{itemize}
 		\item gestire i \textbf{canti della settimana} o, più in generale, della prossima celebrazione liturgica;
@@ -204,7 +203,7 @@
 	
 	Per inserire un canto nella sezione dei tempi forti è necessario scrivere a mano il nome del tempo liturgico (ad esempio, "Natale" o "Quaresima") e successivamente scegliere il canto dal menu a tendina come per le sezioni precedenti.
 	
-	\subsubsection{Aggiungi un canto nuovo (\texttt{/portale/aggiungi-canto})}
+	\subsubsection{Aggiungi un canto nuovo}
 	In questa pagina è disponibile un form con cui si ha la possibilità di richiedere l'aggiunta di un canto.
 	
 	È richiesto l'inserimento del titolo e del testo, ma è molto gradita l'indicazione anche dell'autore e della categoria (sia il momento, sia il tempo liturgico, ad esempio "avvento, offertorio").
@@ -213,7 +212,7 @@
 	
 	Ugualmente essenziale è l'inserimento del numero del canto nel libretto "Cantiamo al Signore", poiché scopo dei nostri cori è, tra le altre cose, far partecipare l'assemblea tutta alla liturgia attraverso il canto.
 	
-	\subsubsection{Gestione utenti (\texttt{/portale/utenti})}
+	\subsubsection{Gestione utenti}
 	Consente di:
 	\begin{itemize}
 		\item creare nuovi account;
@@ -224,7 +223,7 @@
 	
 	Per creare un nuovo account è necessario inserire nome, cognome, email (in alternativa un nome utente) e una password temporanea insieme al ruolo del nuovo utente (\rolecorista, \rolestrumentista, \roledirettore, \roleresponsabile), i cori di cui fa parte e il timbro di voce e/o lo strumento suonato. La data di nascita e il numero di telefono non sono necessari.
 	
-	\subsubsection{Presenze e statistiche (\texttt{/portale/registro} e \texttt{/portale/presenze})}
+	\subsubsection{Presenze e statistiche}
 	La prima pagina permette di registrare le presenze alle prove e alle celebrazioni. La seconda, invece, fa vedere le statistiche di presenza generali e individuali per ogni utente (di qualsiasi tipo).\\
 	È importante che questa funzionalità sia usata principalmente per avere dei dati oggettivi se necessari, e non per premiare o meno un corista piuttosto che un altro.
 	
