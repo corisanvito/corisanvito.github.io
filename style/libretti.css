@@ -1,0 +1,116 @@
+.libretti-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.libretti-filtri {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.canto-nome {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.canto-meta {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 0.1rem;
+}
+
+.badge-stock {
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.badge-stock.zero {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.badge-stock.scarso {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.badge-stock.ok {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.azioni-stock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.btn-stock {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.btn-stock.plus {
+    border-color: #2e7d32;
+    color: #2e7d32;
+}
+
+.btn-stock.minus {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.btn-stock:hover {
+    opacity: 0.75;
+}
+
+.btn-stock:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.input-stock {
+    width: 3.5rem;
+    text-align: center;
+    padding: 0.3rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.riga-esaurita td {
+    background: #fff8f8;
+}
+
+.riga-scarsa td {
+    background: #fffbf0;
+}
+
+@media (max-width: 600px) {
+    .libretti-filtri {
+        flex-direction: column;
+    }
+
+    .libretti-filtri input,
+    .libretti-filtri select {
+        width: 100%;
+    }
+}
