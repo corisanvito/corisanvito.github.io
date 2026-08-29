@@ -78,6 +78,7 @@
         let coroAttivoId = cori[0]?._id;
         let tuttiCanti = [];
         let filtroCorrente = '';
+        let ordinamentoCorrente = 'titolo'; // 'titolo' | 'numero'
 
         async function caricaLibretti(coroId) {
             const pannello = document.getElementById('pannello-libretti');
@@ -127,14 +128,15 @@
                     <table id="tabella-libretti">
                         <thead>
                             <tr>
-                                <th>Canto</th>
+                                <th class="th-ordinabile" id="th-numero" style="width:70px;text-align:center">N° ${ordinamentoCorrente === 'numero' ? '▾' : ''}</th>
+                                <th class="th-ordinabile" id="th-titolo">Canto ${ordinamentoCorrente === 'titolo' ? '▾' : ''}</th>
                                 <th style="width:120px;text-align:center">Copie</th>
                                 <th style="width:180px;text-align:center">Azioni</th>
                                 <th style="width:80px;text-align:center">Note</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-libretti">
-                            ${renderRighe(canti)}
+                            ${renderRighe(ordina(canti))}
                         </tbody>
                     </table>
                 </div>
@@ -147,15 +149,51 @@
             });
 
             document.getElementById('filtro-stock').addEventListener('change', applicaFiltri);
+
+            document.getElementById('th-numero').addEventListener('click', () => {
+                ordinamentoCorrente = 'numero';
+                document.getElementById('th-numero').innerHTML = 'N° ▾';
+                document.getElementById('th-titolo').textContent = 'Canto';
+                applicaFiltri();
+            });
+            document.getElementById('th-titolo').addEventListener('click', () => {
+                ordinamentoCorrente = 'titolo';
+                document.getElementById('th-titolo').textContent = 'Canto ▾';
+                document.getElementById('th-numero').textContent = 'N°';
+                applicaFiltri();
+            });
+        }
+
+        function ordina(lista) {
+            const copia = [...lista];
+            if (ordinamentoCorrente === 'numero') {
+                copia.sort((a, b) => {
+                    const na = parseFloat(a.numeroLibretto);
+                    const nb = parseFloat(b.numeroLibretto);
+                    const aVuoto = a.numeroLibretto === '' || isNaN(na);
+                    const bVuoto = b.numeroLibretto === '' || isNaN(nb);
+                    if (aVuoto && bVuoto) return a.titolo.localeCompare(b.titolo);
+                    if (aVuoto) return 1;
+                    if (bVuoto) return -1;
+                    return na - nb;
+                });
+            } else {
+                copia.sort((a, b) => a.titolo.localeCompare(b.titolo));
+            }
+            return copia;
         }
 
         function renderRighe(canti) {
             if (canti.length === 0) {
-                return '<tr><td colspan="4" style="text-align:center;color:#888;font-style:italic">Nessun canto trovato.</td></tr>';
+                return '<tr><td colspan="5" style="text-align:center;color:#888;font-style:italic">Nessun canto trovato.</td></tr>';
             }
 
             return canti.map(c => `
                 <tr class="${c.stock === 0 ? 'riga-esaurita' : c.stock <= 2 ? 'riga-scarsa' : 'riga-ok'}">
+                    <td style="text-align:center">
+                        <input type="text" class="input-numero" value="${c.numeroLibretto || ''}" placeholder="—"
+                            onchange="aggiornaNumero('${c._id}', this.value, '${coroAttivoId}')">
+                    </td>
                     <td>
                         <div class="canto-nome">${c.titolo}</div>
                         ${c.autore ? `<div class="canto-meta">${c.autore}</div>` : ''}
@@ -200,7 +238,7 @@
                 return matchCerca && matchStock;
             });
 
-            document.getElementById('tbody-libretti').innerHTML = renderRighe(filtrati);
+            document.getElementById('tbody-libretti').innerHTML = renderRighe(ordina(filtrati));
         }
 
         window.aggiornaStock = async (cantoId, nuovoStock, coroId) => {
@@ -220,6 +258,15 @@
                 body: JSON.stringify({ stock: nuovoStock })
             });
             await caricaLibretti(coroId);
+        };
+
+        window.aggiornaNumero = async (cantoId, valore, coroId) => {
+            await apiCall(`/stock/${coroId}/${cantoId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ numeroLibretto: valore.trim() })
+            });
+            const canto = tuttiCanti.find(c => c._id === cantoId);
+            if (canto) canto.numeroLibretto = valore.trim();
         };
 
         window.apriNote = async (cantoId, coroId, noteAttuali) => {
