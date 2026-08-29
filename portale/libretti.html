@@ -98,11 +98,11 @@
                 <!-- Statistiche -->
                 <div class="libretti-stats">
                     <div class="stat-card">
-                        <div class="stat-numero">${totaleCopie}</div>
+                        <div class="stat-numero" id="stat-copie-totali">${totaleCopie}</div>
                         <div class="stat-label">Copie totali</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-numero">${cantiConCopie}</div>
+                        <div class="stat-numero" id="stat-canti-con-copie">${cantiConCopie}</div>
                         <div class="stat-label">Canti con copie</div>
                     </div>
                     <div class="stat-card">
@@ -241,13 +241,25 @@
             document.getElementById('tbody-libretti').innerHTML = renderRighe(ordina(filtrati));
         }
 
+        function aggiornaStatistiche() {
+            const totaleCopie = tuttiCanti.reduce((acc, c) => acc + c.stock, 0);
+            const cantiConCopie = tuttiCanti.filter(c => c.stock > 0).length;
+            const elCopie = document.getElementById('stat-copie-totali');
+            const elConCopie = document.getElementById('stat-canti-con-copie');
+            if (elCopie) elCopie.textContent = totaleCopie;
+            if (elConCopie) elConCopie.textContent = cantiConCopie;
+        }
+
         window.aggiornaStock = async (cantoId, nuovoStock, coroId) => {
             if (nuovoStock < 0) return;
             await apiCall(`/stock/${coroId}/${cantoId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({ stock: nuovoStock })
             });
-            await caricaLibretti(coroId);
+            const canto = tuttiCanti.find(c => c._id === cantoId);
+            if (canto) canto.stock = nuovoStock;
+            aggiornaStatistiche();
+            applicaFiltri();
         };
 
         window.aggiornaStockDiretto = async (cantoId, valore, coroId) => {
@@ -257,7 +269,10 @@
                 method: 'PATCH',
                 body: JSON.stringify({ stock: nuovoStock })
             });
-            await caricaLibretti(coroId);
+            const canto = tuttiCanti.find(c => c._id === cantoId);
+            if (canto) canto.stock = nuovoStock;
+            aggiornaStatistiche();
+            applicaFiltri();
         };
 
         window.aggiornaNumero = async (cantoId, valore, coroId) => {
@@ -276,7 +291,9 @@
                 method: 'PATCH',
                 body: JSON.stringify({ note: nuovaNota })
             });
-            await caricaLibretti(coroId);
+            const canto = tuttiCanti.find(c => c._id === cantoId);
+            if (canto) canto.note = nuovaNota;
+            applicaFiltri();
         };
 
         // Tab click
