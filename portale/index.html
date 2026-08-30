@@ -116,7 +116,11 @@
         const isAdmin = ['admin', 'direttore', 'responsabile'].includes(me.ruolo);
         const isStrumentista = me.ruolo === 'strumentista';
 
-        const cards = isAdmin ? cardsAdmin : isStrumentista ? cardsStrumentista : cardsBase;
+        let cards = isAdmin ? cardsAdmin : isStrumentista ? cardsStrumentista : cardsBase;
+
+        if (isAdmin && me.ruolo !== 'admin') {
+            cards = cards.filter(c => c.href !== '/portale/libretti');
+        }
 
         document.getElementById('card-grid').innerHTML = cards.map(c => `
             <a class="card" href="${c.href}">
