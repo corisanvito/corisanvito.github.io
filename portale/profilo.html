@@ -43,8 +43,55 @@
         </nav>
     </header>
 
+    <style>
+        .banner-primo-accesso {
+            background: #fff8e1;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-family: inherit;
+        }
+        .banner-primo-accesso strong {
+            color: #b45309;
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+        .banner-primo-accesso p {
+            margin: 0;
+            color: #444;
+            font-size: 0.9rem;
+        }
+        .criteri-password {
+            margin: 0.5rem 0 1rem;
+            padding: 0.75rem 1rem;
+            background: #f8f8f8;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        .criteri-password ul {
+            margin: 0.4rem 0 0;
+            padding-left: 1.2rem;
+        }
+        .criteri-password li {
+            margin: 0.2rem 0;
+            transition: color 0.2s;
+        }
+        .criteri-password li.ok { color: #16a34a; font-weight: 600; }
+        .criteri-password li.no { color: #dc2626; }
+        .sezione-bloccata { opacity: 0.4; pointer-events: none; user-select: none; }
+    </style>
+
     <main>
         <h2>Il mio profilo</h2>
+
+        <div id="banner-primo-accesso" class="banner-primo-accesso" style="display:none">
+            <strong>⚠️ Devi cambiare la password prima di continuare</strong>
+            <p>Per motivi di sicurezza, al primo accesso è obbligatorio scegliere una nuova password personale. Scorri in basso alla sezione "Cambio password".</p>
+        </div>
+
         <div class="profilo-card">
             <div class="profilo-header">
                 <div class="avatar" id="avatar">…</div>
@@ -111,6 +158,15 @@
                 <label>Nuova password</label>
                 <input type="password" id="p-pwd-nuova" placeholder="••••••••">
             </div>
+            <div class="criteri-password">
+                <span>La password deve avere:</span>
+                <ul>
+                    <li id="crit-lunghezza">Almeno 8 caratteri</li>
+                    <li id="crit-maiuscola">Almeno una lettera maiuscola (A–Z)</li>
+                    <li id="crit-minuscola">Almeno una lettera minuscola (a–z)</li>
+                    <li id="crit-numero">Almeno un numero (0–9)</li>
+                </ul>
+            </div>
             <div class="campo">
                 <label>Conferma nuova password</label>
                 <input type="password" id="p-pwd-conferma" placeholder="••••••••">
@@ -137,6 +193,24 @@
         const utente = requireAuth();
         if (!utente) throw new Error();
 
+        function validaPassword(pwd) {
+            return {
+                lunghezza: pwd.length >= 8,
+                maiuscola: /[A-Z]/.test(pwd),
+                minuscola: /[a-z]/.test(pwd),
+                numero: /[0-9]/.test(pwd)
+            };
+        }
+
+        // Aggiorna indicatori criteri in tempo reale
+        document.getElementById('p-pwd-nuova').addEventListener('input', function () {
+            const v = validaPassword(this.value);
+            document.getElementById('crit-lunghezza').className = v.lunghezza ? 'ok' : 'no';
+            document.getElementById('crit-maiuscola').className = v.maiuscola ? 'ok' : 'no';
+            document.getElementById('crit-minuscola').className = v.minuscola ? 'ok' : 'no';
+            document.getElementById('crit-numero').className = v.numero ? 'ok' : 'no';
+        });
+
         async function carica() {
             const me = await apiCall('/auth/me');
             if (!me) {
@@ -161,10 +235,27 @@
             if (me.dataNascita) {
                 document.getElementById('p-nascita').value = new Date(me.dataNascita).toISOString().split('T')[0];
             }
-
             document.getElementById('p-vocetipo').value = me.tipoVoce || '';
 
+            // Gestione primo accesso: blocca tutto tranne la sezione password
+            if (me.primoAccesso) {
+                document.getElementById('banner-primo-accesso').style.display = 'block';
+
+                // Blocca le sezioni non password
+                document.querySelector('.profilo-header').classList.add('sezione-bloccata');
+                document.querySelectorAll('.sezione-titolo').forEach((el, i) => {
+                    if (i === 0) el.classList.add('sezione-bloccata'); // "Dati non modificabili"
+                });
+                document.getElementById('btn-salva').classList.add('sezione-bloccata');
+
+                // Scrolla automaticamente alla sezione cambio password
+                setTimeout(() => {
+                    document.getElementById('btn-password').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 400);
+            }
+
             document.getElementById('btn-salva').onclick = async () => {
+                if (me.primoAccesso) return;
                 const body = {
                     email: document.getElementById('p-email').value.trim(),
                     tipoVoce: document.getElementById('p-vocetipo').value,
@@ -195,8 +286,10 @@
                 if (nuova !== conferma) {
                     msg.className = 'messaggio err'; msg.textContent = 'Le password non coincidono.'; return;
                 }
-                if (nuova.length < 6) {
-                    msg.className = 'messaggio err'; msg.textContent = 'Minimo 6 caratteri.'; return;
+
+                const v = validaPassword(nuova);
+                if (!v.lunghezza || !v.maiuscola || !v.minuscola || !v.numero) {
+                    msg.className = 'messaggio err'; msg.textContent = 'La password non soddisfa i criteri di sicurezza.'; return;
                 }
 
                 const res = await apiCall(`/users/${me._id}/password`, {
@@ -210,6 +303,10 @@
                     document.getElementById('p-pwd-attuale').value = '';
                     document.getElementById('p-pwd-nuova').value = '';
                     document.getElementById('p-pwd-conferma').value = '';
+                    // Se era primo accesso, rimuove il blocco e ricarica
+                    if (me.primoAccesso) {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
                 } else {
                     msg.className = 'messaggio err';
                     msg.textContent = res?.message || 'Errore nel cambio password.';

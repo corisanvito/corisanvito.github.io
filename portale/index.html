@@ -113,6 +113,12 @@
             { href: '/portale/profilo', icon: '<i class="fa-solid fa-user" style="color:#301934"></i>', titolo: 'Il mio profilo', desc: 'Modifica i tuoi dati personali' },
         ];
 
+        // Reindirizza al profilo se primo accesso
+        if (me.primoAccesso) {
+            window.location.href = '/portale/profilo';
+            throw new Error('primoAccesso');
+        }
+
         const isAdmin = ['admin', 'direttore', 'responsabile'].includes(me.ruolo);
         const isStrumentista = me.ruolo === 'strumentista';
 
