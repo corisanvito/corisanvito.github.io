@@ -4,10 +4,8 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
-stringa_da_sostituire = '''<meta name="msapplication-TileColor" content="#555555">
-    <meta name="theme-color" content="#555555">'''
-nuova_stringa = '''<meta name="msapplication-TileColor" content="#1b1b1b">
-    <meta name="theme-color" content="#1b1b1b">'''
+stringa_da_sostituire = '''.html'''
+nuova_stringa = ''''''
 
 
 def chiedi_cartella():

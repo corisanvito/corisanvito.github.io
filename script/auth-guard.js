@@ -6,12 +6,12 @@ export function requireAuth(ruoliConsentiti = []) {
     const utente = getUtente();
 
     if (!token || !utente) {
-        window.location.href = '/login.html';
+        window.location.href = '/login';
         return null;
     }
 
     if (ruoliConsentiti.length > 0 && !ruoliConsentiti.includes(utente.ruolo)) {
-        window.location.href = '/portale/index.html';
+        window.location.href = '/portale/index';
         return null;
     }
 

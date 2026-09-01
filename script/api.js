@@ -17,7 +17,7 @@ export function saveAuth(token, utente) {
 export function clearAuth() {
     localStorage.removeItem('csv_token');
     localStorage.removeItem('csv_utente');
-    window.location.href = '/login.html';
+    window.location.href = '/login';
 }
 
 export async function apiCall(endpoint, options = {}) {
