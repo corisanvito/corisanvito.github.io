@@ -49,6 +49,12 @@
 
         <div class="tabs-cori" id="tabs-cori"></div>
 
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+            <button class="btn-sm" id="btn-export">
+                <i class="fa-solid fa-download"></i> Esporta CSV
+            </button>
+        </div>
+
         <div id="pannello-libretti">
             <p class="vuoto">Seleziona un coro per vedere i libretti.</p>
         </div>
@@ -295,6 +301,19 @@
             if (canto) canto.note = nuovaNota;
             applicaFiltri();
         };
+
+        document.getElementById('btn-export').addEventListener('click', () => {
+            const token = localStorage.getItem('csv_token');
+            const url = `https://corisanvito-backend.onrender.com/stock/${coroAttivoId}/export`;
+            fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(res => res.blob())
+                .then(blob => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `stock-${coroAttivoId}.csv`;
+                    a.click();
+                });
+        });
 
         // Tab click
         document.querySelectorAll('.tab-coro').forEach(btn => {
