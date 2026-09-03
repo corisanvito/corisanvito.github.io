@@ -1269,7 +1269,7 @@
       }
     },
     {
-      "titolo": "Ecco l'acqua che sgorga",
+      "titolo": "Ecco l'acqua che sgorga (Iotti)",
       "id": 72,
       "testo": "Ecco l'acqua che sgorga dal tempio Santo di Dio e a quanti giungerà quest'acqua porterà salvezza ed essi canteranno Alleluia.",
       "categorie": [
@@ -1278,8 +1278,8 @@
       "url": "canti/ecco-l-acqua-che-sgorga",
       "fileName": "ecco-l-acqua-che-sgorga.html",
       "metadata": {
-        "Testo": "",
-        "Musica": "",
+        "Testo": "Paolo Iotti",
+        "Musica": "Paolo Iotti",
         "Album": ""
       }
     },
