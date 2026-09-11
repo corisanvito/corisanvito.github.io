@@ -63,10 +63,10 @@
                     <label for="tipo_segnalazione">Tipo di segnalazione *</label>
                     <select id="tipo_segnalazione" name="tipo_segnalazione" required>
                         <option value="">Seleziona…</option>
-                        <option value="Errore nel testo">Errore nel testo</option>
-                        <option value="Testo incompleto">Testo incompleto</option>
+                        <option value="Errore nel testo o testo incompleto">Errore nel testo o testo incompleto</option>
                         <option value="Errore nella formattazione">Errore nella formattazione</option>
                         <option value="Link YouTube errato">Link YouTube errato</option>
+                        <option value="Numero sul libretto errato o mancante">Numero sul libretto errato o mancante</option>
                         <option value="Altro">Altro</option>
                     </select>
                 </div>
@@ -75,12 +75,6 @@
                     <label for="descrizione">Descrizione della segnalazione *</label>
                     <textarea id="descrizione" name="descrizione" required rows="6"
                         placeholder="Descrivi l'errore o la modifica che vorresti suggerire. Se possibile, indica la parte esatta del testo da correggere e la versione corretta."></textarea>
-                </div>
-
-                <div class="campo">
-                    <label for="testo_corretto">Testo corretto (opzionale)</label>
-                    <textarea id="testo_corretto" name="testo_corretto" rows="6"
-                        placeholder="Se conosci la versione corretta, incollala qui…"></textarea>
                 </div>
 
                 <button type="submit" class="btn-primary">Invia segnalazione</button>
