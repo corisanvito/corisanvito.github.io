@@ -155,7 +155,7 @@
             const promises = Object.entries(presenzaMap).map(([userId, presente]) =>
                 apiCall('/presenze', {
                     method: 'POST',
-                    body: JSON.stringify({ utente: userId, coro: coroId, tipo, data, presente })
+                    body: JSON.stringify({ utente: userId, coro: coroId, tipo, data, presente, upsert: true })
                 })
             );
 
