@@ -76,6 +76,7 @@
                 <input type="hidden" name="_subject" id="subject" value="">
                 <input type="hidden" name="_next" value="https://corisanvito.github.io/system/grazie">
                 <input type="hidden" name="_captcha" value="true">
+                <input type="hidden" name="richiedente" id="richiedente" value="">
                 <input type="hidden" name="_append" value="---
     Inserire questo canto come pagina HTML, aggiornare la lista su excel, la pagina canti e il file canti.json">
             </form>
@@ -90,18 +91,20 @@
 
 </body>
 
-<script>
-    document.getElementById("cantoForm").addEventListener("submit", function (e) {
-        const nomeCanto = document.getElementById("nome_canto").value.trim();
-        const subjectInput = document.getElementById("subject");
-        subjectInput.value = "Nuovo canto da inserire: " + nomeCanto;
+<script type="module">
+    import { requireAuth } from '/script/auth-guard.js';
 
-        /* Imposta il reply-to
-        const emailField = document.getElementById("email_richiedente");
-        if (emailField) {
-            document.getElementById("replyto").value = emailField.value.trim();
-        }
-        */
+    const utente = requireAuth();
+    if (!utente) throw new Error();
+
+    // Precompila il campo richiedente con i dati dell'utente loggato
+    document.getElementById('richiedente').value =
+        `${utente.nome} ${utente.cognome}`;
+
+    document.getElementById("cantoForm").addEventListener("submit", function () {
+        const nomeCanto = document.getElementById("nome_canto").value.trim();
+        document.getElementById("subject").value =
+            `Nuovo canto da inserire: ${nomeCanto} (da ${utente.nome} ${utente.cognome})`;
     });
 </script>
 
