@@ -4,8 +4,12 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Stringa da cercare e nuova stringa con cui sostituirla
-stringa_da_sostituire = '''.html'''
-nuova_stringa = ''''''
+stringa_da_sostituire = '''<footer>
+        <p>&copy; <span id="anno"></span> Cori San Vito &mdash; <a class="privacy" href="../privacy">Privacy</a></p>
+    </footer>'''
+nuova_stringa = '''<footer>
+        <p>&copy; 2025 Cori San Vito - <a class="privacy" href="privacy">Privacy</a></p>
+    </footer>'''
 
 
 def chiedi_cartella():
