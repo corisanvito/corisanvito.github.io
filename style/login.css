@@ -91,13 +91,13 @@
     display: block;
 }
 
-.return-to-login {
+.link {
     margin-top: 1.2rem;
     font-size: 0.88rem;
     text-align: center;
 }
 
-.return-to-login a {
+.link a {
     text-decoration: none;
     color: var(--c-purple);
 }
