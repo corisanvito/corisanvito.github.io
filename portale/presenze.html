@@ -154,9 +154,18 @@
             }))
             .sort((a, b) => b.percentuale - a.percentuale);
 
-          const mediaPercentuale = Math.round(
-            coristi.reduce((acc, d) => acc + d.percentuale, 0) / coristi.length
-          );
+          // Media reale: presenti totali / eventi totali (non media delle percentuali)
+          const totPresenti = coristi.reduce((acc, d) => acc + d.presenti, 0);
+          const totEventi = coristi.reduce((acc, d) => acc + d.totale, 0);
+          const mediaPercentuale = totEventi > 0 ? Math.round(totPresenti / totEventi * 100) : 0;
+
+          // Conta eventi distinti (non righe) per tipo
+          const eventiDistintiProva = new Set(
+            presenze.filter(p => p.tipo === 'prova').map(p => new Date(p.data).toISOString().slice(0, 10))
+          ).size;
+          const eventiDistintiCelebrazione = new Set(
+            presenze.filter(p => p.tipo === 'celebrazione').map(p => new Date(p.data).toISOString().slice(0, 10))
+          ).size;
 
           pannello.innerHTML = `
   <!-- STATISTICHE RIEPILOGO -->
@@ -170,11 +179,11 @@
       <div class="stat-label">Presenza media</div>
     </div>
     <div class="stat-card">
-      <div class="stat-numero">${presenze.filter(p => p.tipo === 'prova').length}</div>
+      <div class="stat-numero">${eventiDistintiProva}</div>
       <div class="stat-label">Prove registrate</div>
     </div>
     <div class="stat-card">
-      <div class="stat-numero">${presenze.filter(p => p.tipo === 'celebrazione').length}</div>
+      <div class="stat-numero">${eventiDistintiCelebrazione}</div>
       <div class="stat-label">Celebrazioni registrate</div>
     </div>
   </div>
