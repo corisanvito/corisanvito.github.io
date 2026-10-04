@@ -68,6 +68,15 @@
             <button class="btn-primary" id="btn-carica-coristi">Carica coristi</button>
         </div>
 
+        <div id="avviso-esistente" style="display:none" class="avviso-evento">
+            <i class="fa-solid fa-circle-info"></i>
+            <span id="testo-avviso"></span>
+            <div class="avviso-azioni">
+                <button class="btn-sm" id="btn-modifica-esistente">Modifica</button>
+                <button class="btn-sm danger" id="btn-elimina-evento">Elimina evento</button>
+            </div>
+        </div>
+
         <div id="sezione-coristi" style="display:none">
             <div class="lista-coristi" id="lista-coristi"></div>
             <button class="btn-primary" id="btn-salva">Salva presenze</button>
@@ -100,6 +109,118 @@
         });
 
         let presenzaMap = {};
+        // Presenze già salvate per la data/coro selezionati (per modifica/elimina)
+        let presenzeEsistenti = [];
+
+        // Controlla se esiste già un registro per coro+data e mostra l'avviso
+        async function controllaEsistente() {
+            const coroId = selCoro.value;
+            const data = document.getElementById('data-evento').value;
+            const avviso = document.getElementById('avviso-esistente');
+
+            // Nascondi sezione coristi e avviso quando cambiano i parametri
+            document.getElementById('sezione-coristi').style.display = 'none';
+            avviso.style.display = 'none';
+            presenzeEsistenti = [];
+
+            if (!coroId || !data) return;
+
+            const presenze = await apiCall(`/presenze/coro/${coroId}`);
+            if (!presenze) return;
+
+            // Filtra le presenze per la data selezionata
+            const stessaData = presenze.filter(p =>
+                new Date(p.data).toISOString().slice(0, 10) === data
+            );
+
+            if (stessaData.length > 0) {
+                presenzeEsistenti = stessaData;
+                const tipo = stessaData[0].tipo === 'prova' ? 'Prova' : 'Celebrazione';
+                const presenti = stessaData.filter(p => p.presente).length;
+                document.getElementById('testo-avviso').textContent =
+                    `${tipo} del ${new Date(data).toLocaleDateString('it-IT')} già registrata — ${presenti}/${stessaData.length} presenti.`;
+                avviso.style.display = 'flex';
+
+                // Imposta il tipo corretto nel select
+                document.getElementById('tipo-evento').value = stessaData[0].tipo;
+            }
+        }
+
+        selCoro.addEventListener('change', controllaEsistente);
+        document.getElementById('data-evento').addEventListener('change', controllaEsistente);
+
+        // Modifica evento esistente: carica i coristi con le presenze già segnate
+        document.getElementById('btn-modifica-esistente').addEventListener('click', async () => {
+            const coroId = selCoro.value;
+            const utenti = await apiCall('/users');
+            const coristi = (utenti || []).filter(u =>
+                u.cori && u.cori.some(c => c._id === coroId) && u.attivo
+            );
+
+            if (coristi.length === 0) {
+                alert('Nessun corista trovato per questo coro.');
+                return;
+            }
+
+            // Mappa presenzeEsistenti per utente
+            const mapEsistente = {};
+            presenzeEsistenti.forEach(p => {
+                if (p.utente) mapEsistente[p.utente._id] = p.presente;
+            });
+
+            presenzaMap = { ...mapEsistente };
+
+            const lista = document.getElementById('lista-coristi');
+            lista.innerHTML = coristi.map(c => {
+                const val = mapEsistente[c._id];
+                return `
+                <div class="corista-row" data-id="${c._id}">
+                    <div>
+                        <div class="corista-nome">${c.nome} ${c.cognome}</div>
+                        <div class="corista-ruolo">${c.ruolo}</div>
+                    </div>
+                    <div class="toggle-presenza">
+                        <button class="btn-presenza presente ${val === true ? 'attivo' : ''}" data-id="${c._id}" data-val="true">✓ Presente</button>
+                        <button class="btn-presenza assente ${val === false ? 'attivo' : ''}" data-id="${c._id}" data-val="false">✗ Assente</button>
+                    </div>
+                </div>
+            `}).join('');
+
+            lista.querySelectorAll('.btn-presenza').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const val = btn.dataset.val === 'true';
+                    presenzaMap[id] = val;
+                    lista.querySelectorAll(`.btn-presenza[data-id="${id}"]`).forEach(b => b.classList.remove('attivo'));
+                    btn.classList.add('attivo');
+                });
+            });
+
+            document.getElementById('sezione-coristi').style.display = 'block';
+            document.getElementById('msg').textContent = '';
+        });
+
+        // Elimina tutte le presenze dell'evento (coro + data)
+        document.getElementById('btn-elimina-evento').addEventListener('click', async () => {
+            const data = document.getElementById('data-evento').value;
+            const dataFmt = new Date(data).toLocaleDateString('it-IT');
+            const tipo = presenzeEsistenti[0]?.tipo === 'prova' ? 'prova' : 'celebrazione';
+            if (!confirm(`Eliminare la ${tipo} del ${dataFmt} con tutte le ${presenzeEsistenti.length} presenze?`)) return;
+
+            await Promise.all(presenzeEsistenti.map(p =>
+                apiCall(`/presenze/${p._id}`, { method: 'DELETE' })
+            ));
+
+            document.getElementById('avviso-esistente').style.display = 'none';
+            document.getElementById('sezione-coristi').style.display = 'none';
+            presenzeEsistenti = [];
+            presenzaMap = {};
+
+            const msg = document.getElementById('msg');
+            msg.className = 'messaggio ok';
+            msg.textContent = `✓ ${tipo.charAt(0).toUpperCase() + tipo.slice(1)} del ${dataFmt} eliminata.`;
+            msg.style.display = 'block';
+        });
 
         document.getElementById('btn-carica-coristi').addEventListener('click', async () => {
             const coroId = selCoro.value;
@@ -164,6 +285,9 @@
             msg.textContent = '✓ Presenze salvate!';
             presenzaMap = {};
             document.querySelectorAll('.btn-presenza').forEach(b => b.classList.remove('attivo'));
+
+            // Aggiorna l'avviso dopo il salvataggio
+            await controllaEsistente();
         });
     </script>
 </body>

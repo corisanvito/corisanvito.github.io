@@ -60,3 +60,33 @@
     color: #c0392b;
     font-weight: 600;
 }
+
+.avviso-evento {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    background: #f0f4ff;
+    border: 1px solid #c7d4f5;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    color: #2c3e7a;
+    font-size: 0.95rem;
+}
+
+.avviso-evento i {
+    color: #3a5bc7;
+    flex-shrink: 0;
+}
+
+.avviso-evento span {
+    flex: 1;
+    min-width: 0;
+}
+
+.avviso-azioni {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
