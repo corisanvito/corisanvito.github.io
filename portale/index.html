@@ -102,6 +102,7 @@
             { href: '/portale/presenze', icon: '<i class="fa-solid fa-chart-simple" style="color:#301934"></i>', titolo: 'Statistiche presenze', desc: 'Le statistiche di presenza dei coristi' },
             { href: '/portale/spartiti', icon: '<i class="fa-solid fa-sheet-plastic" style="color:#301934"></i>', titolo: 'Spartiti e accordi', desc: 'Spartiti e accordi condivisi' },
             { href: '/portale/libretti', icon: '<i class="fa-solid fa-book" style="color:#301934"></i>', titolo: 'Gestione libretti', desc: 'Stock delle copie fisiche per ogni coro' },
+            { href: '/portale/stampa-canti', icon: '<i class="fa-solid fa-print" style="color:#301934"></i>', titolo: 'Stampa canti', desc: 'Genera i foglietti per la messa' },
             { href: '/portale/profilo', icon: '<i class="fa-solid fa-user" style="color:#301934"></i>', titolo: 'Il mio profilo', desc: 'Modifica i tuoi dati personali' },
         ];
 
@@ -125,7 +126,10 @@
         let cards = isAdmin ? cardsAdmin : isStrumentista ? cardsStrumentista : cardsBase;
 
         if (isAdmin && me.ruolo !== 'admin') {
-            cards = cards.filter(c => c.href !== '/portale/libretti');
+            cards = cards.filter(c =>
+                c.href !== '/portale/libretti' &&
+                c.href !== '/portale/stampa-canti'
+            );
         }
 
         document.getElementById('card-grid').innerHTML = cards.map(c => `
