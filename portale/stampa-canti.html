@@ -34,26 +34,32 @@
             border-radius: 4px;
             transition: color 0.15s;
         }
-
-        .btn-rimuovi-canto:hover {
-            color: #c0392b;
-        }
-
-        .editor-riga.nascosto {
-            opacity: 0.4;
-        }
-
-        .editor-riga.nascosto .btn-rimuovi-canto {
-            color: #27ae60;
-        }
-
-        .editor-riga.nascosto .btn-rimuovi-canto:hover {
-            color: #1e8449;
-        }
+        .btn-rimuovi-canto:hover { color: #c0392b; }
+        .editor-riga.nascosto { opacity: 0.4; }
+        .editor-riga.nascosto .btn-rimuovi-canto { color: #27ae60; }
+        .editor-riga.nascosto .btn-rimuovi-canto:hover { color: #1e8449; }
     </style>
 </head>
 
 <body>
+    <header class="no-print">
+        <h1><a href="../">Cori San Vito</a></h1>
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <div class="overlay"></div>
+        <nav>
+            <ul>
+                <li><a href="..">Tutti i cori</a></li>
+                <li><a href="../canti">Canti</a></li>
+                <li><a href="../portale">Area riservata</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="toolbar no-print">
         <div class="toolbar-brand">
             <i class="fa-solid fa-book-open"></i>
