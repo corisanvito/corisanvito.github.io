@@ -21,6 +21,36 @@
     <link rel="stylesheet" href="/style/portale.css">
     <link rel="stylesheet" href="/style/tab-cori.css">
     <link rel="stylesheet" href="/style/stampa-canti.css">
+    <style>
+        .btn-rimuovi-canto {
+            margin-left: auto;
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 0.95rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            transition: color 0.15s;
+        }
+
+        .btn-rimuovi-canto:hover {
+            color: #c0392b;
+        }
+
+        .editor-riga.nascosto {
+            opacity: 0.4;
+        }
+
+        .editor-riga.nascosto .btn-rimuovi-canto {
+            color: #27ae60;
+        }
+
+        .editor-riga.nascosto .btn-rimuovi-canto:hover {
+            color: #1e8449;
+        }
+    </style>
 </head>
 
 <body>
@@ -70,6 +100,7 @@
 
     // ── STATO ─────────────────────────────────────────────────────────────
     let listaCanti = [];
+    let cantiNascosti = new Set(); // indici nascosti per questa sessione
     let dataFoglietto = "";
     let mostraData = true;
     let mostraIndicazioni = true;
@@ -168,16 +199,19 @@
 
             dataFoglietto = dataMax ? formattaData(dataMax) : '';
 
-            listaCanti = cantiSettimana.map(c => ({
-                titolo: c.titolo,
-                indicazione: c.indicazione
-            }));
+            listaCanti = cantiSettimana
+                .filter(c => !c.indicazione.toLowerCase().includes('salmo'))
+                .map(c => ({ titolo: c.titolo, indicazione: c.indicazione }));
 
-            if (cantiSettimana.length === 0) {
+            if (listaCanti.length === 0) {
                 if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun canto domenicale configurato per questo coro.</div>`;
                 document.getElementById('pagina').innerHTML = '';
                 return;
             }
+
+            // Ripristina i canti nascosti dalla sessionStorage (si azzera alla chiusura della scheda)
+            const nascostiSalvati = sessionStorage.getItem(`cantiNascosti_${coroId}`);
+            cantiNascosti = nascostiSalvati ? new Set(JSON.parse(nascostiSalvati)) : new Set();
 
             mostraEditor(coroId);
             generaFoglietti();
@@ -208,7 +242,8 @@
 
         listaCanti.forEach((canto, idx) => {
             const riga = document.createElement('div');
-            riga.className = 'editor-riga';
+            riga.className = 'editor-riga' + (cantiNascosti.has(idx) ? ' nascosto' : '');
+            riga.setAttribute('data-riga', idx);
 
             const inputGroup = document.createElement('div');
             inputGroup.className = 'input-group';
@@ -236,8 +271,27 @@
             spanCanto.className = 'canto-label';
             spanCanto.innerText = canto.titolo;
 
+            const btnRimuovi = document.createElement('button');
+            btnRimuovi.className = 'btn-rimuovi-canto';
+            btnRimuovi.title = cantiNascosti.has(idx) ? 'Mostra' : 'Nascondi';
+            btnRimuovi.innerHTML = cantiNascosti.has(idx)
+                ? '<i class="fas fa-eye"></i>'
+                : '<i class="fas fa-xmark"></i>';
+            btnRimuovi.addEventListener('click', () => {
+                if (cantiNascosti.has(idx)) {
+                    cantiNascosti.delete(idx);
+                } else {
+                    cantiNascosti.add(idx);
+                }
+                sessionStorage.setItem(`cantiNascosti_${coroId}`, JSON.stringify([...cantiNascosti]));
+                mostraEditor(coroId);
+                caricaNumeriSalvati(coroId);
+                generaFoglietti();
+            });
+
             riga.appendChild(inputGroup);
             riga.appendChild(spanCanto);
+            riga.appendChild(btnRimuovi);
             scrollDiv.appendChild(riga);
         });
 
@@ -312,6 +366,7 @@
     function generaListaHTMLPrimari() {
         let html = '';
         listaCanti.forEach((canto, i) => {
+            if (cantiNascosti.has(i)) return;
             const inputEl = document.querySelector(`.numero-input[data-index="${i}"]`);
             const numero = inputEl ? inputEl.value.trim() : '';
             const titoloSafe = escapeHtml(abbreviaTitolo(canto.titolo));
@@ -329,6 +384,7 @@
     function generaListaHTMLSecondari() {
         let html = '';
         listaCanti.forEach((canto, i) => {
+            if (cantiNascosti.has(i)) return;
             const input2El = document.querySelector(`.numero-input2[data-index2="${i}"]`);
             const numero2 = input2El?.value.trim() || '';
             if (!numero2) return;
