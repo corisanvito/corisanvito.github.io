@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stampa Canti | Cori San Vito</title>
+
+    <link rel="icon" href="/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta name="msapplication-TileColor" content="#301934">
+    <meta name="theme-color" content="#301934">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/portale.css">
+    <link rel="stylesheet" href="/style/tab-cori.css">
+    <link rel="stylesheet" href="/style/stampa-canti.css">
+</head>
+
+<body>
+    <div class="toolbar no-print">
+        <div class="toolbar-brand">
+            <i class="fa-solid fa-book-open"></i>
+            <span class="brand-title">Canti liturgici</span>
+            <span class="brand-sub">5+1 foglietti</span>
+        </div>
+        <div class="toggle-group">
+            <span>Altezza</span>
+            <div class="toggle-switch" id="toggle-altezza"></div>
+        </div>
+        <div class="toggle-group">
+            <span>Data</span>
+            <div class="toggle-switch on" id="toggle-data"></div>
+        </div>
+        <div class="toggle-group">
+            <span>Indicazioni</span>
+            <div class="toggle-switch on" id="toggle-indicazioni"></div>
+        </div>
+        <div class="font-selector">
+            <label>Font:</label>
+            <button class="font-btn attivo" data-font="garamond">Garamond</button>
+            <button class="font-btn" data-font="lato">Lato</button>
+            <button class="font-btn" data-font="sourceserif">Source Serif</button>
+        </div>
+        <button id="btn-stampa" class="btn-stampa">
+            <i class="fa-solid fa-print"></i>&emsp;Stampa
+        </button>
+    </div>
+
+    <div class="content-wrap">
+        <div class="tabs-cori no-print" id="tabs-cori"></div>
+        <div id="editor-container" class="no-print"></div>
+        <div id="pagina"></div>
+    </div>
+</body>
+
+<script type="module">
+    import { requireAuth } from '/script/auth-guard.js';
+    import { getCori } from '/script/api.js';
+
+    // ── AUTH: solo admin ──────────────────────────────────────────────────
+    const utente = requireAuth(['admin']);
+    if (!utente) throw new Error('Non autorizzato');
+
+    // ── CONFIGURAZIONE FOGLI PER CORO ─────────────────────────────────────
+    // Mappa coroId → Google Sheet ID del foglietto settimanale.
+    // Aggiungi un'entry per ogni coro con il suo Sheet ID.
+    // Se un coro non è mappato, viene usato __default__.
+    const SHEET_IDS = {
+        '__default__': '1NYcf3upDR8YLuPX0dm__T1ArAZLXBIdNRBgzwC5GCa0'
+        // 'id-coro-10': 'sheet-id-coro-10',
+        // 'id-coro-1115': 'sheet-id-coro-1115',
+    };
+
+    // ── STATO ─────────────────────────────────────────────────────────────
+    let listaCanti = [];
+    let dataFoglietto = "";
+    let mostraData = true;
+    let mostraIndicazioni = true;
+    let mostraAltezza = false;
+    let coroAttivoId = null;
+
+    // ── INIT ──────────────────────────────────────────────────────────────
+    const cori = await getCori();
+    setupTabs(cori);
+    setupToolbar();
+    ripristinaFont();
+
+    if (cori.length > 0) {
+        coroAttivoId = cori[0]._id;
+        await caricaCanti(coroAttivoId);
+    }
+
+    // ── TABS ──────────────────────────────────────────────────────────────
+    function setupTabs(cori) {
+        const tabsCori = document.getElementById('tabs-cori');
+        if (!tabsCori) return;
+        tabsCori.innerHTML = cori.map((c, i) =>
+            `<button class="tab-coro ${i === 0 ? 'attivo' : ''}" data-id="${c._id}">${c.nome}</button>`
+        ).join('');
+
+        tabsCori.querySelectorAll('.tab-coro').forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabsCori.querySelectorAll('.tab-coro').forEach(b => b.classList.remove('attivo'));
+                btn.classList.add('attivo');
+                coroAttivoId = btn.dataset.id;
+                caricaCanti(coroAttivoId);
+            });
+        });
+    }
+
+    // ── TOOLBAR ───────────────────────────────────────────────────────────
+    function setupToolbar() {
+        document.getElementById('toggle-altezza').addEventListener('click', function () {
+            mostraAltezza = !mostraAltezza;
+            this.classList.toggle('on', mostraAltezza);
+            generaFoglietti();
+        });
+        document.getElementById('toggle-data').addEventListener('click', function () {
+            mostraData = !mostraData;
+            this.classList.toggle('on', mostraData);
+            generaFoglietti();
+        });
+        document.getElementById('toggle-indicazioni').addEventListener('click', function () {
+            mostraIndicazioni = !mostraIndicazioni;
+            this.classList.toggle('on', mostraIndicazioni);
+            generaFoglietti();
+        });
+        document.getElementById('btn-stampa').addEventListener('click', () => window.print());
+        document.querySelectorAll('.font-btn').forEach(btn => {
+            btn.addEventListener('click', () => cambiaFont(btn.dataset.font, btn));
+        });
+    }
+
+    // ── CARICAMENTO CANTI ─────────────────────────────────────────────────
+    function getSheetId(coroId) {
+        return SHEET_IDS[coroId] || SHEET_IDS['__default__'] || null;
+    }
+
+    function formattaData(data) {
+        const opzioni = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        return new Intl.DateTimeFormat('it-IT', opzioni).format(data);
+    }
+
+    async function caricaCanti(coroId) {
+        const sheetId = getSheetId(coroId);
+        const container = document.getElementById('editor-container');
+
+        if (!sheetId) {
+            if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun foglio Google configurato per questo coro. Aggiungi l'ID in <code>SHEET_IDS</code>.</div>`;
+            document.getElementById('pagina').innerHTML = '';
+            return;
+        }
+
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+
+        try {
+            const response = await fetch(sheetUrl);
+            const text = await response.text();
+            const json = JSON.parse(text.substring(47).slice(0, -2));
+            const rows = json.table.rows;
+
+            // Leggi la data dalla prima riga, colonna C (indice 2)
+            const dataCell = rows[0]?.c?.[2];
+            dataFoglietto = dataCell?.v ? formattaData(new Date(dataCell.v)) : '';
+
+            listaCanti = [];
+            rows.slice(1).forEach(row => {
+                if (!row.c || row.c.length < 3) return;
+                const titolo = row.c[0]?.v?.trim();
+                const indicazione = row.c[2]?.v?.trim();
+                if (!titolo || !indicazione) return;
+                if (indicazione.toLowerCase().includes('salmo')) return;
+                listaCanti.push({ titolo, indicazione });
+            });
+
+            mostraEditor(coroId);
+            generaFoglietti();
+
+        } catch (err) {
+            console.error('Errore caricamento canti:', err);
+            if (container) container.innerHTML = `<div class="avviso-errore"><i class="fas fa-exclamation-triangle"></i> Impossibile caricare i canti. Verifica connessione o foglio Google.</div>`;
+        }
+    }
+
+    // ── EDITOR NUMERI ─────────────────────────────────────────────────────
+    function mostraEditor(coroId) {
+        const container = document.getElementById('editor-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const editorDiv = document.createElement('div');
+        editorDiv.className = 'editor-container';
+        editorDiv.id = 'editor-canti';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'editor-title';
+        titleDiv.innerHTML = `<i class="fas fa-hashtag"></i> Assegna numeri ai canti <span style="font-size:0.7rem;font-weight:normal">(primo numero per i primi 5 foglietti, secondo per il sesto)</span>`;
+        editorDiv.appendChild(titleDiv);
+
+        const scrollDiv = document.createElement('div');
+        scrollDiv.className = 'editor-scroll';
+
+        listaCanti.forEach((canto, idx) => {
+            const riga = document.createElement('div');
+            riga.className = 'editor-riga';
+
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Num. coro';
+            input.className = 'numero-input';
+            input.setAttribute('data-index', idx);
+
+            const spanSep = document.createElement('span');
+            spanSep.textContent = '•';
+
+            const input2 = document.createElement('input');
+            input2.type = 'text';
+            input2.placeholder = 'Num. assemblea';
+            input2.className = 'numero-input2';
+            input2.setAttribute('data-index2', idx);
+
+            inputGroup.appendChild(input);
+            inputGroup.appendChild(spanSep);
+            inputGroup.appendChild(input2);
+
+            const spanCanto = document.createElement('span');
+            spanCanto.className = 'canto-label';
+            spanCanto.innerText = canto.titolo;
+
+            riga.appendChild(inputGroup);
+            riga.appendChild(spanCanto);
+            scrollDiv.appendChild(riga);
+        });
+
+        editorDiv.appendChild(scrollDiv);
+        container.appendChild(editorDiv);
+
+        caricaNumeriSalvati(coroId);
+
+        document.querySelectorAll('.numero-input, .numero-input2').forEach(input => {
+            input.addEventListener('input', () => {
+                generaFoglietti();
+                salvaNumeri(coroId);
+            });
+        });
+    }
+
+    // ── PERSISTENZA NUMERI (per coro) ─────────────────────────────────────
+    function salvaNumeri(coroId) {
+        const k = coroId || 'default';
+        const numeri1 = {}, numeri2 = {};
+        document.querySelectorAll('.numero-input').forEach(input => {
+            const v = input.value.trim();
+            if (v) numeri1[input.getAttribute('data-index')] = v;
+        });
+        document.querySelectorAll('.numero-input2').forEach(input => {
+            const v = input.value.trim();
+            if (v) numeri2[input.getAttribute('data-index2')] = v;
+        });
+        localStorage.setItem(`numeriCanti1_${k}`, JSON.stringify(numeri1));
+        localStorage.setItem(`numeriCanti2_${k}`, JSON.stringify(numeri2));
+        localStorage.setItem(`numeriCanti_ts_${k}`, Date.now());
+    }
+
+    function caricaNumeriSalvati(coroId) {
+        const k = coroId || 'default';
+        const scadenza = 24 * 60 * 60 * 1000;
+        const ts = localStorage.getItem(`numeriCanti_ts_${k}`);
+        if (!ts || (Date.now() - parseInt(ts)) >= scadenza) return false;
+
+        const n1 = JSON.parse(localStorage.getItem(`numeriCanti1_${k}`) || '{}');
+        const n2 = JSON.parse(localStorage.getItem(`numeriCanti2_${k}`) || '{}');
+        Object.entries(n1).forEach(([i, v]) => {
+            const el = document.querySelector(`.numero-input[data-index="${i}"]`);
+            if (el) el.value = v;
+        });
+        Object.entries(n2).forEach(([i, v]) => {
+            const el = document.querySelector(`.numero-input2[data-index2="${i}"]`);
+            if (el) el.value = v;
+        });
+        return true;
+    }
+
+    // ── ABBREVIAZIONI ─────────────────────────────────────────────────────
+    const abbreviazioni = {
+        'ingresso': 'Ingr',
+        'aspersione': 'Asp',
+        'atto penitenziale': 'Kyrie',
+        'gloria': 'Gloria',
+        'acclamazione al vangelo': 'Vangelo',
+        'offertorio': 'Off',
+        'santo': 'Santo',
+        'agnello di dio': 'Agn. di Dio',
+        'comunione': 'Com',
+        'congedo': 'Fine',
+        'canto da ripassare': 'Ripasso'
+    };
+
+    function abbrevia(indicazione) {
+        return abbreviazioni[indicazione.toLowerCase().trim()] || indicazione;
+    }
+
+    function abbreviaTitolo(titolo) {
+        const agnello = titolo.match(/^Agnello di Dio\s*\(([^)]+)\)/i);
+        if (agnello) return agnello[1].trim();
+        const alleluia = titolo.match(/^Alleluia[,\s]+(.+)/i);
+        if (alleluia) return `All. ${alleluia[1].trim()}`;
+        return titolo;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+
+    // ── GENERAZIONE FOGLIETTI ─────────────────────────────────────────────
+    function generaListaHTMLPrimari() {
+        let html = '';
+        listaCanti.forEach((canto, i) => {
+            const inputEl = document.querySelector(`.numero-input[data-index="${i}"]`);
+            const numero = inputEl ? inputEl.value.trim() : '';
+            const titoloSafe = escapeHtml(abbreviaTitolo(canto.titolo));
+            const indicazione = canto.indicazione.replace(/\s*\(\d+\)\s*$/, '').trim();
+            const indicazioneSafe = escapeHtml(abbrevia(indicazione));
+            html += `<p>
+                ${(mostraIndicazioni && indicazioneSafe) ? `<span class="canto-indicazione">${indicazioneSafe}:</span> ` : ''}
+                <span class="canto-titolo">${titoloSafe}</span>
+                ${numero ? `<span class="canto-numero">${escapeHtml(numero)}</span>` : ''}
+            </p>`;
+        });
+        return html;
+    }
+
+    function generaListaHTMLSecondari() {
+        let html = '';
+        listaCanti.forEach((canto, i) => {
+            const input2El = document.querySelector(`.numero-input2[data-index2="${i}"]`);
+            const numero2 = input2El?.value.trim() || '';
+            if (!numero2) return;
+            const titoloSafe = escapeHtml(abbreviaTitolo(canto.titolo));
+            const indicazioneSafe = escapeHtml(canto.indicazione.replace(/\s*\(\d+\)\s*$/, '').trim());
+            html += `<p>
+                ${(mostraIndicazioni && indicazioneSafe) ? `<span class="canto-indicazione">${indicazioneSafe}:</span> ` : ''}
+                <span class="canto-titolo">${titoloSafe}</span>
+                <span class="canto-numero2">${escapeHtml(numero2)}</span>
+            </p>`;
+        });
+        return html || `<p style="font-style:italic;color:#999;justify-content:center;">— Nessun canto con numero secondario —</p>`;
+    }
+
+    function generaFoglietti() {
+        const pagina = document.getElementById('pagina');
+        if (!pagina) return;
+
+        const listaPrimari = generaListaHTMLPrimari();
+        const listaSecondari = generaListaHTMLSecondari();
+        pagina.innerHTML = '';
+
+        const dataHtml = (mostraData && dataFoglietto)
+            ? `<div class="foglietto-data">${escapeHtml(dataFoglietto)}</div>`
+            : '';
+
+        for (let i = 0; i < 5; i++) {
+            const f = document.createElement('div');
+            f.className = 'foglietto';
+            f.innerHTML = `${dataHtml}<div class="canti">${listaPrimari}</div>`;
+            pagina.appendChild(f);
+        }
+
+        const sesto = document.createElement('div');
+        sesto.className = 'foglietto';
+        sesto.innerHTML = `${dataHtml}<div class="canti">${listaSecondari}</div>`;
+        pagina.appendChild(sesto);
+
+        if (mostraAltezza) {
+            requestAnimationFrame(() => {
+                const limite = 9.6 * 37.795;
+                const altezze = Array.from(document.querySelectorAll('.foglietto')).map(f => f.getBoundingClientRect().height);
+                const maxH = Math.max(...altezze);
+                const maxHCm = (maxH / 37.795).toFixed(2);
+                const sforato = maxH > limite;
+
+                let barra = document.getElementById('barra-altezza');
+                if (!barra) {
+                    barra = document.createElement('div');
+                    barra.id = 'barra-altezza';
+                    pagina.parentNode.insertBefore(barra, pagina.nextSibling);
+                }
+                barra.className = 'barra-altezza no-print' + (sforato ? ' sforato' : '');
+                barra.innerHTML = `<i class="fas fa-ruler-vertical"></i> Altezza foglietto: <strong>${maxHCm} cm</strong> ${sforato ? '<span class="avviso-sforato">⚠ supera 9.6 cm</span>' : '<span class="ok">✓ nei limiti</span>'}`;
+            });
+        } else {
+            document.getElementById('barra-altezza')?.remove();
+        }
+    }
+
+    // ── FONT ──────────────────────────────────────────────────────────────
+    const fontMap = {
+        garamond: { canti: "'EB Garamond', Georgia, serif", numeri: "'EB Garamond', Georgia, serif" },
+        lato: { canti: "'Lato', system-ui, sans-serif", numeri: "'Lato', system-ui, sans-serif" },
+        sourceserif: { canti: "'Source Serif 4', Georgia, serif", numeri: "'Source Serif 4', Georgia, serif" }
+    };
+
+    function cambiaFont(nome, btn) {
+        const f = fontMap[nome];
+        if (!f) return;
+        document.documentElement.style.setProperty('--font-canti', f.canti);
+        document.documentElement.style.setProperty('--font-numeri', f.numeri);
+        document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('attivo'));
+        btn.classList.add('attivo');
+        localStorage.setItem('fontCanti', nome);
+    }
+
+    function ripristinaFont() {
+        const saved = localStorage.getItem('fontCanti');
+        if (saved) {
+            const btn = document.querySelector(`.font-btn[data-font="${saved}"]`);
+            if (btn) cambiaFont(saved, btn);
+        }
+    }
+</script>
+
+</html>

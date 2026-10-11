@@ -13,7 +13,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    color: #061a40;
+    color: #2d2d2d;
 }
 
 .content-wrap {
@@ -22,8 +22,8 @@ body {
 
 /* ── TOOLBAR ── */
 .toolbar {
-    background: #061a40;
-    border-bottom: 1px solid #0a2460;
+    background: var(--c-purple, #301934);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding: 0.75rem 1.5rem;
     display: flex;
     justify-content: space-between;
@@ -97,7 +97,7 @@ body {
 }
 
 .toggle-switch.on {
-    background: #2a89c8;
+    background: rgba(255, 255, 255, 0.45);
 }
 
 .toggle-switch.on::after {
@@ -136,15 +136,15 @@ body {
 
 .font-btn.attivo {
     background: white;
-    color: #061a40;
+    color: var(--c-purple, #301934);
     border-color: white;
     font-weight: 600;
 }
 
 /* ── PULSANTE STAMPA ── */
 .btn-stampa {
-    background: #2a89c8;
-    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
     font-weight: 600;
     padding: 0.5rem 1.2rem;
@@ -159,7 +159,43 @@ body {
 }
 
 .btn-stampa:hover {
-    background: #1e6fa0;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── TABS CORI ── */
+.tabs-cori {
+    margin-bottom: 1.25rem;
+}
+
+/* ── AVVISI ── */
+.avviso-nessun-foglio,
+.avviso-errore {
+    padding: 0.9rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.avviso-nessun-foglio {
+    background: #f0ebf4;
+    border: 1px solid #c8aed4;
+    color: var(--c-purple, #301934);
+}
+
+.avviso-errore {
+    background: #fdf0f0;
+    border: 1px solid #f5c0c0;
+    color: #c0392b;
+}
+
+.avviso-nessun-foglio code {
+    background: rgba(48, 25, 52, 0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
 }
 
 /* ── EDITOR ── */
@@ -177,7 +213,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
-    color: #061a40;
+    color: var(--c-purple, #301934);
     margin-bottom: 1rem;
     border-bottom: 1px solid #eaeff7;
     padding-bottom: 0.5rem;
@@ -210,20 +246,20 @@ body {
     background: #f8f9fa;
     font-family: monospace;
     text-align: center;
-    color: #061a40;
+    color: var(--c-purple, #301934);
     transition: border-color 0.15s;
 }
 
 .numero-input:focus,
 .numero-input2:focus {
-    border-color: #2a89c8;
+    border-color: var(--c-purple, #301934);
     outline: none;
     background: white;
 }
 
 .canto-label {
     font-size: 0.95rem;
-    color: #061a40;
+    color: var(--c-purple, #301934);
     flex: 1;
     min-width: 200px;
 }
@@ -318,9 +354,9 @@ body {
     margin-top: 1rem;
     padding: 0.55rem 1rem;
     font-size: 0.82rem;
-    color: #061a40;
-    background: #eaeff7;
-    border: 1px solid #c8d3e0;
+    color: var(--c-purple, #301934);
+    background: #f0ebf4;
+    border: 1px solid #c8aed4;
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -328,7 +364,7 @@ body {
 }
 
 .barra-altezza strong {
-    color: #061a40;
+    color: var(--c-purple, #301934);
 }
 
 .barra-altezza.sforato {
