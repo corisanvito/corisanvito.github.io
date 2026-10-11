@@ -21,24 +21,6 @@
     <link rel="stylesheet" href="/style/portale.css">
     <link rel="stylesheet" href="/style/tab-cori.css">
     <link rel="stylesheet" href="/style/stampa-canti.css">
-    <style>
-        .btn-rimuovi-canto {
-            margin-left: auto;
-            flex-shrink: 0;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #aaa;
-            font-size: 0.95rem;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            transition: color 0.15s;
-        }
-        .btn-rimuovi-canto:hover { color: #c0392b; }
-        .editor-riga.nascosto { opacity: 0.4; }
-        .editor-riga.nascosto .btn-rimuovi-canto { color: #27ae60; }
-        .editor-riga.nascosto .btn-rimuovi-canto:hover { color: #1e8449; }
-    </style>
 </head>
 
 <body>
@@ -207,7 +189,7 @@
 
             listaCanti = cantiSettimana
                 .filter(c => !c.indicazione.toLowerCase().includes('salmo'))
-                .map(c => ({ titolo: c.titolo, indicazione: c.indicazione }));
+                .map(c => ({ titolo: c.titolo, indicazione: c.indicazione, link: c.link || '' }));
 
             if (listaCanti.length === 0) {
                 if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun canto domenicale configurato per questo coro.</div>`;
@@ -275,14 +257,18 @@
 
             const spanCanto = document.createElement('span');
             spanCanto.className = 'canto-label';
-            spanCanto.innerText = canto.titolo;
+            if (canto.link) {
+                spanCanto.innerHTML = `<a href="${canto.link}" target="_blank">${escapeHtml(canto.titolo)}</a>`;
+            } else {
+                spanCanto.innerText = canto.titolo;
+            }
 
             const btnRimuovi = document.createElement('button');
             btnRimuovi.className = 'btn-rimuovi-canto';
             btnRimuovi.title = cantiNascosti.has(idx) ? 'Mostra' : 'Nascondi';
             btnRimuovi.innerHTML = cantiNascosti.has(idx)
-                ? '<i class="fa-solid fa-eye"></i>'
-                : '<i class="fa-solid fa-eye-slash"></i>';
+                ? '<i class="fas fa-eye"></i>'
+                : '<i class="fas fa-xmark"></i>';
             btnRimuovi.addEventListener('click', () => {
                 if (cantiNascosti.has(idx)) {
                     cantiNascosti.delete(idx);

@@ -442,3 +442,32 @@ body {
         padding: 0;
     }
 }
+
+.btn-rimuovi-canto {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 0.95rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+
+.btn-rimuovi-canto:hover {
+    color: #c0392b;
+}
+
+.editor-riga.nascosto {
+    opacity: 0.4;
+}
+
+.editor-riga.nascosto .btn-rimuovi-canto {
+    color: #27ae60;
+}
+
+.editor-riga.nascosto .btn-rimuovi-canto:hover {
+    color: #1e8449;
+}
