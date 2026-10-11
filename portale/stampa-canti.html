@@ -281,8 +281,8 @@
             btnRimuovi.className = 'btn-rimuovi-canto';
             btnRimuovi.title = cantiNascosti.has(idx) ? 'Mostra' : 'Nascondi';
             btnRimuovi.innerHTML = cantiNascosti.has(idx)
-                ? '<i class="fas fa-eye"></i>'
-                : '<i class="fas fa-xmark"></i>';
+                ? '<i class="fa-solid fa-eye"></i>'
+                : '<i class="fa-solid fa-eye-slash"></i>';
             btnRimuovi.addEventListener('click', () => {
                 if (cantiNascosti.has(idx)) {
                     cantiNascosti.delete(idx);
