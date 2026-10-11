@@ -62,21 +62,11 @@
 
 <script type="module">
     import { requireAuth } from '/script/auth-guard.js';
-    import { getCori } from '/script/api.js';
+    import { getCori, apiCall } from '/script/api.js';
 
     // ── AUTH: solo admin ──────────────────────────────────────────────────
     const utente = requireAuth(['admin']);
     if (!utente) throw new Error('Non autorizzato');
-
-    // ── CONFIGURAZIONE FOGLI PER CORO ─────────────────────────────────────
-    // Mappa coroId → Google Sheet ID del foglietto settimanale.
-    // Aggiungi un'entry per ogni coro con il suo Sheet ID.
-    // Se un coro non è mappato, viene usato __default__.
-    const SHEET_IDS = {
-        '__default__': '1NYcf3upDR8YLuPX0dm__T1ArAZLXBIdNRBgzwC5GCa0'
-        // 'id-coro-10': 'sheet-id-coro-10',
-        // 'id-coro-1115': 'sheet-id-coro-1115',
-    };
 
     // ── STATO ─────────────────────────────────────────────────────────────
     let listaCanti = [];
@@ -139,53 +129,39 @@
     }
 
     // ── CARICAMENTO CANTI ─────────────────────────────────────────────────
-    function getSheetId(coroId) {
-        return SHEET_IDS[coroId] || SHEET_IDS['__default__'] || null;
-    }
-
     function formattaData(data) {
         const opzioni = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        return new Intl.DateTimeFormat('it-IT', opzioni).format(data);
+        return new Intl.DateTimeFormat('it-IT', opzioni).format(new Date(data));
     }
 
     async function caricaCanti(coroId) {
-        const sheetId = getSheetId(coroId);
         const container = document.getElementById('editor-container');
 
-        if (!sheetId) {
-            if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun foglio Google configurato per questo coro. Aggiungi l'ID in <code>SHEET_IDS</code>.</div>`;
-            document.getElementById('pagina').innerHTML = '';
-            return;
-        }
-
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-
         try {
-            const response = await fetch(sheetUrl);
-            const text = await response.text();
-            const json = JSON.parse(text.substring(47).slice(0, -2));
-            const rows = json.table.rows;
+            const tutti = await apiCall(`/canti-settimana/${coroId}`);
+            const domenica = tutti.filter(c => c.tipo === 'domenica' && c.indicazione);
 
-            // Leggi la data dalla prima riga, colonna C (indice 2)
-            const dataCell = rows[0]?.c?.[2];
-            dataFoglietto = dataCell?.v ? formattaData(new Date(dataCell.v)) : '';
+            // Leggi la data dal primo canto domenicale
+            const primaData = domenica.find(c => c.dataDomenica)?.dataDomenica;
+            dataFoglietto = primaData ? formattaData(primaData) : '';
 
-            listaCanti = [];
-            rows.slice(1).forEach(row => {
-                if (!row.c || row.c.length < 3) return;
-                const titolo = row.c[0]?.v?.trim();
-                const indicazione = row.c[2]?.v?.trim();
-                if (!titolo || !indicazione) return;
-                if (indicazione.toLowerCase().includes('salmo')) return;
-                listaCanti.push({ titolo, indicazione });
-            });
+            listaCanti = domenica.map(c => ({
+                titolo: c.titolo,
+                indicazione: c.indicazione
+            }));
+
+            if (listaCanti.length === 0) {
+                if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun canto domenicale configurato per questo coro.</div>`;
+                document.getElementById('pagina').innerHTML = '';
+                return;
+            }
 
             mostraEditor(coroId);
             generaFoglietti();
 
         } catch (err) {
             console.error('Errore caricamento canti:', err);
-            if (container) container.innerHTML = `<div class="avviso-errore"><i class="fas fa-exclamation-triangle"></i> Impossibile caricare i canti. Verifica connessione o foglio Google.</div>`;
+            if (container) container.innerHTML = `<div class="avviso-errore"><i class="fas fa-exclamation-triangle"></i> Impossibile caricare i canti. Verifica la connessione.</div>`;
         }
     }
 
