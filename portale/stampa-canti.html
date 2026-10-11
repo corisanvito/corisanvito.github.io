@@ -160,18 +160,20 @@
 
         try {
             const tutti = await apiCall(`/canti-settimana/${coroId}`);
-            const domenica = tutti.filter(c => c.tipo === 'domenica' && c.indicazione);
+            const domenica = tutti.filter(c => c.tipo === 'domenica' && c.indicazione && c.dataDomenica);
 
-            // Leggi la data dal primo canto domenicale
-            const primaData = domenica.find(c => c.dataDomenica)?.dataDomenica;
-            dataFoglietto = primaData ? formattaData(primaData) : '';
+            // Prendi solo i canti della domenica più recente
+            const dataMax = domenica.reduce((max, c) => c.dataDomenica > max ? c.dataDomenica : max, '');
+            const cantiSettimana = domenica.filter(c => c.dataDomenica === dataMax);
 
-            listaCanti = domenica.map(c => ({
+            dataFoglietto = dataMax ? formattaData(dataMax) : '';
+
+            listaCanti = cantiSettimana.map(c => ({
                 titolo: c.titolo,
                 indicazione: c.indicazione
             }));
 
-            if (listaCanti.length === 0) {
+            if (cantiSettimana.length === 0) {
                 if (container) container.innerHTML = `<div class="avviso-nessun-foglio"><i class="fas fa-circle-info"></i> Nessun canto domenicale configurato per questo coro.</div>`;
                 document.getElementById('pagina').innerHTML = '';
                 return;
