@@ -76,7 +76,21 @@
     let mostraAltezza = false;
     let coroAttivoId = null;
 
-    // ── FONT MAP (definita prima dell'init perché ripristinaFont() la usa subito) ──
+    // ── COSTANTI (definite prima dell'init perché le funzioni le usano subito) ──
+    const abbreviazioni = {
+        'ingresso': 'Ingr',
+        'aspersione': 'Asp',
+        'atto penitenziale': 'Kyrie',
+        'gloria': 'Gloria',
+        'acclamazione al vangelo': 'Vangelo',
+        'offertorio': 'Off',
+        'santo': 'Santo',
+        'agnello di dio': 'Agn. di Dio',
+        'comunione': 'Com',
+        'congedo': 'Fine',
+        'canto da ripassare': 'Ripasso'
+    };
+
     const fontMap = {
         garamond: { canti: "'EB Garamond', Georgia, serif", numeri: "'EB Garamond', Georgia, serif" },
         lato: { canti: "'Lato', system-ui, sans-serif", numeri: "'Lato', system-ui, sans-serif" },
@@ -275,20 +289,6 @@
     }
 
     // ── ABBREVIAZIONI ─────────────────────────────────────────────────────
-    const abbreviazioni = {
-        'ingresso': 'Ingr',
-        'aspersione': 'Asp',
-        'atto penitenziale': 'Kyrie',
-        'gloria': 'Gloria',
-        'acclamazione al vangelo': 'Vangelo',
-        'offertorio': 'Off',
-        'santo': 'Santo',
-        'agnello di dio': 'Agn. di Dio',
-        'comunione': 'Com',
-        'congedo': 'Fine',
-        'canto da ripassare': 'Ripasso'
-    };
-
     function abbrevia(indicazione) {
         return abbreviazioni[indicazione.toLowerCase().trim()] || indicazione;
     }
