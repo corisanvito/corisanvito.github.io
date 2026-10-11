@@ -76,6 +76,13 @@
     let mostraAltezza = false;
     let coroAttivoId = null;
 
+    // ── FONT MAP (definita prima dell'init perché ripristinaFont() la usa subito) ──
+    const fontMap = {
+        garamond: { canti: "'EB Garamond', Georgia, serif", numeri: "'EB Garamond', Georgia, serif" },
+        lato: { canti: "'Lato', system-ui, sans-serif", numeri: "'Lato', system-ui, sans-serif" },
+        sourceserif: { canti: "'Source Serif 4', Georgia, serif", numeri: "'Source Serif 4', Georgia, serif" }
+    };
+
     // ── INIT ──────────────────────────────────────────────────────────────
     const cori = await getCori();
     setupTabs(cori);
@@ -381,12 +388,6 @@
     }
 
     // ── FONT ──────────────────────────────────────────────────────────────
-    const fontMap = {
-        garamond: { canti: "'EB Garamond', Georgia, serif", numeri: "'EB Garamond', Georgia, serif" },
-        lato: { canti: "'Lato', system-ui, sans-serif", numeri: "'Lato', system-ui, sans-serif" },
-        sourceserif: { canti: "'Source Serif 4', Georgia, serif", numeri: "'Source Serif 4', Georgia, serif" }
-    };
-
     function cambiaFont(nome, btn) {
         const f = fontMap[nome];
         if (!f) return;
