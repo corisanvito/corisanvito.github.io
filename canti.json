@@ -1582,12 +1582,15 @@
     {
       "titolo": "Offertorio (Prendiamo e mangiamo)",
       "id": 90,
+    {
+      "titolo": "Prendiamo e mangiamo",
+      "id": 91,
       "testo": "Prendiamo e mangiamo questo pane, è il corpo di nostro Signor. Prendiamo e beviamo questo vino, è il sangue di nostro Signor. Sei la nostra fame, dacci sempre di questo pane. Sei la nostra sete, dacci sempre di questo vino.",
       "categorie": [
         "offertorio"
       ],
-      "url": "canti/offertorio-prendiamo-e-mangiamo",
-      "fileName": "offertorio-prendiamo-e-mangiamo.html",
+      "url": "canti/prendiamo-e-mangiamo",
+      "fileName": "prendiamo-e-mangiamo.html",
       "metadata": {
         "Testo": "",
         "Musica": "",
