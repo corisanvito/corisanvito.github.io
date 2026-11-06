@@ -25,23 +25,6 @@ body main a:hover {
     }
 }
 
-.btn-primary {
-    background: var(--c-purple);
-    color: white;
-    border: none;
-    border-radius: var(--radius-btn);
-    padding: 0.6rem 1.4rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.btn-primary:hover {
-    opacity: 0.85;
-}
-
 .btn-sm {
     padding: 0.25rem 0.7rem;
     border-radius: 4px;
@@ -74,6 +57,23 @@ body main a:hover {
 
 .btn-sm.ok:hover {
     background: #e8f5e9;
+}
+
+.btn-primary {
+    background: var(--c-purple);
+    color: white;
+    border: none;
+    border-radius: var(--radius-btn);
+    padding: 0.6rem 1.4rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+    opacity: 0.85;
 }
 
 .campo {
