@@ -75,7 +75,8 @@
                     </button>
                     <small>PDF, immagini, audio (max 5 file)</small>
                 </div>
-                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg" style="display:none" multiple>
+                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg" style="display:none"
+                    multiple>
                 <ul id="lista-file" style="list-style:none;padding:0;margin:0.5rem 0 0"></ul>
             </div>
             <button class="btn-primary" id="btn-carica">
@@ -245,9 +246,8 @@
                     <div class="spartito-gruppo card-box">
                         <h3 class="spartito-titolo-canto">${titolo}</h3>
                         ${files.map(s => {
-                            const puoModificare = isAdmin || s.caricatoDa?._id === utente.id;
-                            const strumentiJson = JSON.stringify(s.strumenti || []).replace(/'/g, '&#39;');
-                            return `
+                    const puoModificare = isAdmin || s.caricatoDa?._id === utente.id;
+                    return `
                             <div class="spartito-row" id="row-${s._id}">
                                 <div class="spartito-info">
                                     <a href="${s.file.url}" target="_blank" class="allegato-link">
@@ -262,10 +262,10 @@
                                 </div>
                                 ${puoModificare ? `
                                 <div class="spartito-azioni">
-                                    <button class="btn-sm" title="Modifica" onclick="apriModifica('${s._id}', '${(s.tonalita || '').replace(/'/g, '&#39;')}', ${strumentiJson})">
+                                    <button class="btn-sm btn-modifica" data-id="${s._id}" title="Modifica">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <button class="btn-sm danger" title="Elimina" onclick="eliminaSpartito('${s._id}')">
+                                    <button class="btn-sm danger btn-elimina" data-id="${s._id}" title="Elimina">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>` : ''}
@@ -292,9 +292,22 @@
                                 <p class="messaggio" id="edit-msg-${s._id}"></p>
                             </div>
                             `;
-                        }).join('')}
+                }).join('')}
                     </div>
                 `).join('');
+
+            lista.querySelectorAll('.btn-modifica').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const spartito = tuttiSpartiti.find(s => s._id === id);
+                    if (!spartito) return;
+                    apriModifica(id, spartito.tonalita || '', spartito.strumenti || []);
+                });
+            });
+
+            lista.querySelectorAll('.btn-elimina').forEach(btn => {
+                btn.addEventListener('click', () => eliminaSpartito(btn.dataset.id));
+            });
         }
 
         window.apriModifica = (id, tonalita, strumentiAttivi) => {
