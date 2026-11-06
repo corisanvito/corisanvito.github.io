@@ -102,3 +102,26 @@
     color: #aaa;
     font-size: 0.78rem;
 }
+
+/* Azioni per ogni riga spartito */
+.spartito-azioni {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* Form di modifica inline */
+.spartito-edit-form {
+    padding: 0.8rem 0.6rem 0.6rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+    margin-top: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.edit-azioni {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}

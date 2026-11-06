@@ -244,8 +244,11 @@
                 .map(([titolo, files]) => `
                     <div class="spartito-gruppo card-box">
                         <h3 class="spartito-titolo-canto">${titolo}</h3>
-                        ${files.map(s => `
-                            <div class="spartito-row">
+                        ${files.map(s => {
+                            const puoModificare = isAdmin || s.caricatoDa?._id === utente.id;
+                            const strumentiJson = JSON.stringify(s.strumenti || []).replace(/'/g, '&#39;');
+                            return `
+                            <div class="spartito-row" id="row-${s._id}">
                                 <div class="spartito-info">
                                     <a href="${s.file.url}" target="_blank" class="allegato-link">
                                         <i class="fa-solid fa-file"></i> ${s.file.nome}
@@ -257,16 +260,98 @@
                                         <span class="tag-meta"><i class="fa-solid fa-calendar"></i> ${new Date(s.createdAt).toLocaleDateString('it-IT')}</span>
                                     </div>
                                 </div>
-                                ${isAdmin || s.caricatoDa?._id === utente.id
-                        ? `<button class="btn-sm danger" onclick="eliminaSpartito('${s._id}')">
+                                ${puoModificare ? `
+                                <div class="spartito-azioni">
+                                    <button class="btn-sm" title="Modifica" onclick="apriModifica('${s._id}', '${(s.tonalita || '').replace(/'/g, '&#39;')}', ${strumentiJson})">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn-sm danger" title="Elimina" onclick="eliminaSpartito('${s._id}')">
                                         <i class="fa-solid fa-trash"></i>
-                                       </button>`
-                        : ''}
+                                    </button>
+                                </div>` : ''}
                             </div>
-                        `).join('')}
+                            <div class="spartito-edit-form" id="edit-${s._id}" style="display:none">
+                                <div class="form-row">
+                                    <div class="campo">
+                                        <label>Tonalità</label>
+                                        <input type="text" id="edit-ton-${s._id}" placeholder="es. Do maggiore, La minore…">
+                                    </div>
+                                </div>
+                                <div class="campo">
+                                    <label>Strumenti</label>
+                                    <div id="edit-str-${s._id}" class="cori-selector"></div>
+                                </div>
+                                <div class="edit-azioni">
+                                    <button class="btn-primary btn-sm" onclick="salvaModifica('${s._id}')">
+                                        <i class="fa-solid fa-check"></i> Salva
+                                    </button>
+                                    <button class="btn-sm" onclick="chiudiModifica('${s._id}')">
+                                        <i class="fa-solid fa-xmark"></i> Annulla
+                                    </button>
+                                </div>
+                                <p class="messaggio" id="edit-msg-${s._id}"></p>
+                            </div>
+                            `;
+                        }).join('')}
                     </div>
                 `).join('');
         }
+
+        window.apriModifica = (id, tonalita, strumentiAttivi) => {
+            chiudiTutteLeModifiche();
+            const form = document.getElementById(`edit-${id}`);
+            form.style.display = 'block';
+
+            // Precompila tonalità
+            document.getElementById(`edit-ton-${id}`).value = tonalita;
+
+            // Popola strumenti
+            const container = document.getElementById(`edit-str-${id}`);
+            container.innerHTML = '';
+            STRUMENTI.forEach(s => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'coro-option' + (strumentiAttivi.includes(s.valore) ? ' selezionato' : '');
+                btn.dataset.value = s.valore;
+                btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" class="icona-strumento"> ${s.label}`;
+                btn.addEventListener('click', () => btn.classList.toggle('selezionato'));
+                container.appendChild(btn);
+            });
+        };
+
+        window.chiudiModifica = (id) => {
+            document.getElementById(`edit-${id}`).style.display = 'none';
+        };
+
+        function chiudiTutteLeModifiche() {
+            document.querySelectorAll('.spartito-edit-form').forEach(el => el.style.display = 'none');
+        }
+
+        window.salvaModifica = async (id) => {
+            const tonalita = document.getElementById(`edit-ton-${id}`).value.trim();
+            const strumenti = [...document.querySelectorAll(`#edit-str-${id} .coro-option.selezionato`)].map(b => b.dataset.value);
+            const msg = document.getElementById(`edit-msg-${id}`);
+
+            msg.className = 'messaggio';
+            msg.textContent = 'Salvataggio…';
+
+            try {
+                await apiCall(`/spartiti/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tonalita, strumenti })
+                });
+                msg.className = 'messaggio ok';
+                msg.textContent = '✓ Salvato!';
+                setTimeout(() => {
+                    chiudiModifica(id);
+                    caricaSpartiti();
+                }, 600);
+            } catch (err) {
+                msg.className = 'messaggio err';
+                msg.textContent = 'Errore durante il salvataggio.';
+            }
+        };
 
         // Ricerca
         document.getElementById('inp-cerca').addEventListener('input', function () {
@@ -316,6 +401,13 @@
             } catch (err) {
                 msg.className = 'messaggio err';
                 msg.textContent = 'Errore di connessione.';
+            }
+        });
+
+        // Chiudi form modifica se si clicca fuori
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.spartito-edit-form') && !e.target.closest('.spartito-azioni')) {
+                chiudiTutteLeModifiche();
             }
         });
 
