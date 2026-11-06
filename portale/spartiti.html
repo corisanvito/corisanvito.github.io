@@ -67,12 +67,16 @@
             </div>
             <div class="campo">
                 <label>File *</label>
-                <button type="button" class="btn-sm" id="btn-aggiungi-file" style="margin-bottom:0.5rem">
-                    <i class="fa-solid fa-paperclip"></i> Aggiungi file
-                </button>
-                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg" style="display:none">
-                <ul id="lista-file" style="list-style:none;padding:0;margin:0"></ul>
-                <small style="color:#888;font-size:0.78rem">PDF, immagini, audio (max 5 file)</small>
+                <div id="drop-zone" class="drop-zone">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                    <span class="drop-label">Trascina qui i file oppure</span>
+                    <button type="button" class="btn-sm" id="btn-aggiungi-file">
+                        <i class="fa-solid fa-paperclip"></i> Sfoglia
+                    </button>
+                    <small>PDF, immagini, audio (max 5 file)</small>
+                </div>
+                <input type="file" id="inp-file" accept=".pdf,.jpg,.jpeg,.png,.mp3,.wav,.ogg" style="display:none" multiple>
+                <ul id="lista-file" style="list-style:none;padding:0;margin:0.5rem 0 0"></ul>
             </div>
             <button class="btn-primary" id="btn-carica">
                 <i class="fa-solid fa-upload"></i> Carica
@@ -143,16 +147,46 @@
         });
 
         document.getElementById('inp-file').addEventListener('change', (e) => {
-            const nuovi = Array.from(e.target.files);
+            aggiungiFile(Array.from(e.target.files));
+            e.target.value = '';
+        });
+
+        // Drag & drop
+        const dropZone = document.getElementById('drop-zone');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            if (!dropZone.contains(e.relatedTarget)) {
+                dropZone.classList.remove('drag-over');
+            }
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files).filter(f =>
+                /\.(pdf|jpe?g|png|mp3|wav|ogg)$/i.test(f.name)
+            );
+            if (files.length === 0) {
+                alert('Formato non supportato. Usa PDF, immagini o audio.');
+                return;
+            }
+            aggiungiFile(files);
+        });
+
+        function aggiungiFile(nuovi) {
             for (const f of nuovi) {
                 if (fileAccumulati.length >= 5) { alert('Puoi allegare al massimo 5 file.'); break; }
                 if (!fileAccumulati.find(x => x.name === f.name && x.size === f.size)) {
                     fileAccumulati.push(f);
                 }
             }
-            e.target.value = '';
             aggiornaListaFile();
-        });
+        }
 
         function aggiornaListaFile() {
             const ul = document.getElementById('lista-file');
