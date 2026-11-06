@@ -277,10 +277,7 @@ input[type="file"] {
         min-height: 36px;
         padding: 0.3rem 0.8rem;
     }
-}
-
-@media (max-width: 600px) {
-
+    
     /* Form inline: impilato verticalmente */
     .form-inline {
         flex-direction: column;
