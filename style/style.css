@@ -540,7 +540,7 @@ label {
         width: 100%;
     }
 
-    .btn-sm {
+    .btn-sm.full-mobile {
         width: 100%;
     }
 }

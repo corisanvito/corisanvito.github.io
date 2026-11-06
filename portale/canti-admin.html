@@ -274,9 +274,9 @@
                 ? new Date(c.dataDomenica).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })
                 : '—';
             return `<tr data-id="${c._id}">
-                <td>${c.indicazione || '—'}</td>
-                <td>${link}</td>
-                <td style="white-space:nowrap">${data}</td>
+                <td data-label="Indicazione">${c.indicazione || '—'}</td>
+                <td data-label="Canto">${link}</td>
+                <td data-label="Data" style="white-space:nowrap">${data}</td>
                 <td><button class="btn-sm danger" onclick="rimuoviCanto('${c._id}')">✕</button></td>
             </tr>`;
         }

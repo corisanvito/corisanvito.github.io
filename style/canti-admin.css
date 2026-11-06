@@ -225,9 +225,66 @@ input[type="file"] {
     margin: 0;
 }
 
+@media screen and (max-width: 768px) {
+    .info {
+        font-size: 0.7em;
+    }
+
+    /* Tab cori: scroll orizzontale invece di andare a capo */
+    .tabs-cori {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.4rem;
+        padding-bottom: 0.3rem;
+        /* nasconde la scrollbar visivamente ma mantiene la funzionalità */
+        scrollbar-width: none;
+    }
+
+    .tabs-cori::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-coro {
+        flex: 0 0 auto;
+        margin: 0;
+        white-space: nowrap;
+        font-size: 0.88rem;
+        padding: 0.5rem 1rem;
+        min-height: 44px;
+    }
+
+    /* Sottosezione: padding ridotto */
+    .sottosezione {
+        padding: 0.9rem 1rem;
+    }
+
+    /* Header sottosezione: allineamento verticale se troppo lungo */
+    .sottosezione-header {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .sottosezione-header h4 {
+        font-size: 0.92rem;
+        flex: 1 1 auto;
+    }
+
+    /* Pulsante Svuota: non full-width */
+    .sottosezione-header .btn-sm.danger {
+        flex: 0 0 auto;
+        min-height: 36px;
+        padding: 0.3rem 0.8rem;
+    }
+}
+
 @media (max-width: 600px) {
+
+    /* Form inline: impilato verticalmente */
     .form-inline {
         flex-direction: column;
+        gap: 0.6rem;
     }
 
     .form-inline input,
@@ -237,18 +294,79 @@ input[type="file"] {
     #campo-canto-domenica select {
         width: 100%;
         flex: 1 1 auto;
-        height: 2.5rem;
+        height: 44px;
+        /* touch target minimo */
         box-sizing: border-box;
+        font-size: 1rem;
+        /* evita zoom iOS al focus */
     }
 
+    /* Pulsante + rimane full-width ma con altezza adeguata */
     .btn-sm-h {
         width: 100%;
-        height: 2.5rem;
+        height: 44px;
+        font-size: 0.95rem;
     }
-}
 
-@media screen and (max-width: 768px) {
-    .info {
-        font-size: 0.7em;
+    /* ── Tabella domenica → layout a card su mobile ── */
+    .tabella-domenica thead {
+        display: none;
+    }
+
+    .tabella-domenica tbody tr {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        margin-bottom: 0.6rem;
+        padding: 0.6rem 0.8rem;
+        position: relative;
+    }
+
+    .tabella-domenica tbody tr:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Etichette sintetiche prima di ogni cella */
+    .tabella-domenica td {
+        border-bottom: none;
+        padding: 0.15rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .tabella-domenica td::before {
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--c-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* Pulsante ✕: posizionato in alto a destra della card */
+    .tabella-domenica td:last-child {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0;
+    }
+
+    .tabella-domenica td:last-child::before {
+        display: none;
+    }
+
+    /* Riga canto sett: target di tocco più grande */
+    .riga-canto-sett {
+        min-height: 44px;
+        padding: 0.5rem 0;
+        gap: 0.5rem;
+    }
+
+    .riga-canto-sett .btn-sm {
+        flex: 0 0 auto;
+        min-width: 32px;
+        min-height: 32px;
     }
 }
