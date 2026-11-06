@@ -65,8 +65,8 @@
     pointer-events: none;
 }
 
-.btn-sm .remove {
-    width: max-content;
+.btn-sm.delete-attachment {
+    max-width: fit-content;
 }
 
 .drop-zone {
