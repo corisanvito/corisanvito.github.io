@@ -36,6 +36,19 @@ export async function apiCall(endpoint, options = {}) {
         return;
     }
 
+    if (!res.ok) {
+        let messaggio = `Errore ${res.status}`;
+        try {
+            const data = await res.json();
+            messaggio = data.message || data.error || messaggio;
+        } catch {
+            // risposta non-JSON (es. HTML di errore) — usa solo lo status
+        }
+        throw new Error(messaggio);
+    }
+
+    if (res.status === 204) return null;
+
     return res.json();
 }
 
