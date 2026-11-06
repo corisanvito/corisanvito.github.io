@@ -349,11 +349,12 @@
             msg.textContent = 'Salvataggio…';
 
             try {
-                await apiCall(`/spartiti/${id}`, {
+                const res = await apiCall(`/spartiti/${id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tonalita, strumenti })
                 });
+                console.log('PATCH ok:', res);
                 msg.className = 'messaggio ok';
                 msg.textContent = '✓ Salvato!';
                 setTimeout(() => {
@@ -361,8 +362,9 @@
                     caricaSpartiti();
                 }, 600);
             } catch (err) {
+                console.error('PATCH fallito:', err);
                 msg.className = 'messaggio err';
-                msg.textContent = 'Errore durante il salvataggio.';
+                msg.textContent = 'Errore: ' + (err.message || 'sconosciuto');
             }
         };
 
