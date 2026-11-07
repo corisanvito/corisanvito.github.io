@@ -71,7 +71,7 @@
         const utente = requireAuth(['admin']);
         if (!utente) throw new Error();
 
-        window.location.replace('https://book-manager-10.web.app/' + path + search);
+        window.location.replace('https://book-manager-10.web.app/');
 
         const cori = await getCori();
 
