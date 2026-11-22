@@ -247,3 +247,37 @@ body.zoomed-in .song {
 body.zoomed-in .auto-scroll-btn {
     display: flex !important;
 }
+
+/* -- Indicatori tempo liturgico -- */
+.verse[data-season],
+.chorus[data-season],
+.bridge[data-season] {
+    position: relative;
+    padding-left: 0.9rem;
+    border-left: 3px solid #C0C0C0;
+}
+
+.verse[data-season]::before,
+.chorus[data-season]::before,
+.bridge[data-season]::before {
+    content: attr(data-season-label);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+    opacity: 0.6;
+}
+
+[data-season="natale"], [data-season="natale"]::before {
+    border-left-color: #c0392b !important;
+}
+
+[data-season="ordinario"], [data-season="ordinario"]::before {
+    border-left-color: #2e7d32 !important;
+}
+
+[data-season="pasqua"], [data-season="pasqua"]::before {
+    border-left-color: #f9a825 !important;
+}
