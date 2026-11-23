@@ -281,3 +281,13 @@ body.zoomed-in .auto-scroll-btn {
 [data-season="pasqua"], [data-season="pasqua"]::before {
     border-left-color: #f9a825 !important;
 }
+
+[data-season="avvento"], [data-season="avvento"]::before,
+[data-season="quaresima"], [data-season="quaresima"]::before {
+    border-left-color: #6C3082 !important;
+}
+
+[data-season="avvento3"], [data-season="avvento3"]::before,
+[data-season="quaresima3"], [data-season="quaresima3"]::before {
+    border-left-color: #F19CBB !important;
+}
